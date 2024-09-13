@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import GoalCard from './GoalCard'
 import NewGoalForm from './NewGoalForm'
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { getAuth } from 'firebase/auth'
+import { readGoals, createGoal, updateGoal, deleteGoal } from '../utils/database'
+
 
 const user = {
   name: 'Tom Cook',
@@ -27,16 +30,30 @@ function classNames(...classes) {
 }
 
 export default function Dashboard() {
-  const [goals, setGoals] = useState([
-    { id: 1, title: 'Learn React', description: 'Master React fundamentals' },
-    { id: 2, title: 'Exercise', description: 'Go to the gym 3 times a week' },
-  ])
+  const [goals, setGoals] = useState([])
+  const auth = getAuth()
 
-  const handleAddGoal = (newGoal) => {
-    const goalWithId = { ...newGoal, id: Date.now() }
-    setGoals(prevGoals => [goalWithId, ...prevGoals])
-  }
+  useEffect(() => {
+    const fetchGoals = async () => {
+      const auth = getAuth()
+      if (auth.currentUser) {
+        const fetchedGoals = await readGoals(auth.currentUser.uid)
+        if (fetchedGoals) {
+          setGoals(Object.entries(fetchedGoals).map(([id, goal]) => ({ id, ...goal })))
+        }
+      }
+    }
+    fetchGoals()
+  }, [])
 
+  const handleAddGoal = async (newGoal) => {
+    const auth = getAuth();
+    if (auth.currentUser) {
+      const goalId = await createGoal(auth.currentUser.uid, newGoal);
+      setGoals(prevGoals => [...prevGoals, { id: goalId, ...newGoal }]);
+    }
+  };
+  
   const handleEditGoal = (goal) => {
     // Implement edit functionality
     console.log('Edit goal:', goal)
@@ -48,16 +65,16 @@ export default function Dashboard() {
 
   return (
     <>
+    <div className="container bg-slate-200 rounded-lg mx-auto px-4 sm:px-6 lg:px-8 mt-8">
       <div className="min-h-full">
         <Disclosure as="nav" className="text-center">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
               <div className="flex lg:flex-1">
-            <a href="/" className="-m-1.5 p-1.5">
-              <span className="sr-only">Soul Ascend</span>
-              <img className="h-20 w-auto" src="src/SoulAscend.png" alt="Logo" />
-            </a>
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+            ASCEND<br />
+            </h1>
           </div>
                 <div className="hidden md:block">
                   <div className="ml-80 flex space-x-4">
@@ -178,15 +195,15 @@ export default function Dashboard() {
           </DisclosurePanel>
         </Disclosure>
 
-        <header className="bg-white shadow">
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <header className="bg-white shadow sm:rounded-lg sm:shadow max-w-7xl mx-auto mt-6">
+          <div className="px-4 py-6 sm:px-6 lg:px-8">
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">Goals</h1>
           </div>
         </header>
         <main>
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <NewGoalForm onAddGoal={handleAddGoal} />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <NewGoalForm onAddGoal={handleAddGoal} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {goals.map(goal => (
                 <GoalCard
                   key={goal.id}
@@ -198,6 +215,7 @@ export default function Dashboard() {
             </div>
           </div>
         </main>
+      </div>
       </div>
     </>
   )

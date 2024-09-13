@@ -10,3 +10,26 @@ h1,h2,h3,h4,h5,h6 {
 p, button, nav, ul, li {
     font-family: "Archivo", sans-serif;
 }
+
+body {
+    background-color: #ffffff;
+  }
+  
+  .background-svg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: -1;
+  }
+
+#root {
+  position: relative;
+  z-index: 2;
+}
+
+button, a {
+  position: relative;
+  z-index: 3;
+}

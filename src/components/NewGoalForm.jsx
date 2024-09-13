@@ -6,16 +6,36 @@ export default function NewGoalForm({ onAddGoal }) {
   const [isOpen, setIsOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [milestones, setMilestones] = useState([])
+  const [newMilestone, setNewMilestone] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
     if (title && description) {
-      onAddGoal({ title, description })
+      onAddGoal({
+        title,
+        description,
+        createdAt: new Date().toISOString(),
+        progress: '0%',
+        milestones: milestones || [] // Ensure milestones is always an array
+      })
       setTitle('')
       setDescription('')
+      setMilestones([])
       setIsOpen(false)
     }
   }
+
+  const addMilestone = () => {
+    if (newMilestone.trim() !== '') {
+      setMilestones([...milestones, { text: newMilestone, completed: false }]);
+      setNewMilestone('');
+    }
+  };
+  
+  const removeMilestone = (index) => {
+    setMilestones(milestones.filter((_, i) => i !== index));
+  };
 
   return (
     <motion.div 
@@ -60,6 +80,11 @@ export default function NewGoalForm({ onAddGoal }) {
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 h-32 font-archivo"
               />
+            </div>
+            {/* ... existing form fields ... */}
+            <div>
+              <label htmlFor="milestones" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black">Milestones</label>
+              {/* ... (add the milestone input and list as described earlier) ... */}
             </div>
             <button 
               type="submit" 
