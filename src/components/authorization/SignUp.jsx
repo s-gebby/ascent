@@ -35,11 +35,6 @@ export default function SignUp() {
           </svg>
         </Link>
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            alt="Your Company"
-            src="src/SoulAscend.png"
-            className="mx-auto h-16 w-auto"
-          />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Create your account
           </h2>

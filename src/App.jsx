@@ -6,6 +6,7 @@ import Company from './components/Company';
 import SignUp from './components/authorization/SignUp';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useState, useEffect } from 'react';
+import Journal from './components/Journal';
 
 function App() {
   return (
@@ -18,17 +19,18 @@ function App() {
 function AppContent() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const auth = getAuth();
+
 
   useEffect(() => {
-    const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
     });
-
+  
     return () => unsubscribe();
   }, []);
-
+  
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -45,6 +47,7 @@ function AppContent() {
         <Route path="/login" element={<AuthPage />} />
         <Route path="/company" element={<Company />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/journal" element={<Journal />} />
       </Routes>
     </>
   );
