@@ -66,7 +66,7 @@ export default function Dashboard() {
     <div className="flex h-screen">
       <button 
         onClick={() => setIsSidebarOpen(true)}
-        className="md:hidden fixed top-4 right-4 p-2 bg-gray-800 text-white rounded"
+        className="md:hidden fixed top-4 right-4 p-2 bg-ascend-black text-white rounded font-archivo font-semibold text-sm" 
       >
         Menu
       </button>
@@ -78,11 +78,11 @@ export default function Dashboard() {
       />
       
       <div className="flex-1 overflow-auto bg-slate-200">
-        <header className="bg-white shadow sm:rounded-lg sm:shadow max-w-7xl mx-auto mt-6">
-          <div className="px-4 py-6 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Goals</h1>
-          </div>
-        </header>
+      <header className="bg-white shadow sm:rounded-lg sm:shadow max-w-[220px] mt-6 px-4 ml-8 text-center">
+  <div className="py-6 sm:px-6 lg:px-8">
+    <h1 className="text-3xl font-bold tracking-tight text-gray-900">Goals</h1>
+  </div>
+</header>
         <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           {showNewGoalForm && (
             <NewGoalForm 

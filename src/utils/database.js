@@ -1,4 +1,4 @@
-import { ref, set, get, update, remove, push } from "firebase/database";
+import { getDatabase, ref, set, get, update, remove, push } from "firebase/database";
 
 import { database } from "../firebaseConfig";
 export const writeUserData = (userId, name, email) => {
@@ -54,4 +54,31 @@ export const deleteGoal = (userId, goalId) => {
 
 export const updateGoal = (userId, goalId, updates) => {
   return update(ref(database, `users/${userId}/goals/${goalId}`), updates);
+};
+
+export const createCalendarEvent = async (userId, event) => {
+  const db = getDatabase();
+  const eventRef = ref(db, `users/${userId}/calendarEvents`);
+  const newEventRef = push(eventRef);
+  await set(newEventRef, event);
+  return newEventRef.key;
+};
+
+export const readCalendarEvents = async (userId) => {
+  const db = getDatabase();
+  const eventsRef = ref(db, `users/${userId}/calendarEvents`);
+  const snapshot = await get(eventsRef);
+  return snapshot.val();
+};
+
+export const updateCalendarEvent = async (userId, eventId, updates) => {
+  const db = getDatabase();
+  const eventRef = ref(db, `users/${userId}/calendarEvents/${eventId}`);
+  await update(eventRef, updates);
+};
+
+export const deleteCalendarEvent = async (userId, eventId) => {
+  const db = getDatabase();
+  const eventRef = ref(db, `users/${userId}/calendarEvents/${eventId}`);
+  await remove(eventRef);
 };

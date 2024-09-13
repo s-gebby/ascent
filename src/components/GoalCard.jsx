@@ -26,8 +26,9 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
           {new Date(goal.createdAt).toLocaleDateString()}
         </time>
         <span className="relative z-10 rounded-full bg-green-100 px-3 py-1.5 font-medium text-green-600">
-          Goal</span>
-        </div>
+          {goal.isDailyGoal ? 'Daily Goal' : 'One-time Goal'}
+        </span>
+      </div>
         <div className="group relative p-4 flex-grow">
           <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
             {goal.title}
@@ -56,8 +57,11 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
         </div>
       <div className="relative mt-4 flex items-center gap-x-4 p-4 border-t border-gray-200 w-full">
         <div className="text-sm leading-6 flex-grow">
-          <p className="font-semibold text-gray-900">Progress</p>
-          <p className="text-gray-600">{goal.progress || '0%'} Complete</p>
+          {goal.completeBy && (
+            <p className="text-gray-600">
+              {new Date(goal.completeBy).toLocaleDateString()}
+            </p>
+          )}
         </div>
         <div className="flex items-center">
           <button
@@ -75,5 +79,4 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
         </div>
       </div>
     </div>
-  )
-}
+  )}

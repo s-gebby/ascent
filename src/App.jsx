@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import AuthPage from './components/authorization/AuthPage';
@@ -7,6 +7,7 @@ import SignUp from './components/authorization/SignUp';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useState, useEffect } from 'react';
 import Journal from './components/Journal';
+import Calendar from './components/Calendar';
 
 function App() {
   return (
@@ -18,9 +19,9 @@ function App() {
 
 function AppContent() {
   const [user, setUser] = useState(null);
+  const [userGoals, setUserGoals] = useState([]);
   const [loading, setLoading] = useState(true);
   const auth = getAuth();
-
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -29,6 +30,11 @@ function AppContent() {
     });
   
     return () => unsubscribe();
+  }, [auth]);
+
+  useEffect(() => {
+    // Fetch goals data here
+    // When done, setUserGoals(fetchedGoals) and setLoading(false)
   }, []);
   
   if (loading) {
@@ -48,9 +54,8 @@ function AppContent() {
         <Route path="/company" element={<Company />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/journal" element={<Journal />} />
+        <Route path="/calendar" element={user ? <Calendar /> : <Navigate to="/login" />} />
       </Routes>
     </>
   );
-}
-
-export default App;
+}export default App;
