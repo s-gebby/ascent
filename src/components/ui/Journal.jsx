@@ -47,40 +47,51 @@ export default function Journal() {
       }
     }
   }
-  const handleDelete = (entryId) => {
+  const handleDelete = async (entryId) => {
     if (auth.currentUser) {
-      const entryRef = ref(database, `journal/${auth.currentUser.uid}/${entryId}`)
-      remove(entryRef)
+      try {
+        const entryRef = ref(database, `users/${auth.currentUser.uid}/journal/${entryId}`)
+        await remove(entryRef)
+      } catch (error) {
+        console.error("Error deleting entry:", error)
+      }
     }
   }
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen">
       <Sidebar 
         isOpen={isSidebarOpen} 
         setIsOpen={setIsSidebarOpen}
       />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-          <div className="container mx-auto px-6 py-8">
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">My Journal</h1>
-            <div className="bg-white rounded-lg shadow-xl p-6 mb-6">
-              <form onSubmit={handleSubmit} className="mb-6">
-                <textarea
-                  className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-green-500"
-                  rows="4"
-                  placeholder="Write your thoughts..."
-                  value={newEntry}
-                  onChange={(e) => setNewEntry(e.target.value)}
-                ></textarea>
-                <button
-                  type="submit"
-                  className="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
-                >
-                  Save Entry
-                </button>
-              </form>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <div className="flex-1 overflow-auto bg-slate-200 p-6">
+        <header className="bg-white shadow sm:rounded-lg sm:shadow mb-6 px-4 flex justify-between items-center">
+          <div className="py-6 sm:px-6 lg:px-8">
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900 uppercase">My Journal</h1>
+          </div>
+        </header>
+        
+        <div className="flex flex-col gap-6">
+          <div className="w-full">
+            <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-xl p-6 mb-6">
+              <textarea
+                className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-green-500"
+                rows="4"
+                placeholder="Write your thoughts..."
+                value={newEntry}
+                onChange={(e) => setNewEntry(e.target.value)}
+              ></textarea>
+              <button
+                type="submit"
+                className="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+              >
+                Save Entry
+              </button>
+            </form>
+          </div>
+          
+          <div className="w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {entries.map((entry) => (
                 <div key={entry.id} className="bg-white rounded-lg shadow-md p-6">
                   <p className="text-gray-800 mb-2">{entry.text}</p>
@@ -97,7 +108,7 @@ export default function Journal() {
               ))}
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   )

@@ -13,7 +13,19 @@ import { motion } from 'framer-motion';
 
 function App() {
   return (
-    <MantineProvider>
+    <MantineProvider
+    theme={{
+      colors: {
+        'ascend-orange': ['#e09016', '#e09016', '#e09016', '#e09016', '#e09016', '#e09016', '#e09016', '#e09016', '#e09016', '#e09016'],
+        'ascend-pink': ['#d63cab', '#d63cab', '#d63cab', '#d63cab', '#d63cab', '#d63cab', '#d63cab', '#d63cab', '#d63cab', '#d63cab'],
+        'ascend-blue': ['#1556bf', '#1556bf', '#1556bf', '#1556bf', '#1556bf', '#1556bf', '#1556bf', '#1556bf', '#1556bf', '#1556bf'],
+        'ascend-black': ['#000000', '#000000', '#000000', '#000000', '#000000', '#000000', '#000000', '#000000', '#000000', '#000000'],
+        'ascend-white': ['#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff'],
+        'ascend-green': ['#23cf2f', '#23cf2f', '#23cf2f', '#23cf2f', '#23cf2f', '#23cf2f', '#23cf2f', '#23cf2f', '#23cf2f', '#23cf2f'],
+      },
+      primaryColor: 'ascend-black',
+    }}
+  >
       <Router>
         <AppContent />
       </Router>
