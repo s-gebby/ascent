@@ -2,18 +2,22 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import AuthPage from './components/authorization/AuthPage';
-import Company from './components/Company';
+import Company from './components/ui/Company';
 import SignUp from './components/authorization/SignUp';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useState, useEffect } from 'react';
-import Journal from './components/Journal';
-import Calendar from './components/Calendar';
+import Journal from './components/ui/Journal';
+import Calendar from './components/ui/Calendar.jsx';
+import { MantineProvider } from '@mantine/core';
+
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <MantineProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </MantineProvider>
   );
 }
 
@@ -53,7 +57,7 @@ function AppContent() {
         <Route path="/login" element={<AuthPage />} />
         <Route path="/company" element={<Company />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/journal" element={<Journal />} />
+        <Route path="/journal" element={user ? <Journal /> : <Navigate to="/login" />} />
         <Route path="/calendar" element={user ? <Calendar /> : <Navigate to="/login" />} />
       </Routes>
     </>

@@ -2,11 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import '../styles/custom-calendar.css';
+import '../../styles/custom-calendar.css';
 import { getAuth } from 'firebase/auth';
-import { readGoals, createGoal } from '../utils/database';
-import Sidebar from './Sidebar';
-import NewGoalForm from './NewGoalForm';
+import { readGoals, createGoal } from '../../utils/database';
+import Sidebar from '../Sidebar';
 
 const localizer = momentLocalizer(moment);
 
@@ -88,15 +87,9 @@ export default function GoalCalendar() {
       <Sidebar 
         isOpen={isSidebarOpen} 
         setIsOpen={setIsSidebarOpen}
-        setShowNewGoalForm={() => {}}  // You can implement this functionality later if needed
+        setShowNewGoalForm={() => {}}  // Implement this functionality later if needed
       />
       <div className="flex-1 overflow-auto bg-slate-200">
-        <button 
-          onClick={() => setIsSidebarOpen(true)}
-          className="md:hidden fixed top-4 right-4 p-2 bg-ascend-black text-white rounded font-archivo font-semibold text-sm" 
-        >
-          Menu
-        </button>
         <header className="bg-white shadow sm:rounded-lg sm:shadow max-w-[220px] mt-6 px-4 ml-8 text-center">
           <div className="py-6 sm:px-6 lg:px-8">
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">Goal Calendar</h1>

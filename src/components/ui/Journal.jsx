@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import Sidebar from './Sidebar'
+import { useState, useEffect } from 'react'
+import Sidebar from '../Sidebar'
 import { getAuth } from 'firebase/auth'
 import { ref, push, onValue, remove } from 'firebase/database'
-import { database } from '../firebaseConfig'
+import { database } from '../../firebaseConfig'
 
 export default function Journal() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [entries, setEntries] = useState([])
   const [newEntry, setNewEntry] = useState('')
   const auth = getAuth()
@@ -52,10 +53,12 @@ export default function Journal() {
       remove(entryRef)
     }
   }
-
   return (
     <div className="flex h-screen bg-gray-100">
-      <Sidebar />
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        setIsOpen={setIsSidebarOpen}
+      />
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           <div className="container mx-auto px-6 py-8">

@@ -1,0 +1,64 @@
+.autosuggest-container {
+  position: relative;
+.suggestions-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+@keyframes popUp {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.suggestions-list {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  max-width: 90%;
+  max-height: 80%;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  padding: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+
+.react-autosuggest__suggestion--highlighted {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+  margin: 0;
+}
+
+.suggestion-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.suggestion-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.react-autosuggest__suggestion--highlighted {
+  background-color: rgba(0, 0, 0, 0.1);
+}
