@@ -7,8 +7,8 @@ import SignUp from './components/authorization/SignUp';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useState, useEffect } from 'react';
 import Journal from './components/ui/Journal';
-import Calendar from './components/ui/Calendar.jsx';
 import { MantineProvider } from '@mantine/core';
+import { motion } from 'framer-motion';
 
 
 function App() {
@@ -30,7 +30,10 @@ function AppContent() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setLoading(false);
+      // Introduce a delay before setting loading to false
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
     });
   
     return () => unsubscribe();
@@ -43,12 +46,23 @@ function AppContent() {
   
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-5xl font-bold">Loading...</div>
+      <div className="flex items-center justify-center h-screen bg-ascend-black">
+        <motion.div
+          className="text-6xl font-bold font-archivo-black"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
+        >
+          <span className="text-ascend-orange">A</span>
+          <span className="text-ascend-pink">S</span>
+          <span className="text-ascend-blue">C</span>
+          <span className="text-ascend-green">E</span>
+          <span className="text-ascend-white">N</span>
+          <span className="text-ascend-orange">D</span>
+        </motion.div>
       </div>
     );
   }
-
   return (
     <>
       <Routes>
@@ -58,7 +72,6 @@ function AppContent() {
         <Route path="/company" element={<Company />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/journal" element={user ? <Journal /> : <Navigate to="/login" />} />
-        <Route path="/calendar" element={user ? <Calendar /> : <Navigate to="/login" />} />
       </Routes>
     </>
   );
