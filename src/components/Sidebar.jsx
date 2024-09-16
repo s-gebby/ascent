@@ -70,28 +70,13 @@ import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon } from '@heroicons
                 {isDashboardExpanded && (
                   <ul className="ml-4 mt-2">
                     <li className="mb-2">
-                      <Link to="/dashboard" className="block py-1 px-4 hover:bg-gray-700 rounded text-sm">Stats</Link>
+                      <Link to="/stats" className="block py-1 px-4 hover:bg-gray-700 rounded text-sm">Stats</Link>
                     </li>
                   </ul>
                 )}
               </li>
               <li className="mb-4">
                 <Link to="/journal" className="block py-2 px-4 hover:bg-ascend-blue rounded text-sm">Journal</Link>
-              </li>
-              <li className="mb-4">
-                <Link to="/accountability" className="block py-2 px-4 hover:bg-ascend-blue rounded text-sm">Accountability</Link>
-              </li>
-              <li className="mb-4">
-                <Link to="/accountability" className="block py-2 px-4 hover:bg-ascend-blue rounded text-sm">Rewards</Link>
-              </li>
-              <li className="mb-4">
-                <Link to="/accountability" className="block py-2 px-4 hover:bg-ascend-blue rounded text-sm">Motivation</Link>
-              </li>
-              <li className="mb-4">
-                <Link to="/accountability" className="block py-2 px-4 hover:bg-ascend-blue rounded text-sm">Theme</Link>
-              </li>
-              <li className="mb-4">
-                <Link to="/accountability" className="block py-2 px-4 hover:bg-ascend-blue rounded text-sm">Notifs</Link>
               </li>
             </ul>
           </nav>

@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import Journal from './components/ui/Journal';
 import { MantineProvider } from '@mantine/core';
 import { motion } from 'framer-motion';
+import Stats from './components/Stats';
 
 
 function App() {
@@ -84,6 +85,7 @@ function AppContent() {
         <Route path="/company" element={<Company />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/journal" element={user ? <Journal /> : <Navigate to="/login" />} />
+        <Route path="/stats" element={user ? <Stats /> : <Navigate to="/login" />} />
       </Routes>
     </>
   );
