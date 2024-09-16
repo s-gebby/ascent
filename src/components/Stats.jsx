@@ -6,6 +6,13 @@ import { getAuth } from 'firebase/auth';
 import { readGoals } from '../utils/database';
 import Sidebar from './Sidebar';
 import { motion } from 'framer-motion';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { jsPDF } from 'jspdf';
+import { saveAs } from 'file-saver'
+import { Menu, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
+
+
 
 const timeFrames = [
   { label: '1 Month', days: 30 },
@@ -55,7 +62,7 @@ export default function Stats() {
 
   const StatCard = ({ title, value, message, color }) => (
     <motion.div 
-      className={`bg-${color} p-3 rounded-lg`}
+      className={`bg-${color} p-3 rounded-lg mb-6`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -66,7 +73,66 @@ export default function Stats() {
     </motion.div>
   );
 
-  const ShareButton = ({ stats, timeFrame }) => {
+  const Button = ({ onClick, icon: Icon, children, color = 'blue' }) => (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-ascend-${color} hover:bg-ascend-${color}-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ascend-${color} transition-all duration-200`}
+    >
+      <Icon className="h-5 w-5 mr-2" aria-hidden="true" />
+      {children}
+    </button>
+  );
+
+  const ExportMenu = ({ onExport }) => (
+    <Menu as="div" className="relative inline-block text-left z-50">
+      <div>
+        <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-ascend-blue rounded-md hover:bg-ascend-blue-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 ">
+          <ArrowDownTrayIcon className="h-5 w-5 mr-2" aria-hidden="true" />
+          Export
+        </Menu.Button>
+      </div>
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <Menu.Items className="absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <div className="px-1 py-1">
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  className={`${
+                    active ? 'bg-ascend-blue text-white' : 'text-gray-900'
+                  } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                  onClick={() => onExport('csv')}
+                >
+                  CSV
+                </button>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  className={`${
+                    active ? 'bg-ascend-blue text-white' : 'text-gray-900'
+                  } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                  onClick={() => onExport('pdf')}
+                >
+                  PDF
+                </button>
+              )}
+            </Menu.Item>
+          </div>
+        </Menu.Items>
+      </Transition>
+    </Menu>
+  );
+
+  const ActionButtons = ({ stats, timeFrame }) => {
     const handleShare = async () => {
       const shareData = {
         title: 'My Ascend Goal Progress',
@@ -81,17 +147,30 @@ export default function Stats() {
       }
     };
 
+    const handleExport = (format) => {
+      if (format === 'csv') {
+        const csvContent = `Time Frame,Completed Goals,In Progress,Total Goals\n${timeFrame},${stats.completed},${stats.inProgress},${stats.total}`;
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        saveAs(blob, `goal_stats_${timeFrame.replace(' ', '_')}.csv`);
+      } else if (format === 'pdf') {
+        const doc = new jsPDF();
+        doc.text(`Goal Statistics for ${timeFrame}`, 10, 10);
+        doc.text(`Completed Goals: ${stats.completed}`, 10, 20);
+        doc.text(`In Progress: ${stats.inProgress}`, 10, 30);
+        doc.text(`Total Goals: ${stats.total}`, 10, 40);
+        doc.save(`goal_stats_${timeFrame.replace(' ', '_')}.pdf`);
+      }
+    };
+
     return (
-      <button 
-        onClick={handleShare}
-        className="flex items-center text-ascend-white hover:text-ascend-blue transition-colors duration-200"
-      >
-        <ShareIcon className="h-5 w-5 mr-1" />
-        Share Progress
-      </button>
+      <div className="flex justify-end items-center space-x-4 mt-">
+        <Button onClick={handleShare} icon={ShareIcon} color="blue">
+          Share Progress
+        </Button>
+        <ExportMenu onExport={handleExport} />
+      </div>
     );
   };
-
   return (
     <div className="flex h-screen">
       <Sidebar 
@@ -134,9 +213,7 @@ export default function Stats() {
                         color="ascend-orange"
                       />
                     </div>
-                    <div className="mt-4 flex justify-end">
-                      <ShareButton stats={stats[frame.label]} timeFrame={frame.label} />
-                    </div>
+                    <ActionButtons stats={stats[frame.label]} timeFrame={frame.label} />
                   </Disclosure.Panel>
                 </>
               )}
