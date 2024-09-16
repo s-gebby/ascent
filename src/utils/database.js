@@ -53,6 +53,9 @@ export const deleteGoal = (userId, goalId) => {
 };
 
 export const updateGoal = (userId, goalId, updates) => {
+  if (updates.completed) {
+    updates.completedAt = new Date().toISOString();
+  }
   return update(ref(database, `users/${userId}/goals/${goalId}`), updates);
 };
 

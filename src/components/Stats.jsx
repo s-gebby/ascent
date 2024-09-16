@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Disclosure } from '@headlessui/react';
 import { ChevronUpIcon } from '@heroicons/react/20/solid';
+import { ShareIcon } from '@heroicons/react/24/outline';
 import { getAuth } from 'firebase/auth';
 import { readGoals } from '../utils/database';
 import Sidebar from './Sidebar';
+import { motion } from 'framer-motion';
 
 const timeFrames = [
   { label: '1 Month', days: 30 },
   { label: '3 Months', days: 90 },
   { label: '6 Months', days: 180 },
   { label: '1 Year', days: 365 },
+  { label: 'All Time', days: Infinity },
 ];
 
 export default function Stats() {
@@ -24,21 +27,69 @@ export default function Stats() {
   const fetchStats = async () => {
     if (auth.currentUser) {
       const goals = await readGoals(auth.currentUser.uid);
-      const calculatedStats = calculateStats(goals);
-      setStats(calculatedStats);
+      if (goals) {
+        const calculatedStats = calculateStats(goals);
+        setStats(calculatedStats);
+      }
     }
   };
 
   const calculateStats = (goals) => {
-    // Implement logic to calculate stats for each time frame
+    const now = new Date();
     return timeFrames.reduce((acc, frame) => {
+      const cutoffDate = frame.days === Infinity ? new Date(0) : new Date(now.getTime() - frame.days * 24 * 60 * 60 * 1000);
+      
+      const relevantGoals = Object.values(goals).filter(goal => {
+        const completedDate = goal.completedAt ? new Date(goal.completedAt) : null;
+        return completedDate && completedDate > cutoffDate;
+      });
+
       acc[frame.label] = {
-        completed: Math.floor(Math.random() * 10),
-        inProgress: Math.floor(Math.random() * 10),
-        total: Math.floor(Math.random() * 20),
+        completed: relevantGoals.length,
+        inProgress: Object.values(goals).filter(goal => !goal.completedAt).length,
+        total: Object.values(goals).length,
       };
       return acc;
     }, {});
+  };
+
+  const StatCard = ({ title, value, message, color }) => (
+    <motion.div 
+      className={`bg-${color} p-3 rounded-lg`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <p className="font-semibold text-sm">{title}</p>
+      <p className="text-xl">{value}</p>
+      <p className="text-xs mt-1">{message}</p>
+    </motion.div>
+  );
+
+  const ShareButton = ({ stats, timeFrame }) => {
+    const handleShare = async () => {
+      const shareData = {
+        title: 'My Ascend Goal Progress',
+        text: `In the last ${timeFrame}, I've completed ${stats.completed} goals out of ${stats.total} total goals!`,
+        url: window.location.href
+      };
+
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    };
+
+    return (
+      <button 
+        onClick={handleShare}
+        className="flex items-center text-ascend-white hover:text-ascend-blue transition-colors duration-200"
+      >
+        <ShareIcon className="h-5 w-5 mr-1" />
+        Share Progress
+      </button>
+    );
   };
 
   return (
@@ -47,9 +98,8 @@ export default function Stats() {
         isOpen={isSidebarOpen} 
         setIsOpen={setIsSidebarOpen}
       />
-      
       <div className="flex-1 overflow-auto bg-black bg-opacity-50 text-white p-8">
-        <h1 className="text-3xl font-bold mb-8">Goal Progress Statistics</h1>
+        <h1 className="text-3xl font-bold mb-8">Goal Statistics</h1>
         <div className="space-y-4">
           {timeFrames.map((frame) => (
             <Disclosure key={frame.label}>
@@ -65,29 +115,29 @@ export default function Stats() {
                   </Disclosure.Button>
                   <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm text-ascend-black">
                     <div className="grid grid-cols-3 gap-3">
-                        <div className="bg-ascend-green p-3 rounded-lg">
-                        <p className="font-semibold text-sm">Completed Goals</p>
-                        <p className="text-xl">{stats[frame.label]?.completed || 0}</p>
-                        <p className="text-xs mt-1">
-                            {stats[frame.label]?.completed > 0 ? "Great job! Keep pushing forward!" : "You're getting there! One step at a time."}
-                        </p>
-                        </div>
-                        <div className="bg-ascend-pink p-3 rounded-lg">
-                        <p className="font-semibold text-sm">In Progress</p>
-                        <p className="text-xl">{stats[frame.label]?.inProgress || 0}</p>
-                        <p className="text-xs mt-1">
-                            {stats[frame.label]?.inProgress > 0 ? "Stay focused, you're almost there!" : "Start something today!"}
-                        </p>
-                        </div>
-                        <div className="bg-ascend-orange p-3 rounded-lg">
-                        <p className="font-semibold text-sm">Total Goals</p>
-                        <p className="text-xl">{stats[frame.label]?.total || 0}</p>
-                        <p className="text-xs mt-1">
-                            {stats[frame.label]?.total > 0 ? "The more goals, the bigger the achievements!" : "Set a goal to get started on your journey!"}
-                        </p>
-                        </div>
+                      <StatCard 
+                        title="Completed Goals" 
+                        value={stats[frame.label]?.completed || 0}
+                        message={stats[frame.label]?.completed > 0 ? "Great job! Keep pushing forward!" : "You're getting there! One step at a time."}
+                        color="ascend-green"
+                      />
+                      <StatCard 
+                        title="In Progress" 
+                        value={stats[frame.label]?.inProgress || 0}
+                        message={stats[frame.label]?.inProgress > 0 ? "Stay focused, you're almost there!" : "Start something today!"}
+                        color="ascend-pink"
+                      />
+                      <StatCard 
+                        title="Total Goals" 
+                        value={stats[frame.label]?.total || 0}
+                        message={stats[frame.label]?.total > 0 ? "The more goals, the bigger the achievements!" : "Set a goal to get started on your journey!"}
+                        color="ascend-orange"
+                      />
                     </div>
-                 </Disclosure.Panel>
+                    <div className="mt-4 flex justify-end">
+                      <ShareButton stats={stats[frame.label]} timeFrame={frame.label} />
+                    </div>
+                  </Disclosure.Panel>
                 </>
               )}
             </Disclosure>

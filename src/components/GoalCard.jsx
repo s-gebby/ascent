@@ -23,12 +23,19 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
     }
   }
 
-  const handleComplete = () => {
-    setShowConfetti(true)
-    setTimeout(() => {
-      setShowConfetti(false)
-      setShowPopup(true)
-    }, 5000) // Show confetti for 5 seconds
+  const handleComplete = async () => {
+    if (auth.currentUser) {
+      const updates = {
+        completed: true,
+        completedAt: new Date().toISOString()
+      }
+      await updateGoal(auth.currentUser.uid, goal.id, updates)
+      setShowConfetti(true)
+      setTimeout(() => {
+        setShowConfetti(false)
+        setShowPopup(true)
+      }, 5000); // Show confetti for 5 seconds
+    }
   }
 
   const handleConfirmDelete = async () => {
