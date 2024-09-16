@@ -53,7 +53,7 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
             />
           </div>
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black">Describe your goal</label>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black">Goal Description</label>
             <Textarea
               id="description"
               placeholder="Describe your goal"
@@ -87,7 +87,7 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
 
         <div className="md:w-1/3 bg-gray-100 p-6 flex items-center justify-center">
           <div>
-            <label htmlFor="completeBy" className="block text-sm font-medium text-ascend-black mb-1 font-archivo-black capitalize text-center">Completion Date</label>
+            <label htmlFor="completeBy" className="block text-sm font-medium text-ascend-black mb-1 font-archivo-black capitalize text-center">Complete By</label>
             <DatePicker
               id="completeBy"
               selected={form.values.completeBy}
