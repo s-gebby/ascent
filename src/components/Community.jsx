@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Sidebar from './Sidebar'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { readPosts, createPost, likePost, repostPost, readUserData } from '../utils/database.js'
+import { readPosts, createPost, encouragePost, readUserData } from '../utils/database.js'
 import { Avatar, TextInput, Button } from '@mantine/core'
 import { motion } from 'framer-motion'
 
@@ -52,17 +52,11 @@ export default function Community() {
       }
     }
   }
-  const handleLikePost = async (postId) => {
+  
+  const handleEncourage = async (postId) => {
     if (user) {
-      await likePost(postId, user.uid)
-      fetchPosts()
-    }
-  }
-
-  const handleRepost = async (postId) => {
-    if (user) {
-      await repostPost(postId, user.uid)
-      fetchPosts()
+      await encouragePost(postId, user.uid);
+      fetchPosts();
     }
   }
 
@@ -109,11 +103,8 @@ export default function Community() {
               </div>
               <p className="mb-2">{post.content}</p>
               <div className="flex justify-between">
-                <Button variant="subtle" color="ascend-pink" onClick={() => handleLikePost(post.id)}>
-                  Like ({post.likes ? post.likes.length : 0})
-                </Button>
-                <Button variant="subtle" color="ascend-green" onClick={() => handleRepost(post.id)}>
-                  Repost ({post.reposts ? post.reposts.length : 0})
+                <Button variant="subtle" color="ascend-green" onClick={() => handleEncourage(post.id)}>
+                  Encourage ({post.encouragements ? Object.keys(post.encouragements).length : 0})
                 </Button>
               </div>
             </motion.div>

@@ -1,4 +1,4 @@
-import { getDatabase, ref, set, get, update, remove, push } from "firebase/database";
+import { getDatabase, ref, set, get, update, remove, push, child } from "firebase/database";
 
 import { database } from "../firebaseConfig";
 export const writeUserData = (userId, name, email) => {
@@ -96,8 +96,7 @@ export const createPost = async (user, content) => {
     authorPhotoURL: user.photoURL || '',
     content,
     timestamp: Date.now(),
-    likes: [],
-    reposts: []
+    encouragements: {}
   });
 };
 export const readPosts = async () => {
@@ -119,35 +118,10 @@ export const readPosts = async () => {
   return [];
 };
 
-export const likePost = async (postId, userId) => {
-  const db = getDatabase();
-  const postRef = ref(db, `posts/${postId}/likes`);
-  const snapshot = await get(postRef);
-  
-  if (snapshot.exists()) {
-    const likes = snapshot.val();
-    if (likes.includes(userId)) {
-      await set(postRef, likes.filter(id => id !== userId));
-    } else {
-      await set(postRef, [...likes, userId]);
-    }
-  } else {
-    await set(postRef, [userId]);
-  }
-};
-
-export const repostPost = async (postId, userId) => {
-  const db = getDatabase();
-  const postRef = ref(db, `posts/${postId}/reposts`);
-  const snapshot = await get(postRef);
-  
-  if (snapshot.exists()) {
-    const reposts = snapshot.val();
-    if (!reposts.includes(userId)) {
-      await set(postRef, [...reposts, userId]);
-    }
-  } else {
-    await set(postRef, [userId]);
-  }
-};
 // Implement updatePost and deletePost functions similarly
+
+export const encouragePost = async (postId, userId) => {
+  const db = getDatabase();
+  const encouragementRef = ref(db, `posts/${postId}/encouragements/${userId}`);
+  await set(encouragementRef, true);
+};
