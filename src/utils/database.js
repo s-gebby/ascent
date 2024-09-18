@@ -125,3 +125,7 @@ export const encouragePost = async (postId, userId) => {
   const encouragementRef = ref(db, `posts/${postId}/encouragements/${userId}`);
   await set(encouragementRef, true);
 };
+
+export const deletePost = (postId) => {
+  return remove(ref(database, `posts/${postId}`));
+};
