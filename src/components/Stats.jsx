@@ -177,19 +177,19 @@ export default function Stats() {
         isOpen={isSidebarOpen} 
         setIsOpen={setIsSidebarOpen}
       />
-      <div className="flex-1 overflow-auto bg-black bg-opacity-50 text-white p-8">
-        <h1 className="text-3xl font-bold mb-8">Goal Statistics</h1>
+      <div className="flex-1 overflow-auto bg-white text-white p-8">
+        <h1 className="text-3xl font-bold mb-8 text-ascend-black">Goal Statistics</h1>
         <div className="space-y-4">
           {timeFrames.map((frame) => (
             <Disclosure key={frame.label}>
               {({ open }) => (
                 <>
-                  <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-white bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75">
+                  <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-ascend-black bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75">
                     <span>{frame.label}</span>
                     <ChevronUpIcon
                       className={`${
                         open ? 'transform rotate-180' : ''
-                      } w-5 h-5 text-white`}
+                      } w-5 h-5 text-ascend-black`}
                     />
                   </Disclosure.Button>
                   <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm text-ascend-black">
@@ -198,19 +198,16 @@ export default function Stats() {
                         title="Completed Goals" 
                         value={stats[frame.label]?.completed || 0}
                         message={stats[frame.label]?.completed > 0 ? "Great job! Keep pushing forward!" : "You're getting there! One step at a time."}
-                        color="ascend-green"
                       />
                       <StatCard 
                         title="In Progress" 
                         value={stats[frame.label]?.inProgress || 0}
                         message={stats[frame.label]?.inProgress > 0 ? "Stay focused, you're almost there!" : "Start something today!"}
-                        color="ascend-pink"
                       />
                       <StatCard 
                         title="Total Goals" 
                         value={stats[frame.label]?.total || 0}
                         message={stats[frame.label]?.total > 0 ? "The more goals, the bigger the achievements!" : "Set a goal to get started on your journey!"}
-                        color="ascend-orange"
                       />
                     </div>
                     <ActionButtons stats={stats[frame.label]} timeFrame={frame.label} />

@@ -85,3 +85,69 @@ export const deleteCalendarEvent = async (userId, eventId) => {
   const eventRef = ref(db, `users/${userId}/calendarEvents/${eventId}`);
   await remove(eventRef);
 };
+export const createPost = async (user, content) => {
+  const db = getDatabase();
+  const postRef = ref(db, 'posts');
+  const newPostRef = push(postRef);
+  
+  await set(newPostRef, {
+    authorId: user.uid,
+    authorName: user.displayName || 'Anonymous',
+    authorPhotoURL: user.photoURL || '',
+    content,
+    timestamp: Date.now(),
+    likes: [],
+    reposts: []
+  });
+};
+export const readPosts = async () => {
+  const db = getDatabase();
+  const postsRef = ref(db, 'posts');
+  const snapshot = await get(postsRef);
+  
+  if (snapshot.exists()) {
+    const posts = [];
+    snapshot.forEach((childSnapshot) => {
+      posts.push({
+        id: childSnapshot.key,
+        ...childSnapshot.val()
+      });
+    });
+    return posts.sort((a, b) => b.timestamp - a.timestamp);
+  }
+  
+  return [];
+};
+
+export const likePost = async (postId, userId) => {
+  const db = getDatabase();
+  const postRef = ref(db, `posts/${postId}/likes`);
+  const snapshot = await get(postRef);
+  
+  if (snapshot.exists()) {
+    const likes = snapshot.val();
+    if (likes.includes(userId)) {
+      await set(postRef, likes.filter(id => id !== userId));
+    } else {
+      await set(postRef, [...likes, userId]);
+    }
+  } else {
+    await set(postRef, [userId]);
+  }
+};
+
+export const repostPost = async (postId, userId) => {
+  const db = getDatabase();
+  const postRef = ref(db, `posts/${postId}/reposts`);
+  const snapshot = await get(postRef);
+  
+  if (snapshot.exists()) {
+    const reposts = snapshot.val();
+    if (!reposts.includes(userId)) {
+      await set(postRef, [...reposts, userId]);
+    }
+  } else {
+    await set(postRef, [userId]);
+  }
+};
+// Implement updatePost and deletePost functions similarly

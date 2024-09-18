@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import GoalCard from './GoalCard'
 import NewGoalForm from './form/NewGoalForm'
 import Sidebar from './Sidebar'
-
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { readGoals, createGoal, updateGoal, deleteGoal } from '../utils/database'
 

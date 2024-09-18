@@ -10,6 +10,7 @@ import Journal from './components/ui/Journal';
 import { MantineProvider } from '@mantine/core';
 import { motion } from 'framer-motion';
 import Stats from './components/Stats';
+import Community from "./components/Community";
 
 
 function App() {
@@ -86,6 +87,7 @@ function AppContent() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/journal" element={user ? <Journal /> : <Navigate to="/login" />} />
         <Route path="/stats" element={user ? <Stats /> : <Navigate to="/login" />} />
+        <Route path="/community" element={user ? <Community /> : <Navigate to="/login" />} />
       </Routes>
     </>
   );
