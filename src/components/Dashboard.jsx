@@ -76,8 +76,8 @@ export default function Dashboard() {
         setIsOpen={setIsSidebarOpen}
       />
       
-      <div className="flex-1 overflow-auto bg-slate-200 p-6">
-        <header className="bg-white shadow sm:rounded-lg sm:shadow mb-6 px-4 flex justify-between items-center">
+      <div className="flex-1 overflow-auto bg-white p-6">
+        <header className="bg-ascend-white border border-gray-200 rounded-xl mb-6 px-4 flex justify-between items-center">
           <div className="py-6 sm:px-6 lg:px-8">
             <h1 className="text-2xl font-bold tracking-tight text-gray-900 uppercase">Goals</h1>
           </div>

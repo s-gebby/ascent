@@ -82,8 +82,8 @@ export default function Community() {
         setIsOpen={setIsSidebarOpen}
       />
       
-      <div className="flex-1 overflow-auto bg-slate-200 p-6">
-        <header className="bg-white shadow sm:rounded-lg sm:shadow mb-6 px-4">
+      <div className="flex-1 overflow-auto bg-white p-6">
+        <header className="bg-white border border-gray-200 rounded-xl mb-6 px-4">
           <div className="py-6 sm:px-6 lg:px-8">
             <h1 className="text-2xl font-bold tracking-tight text-gray-900 uppercase">Community</h1>
           </div>
@@ -92,7 +92,7 @@ export default function Community() {
         {/* Community Guidelines section */}
         
         {/* Potentially want to make this only show for the first time user, or have a delete (x) button at the top right */}
-        <div className="bg-white rounded-lg shadow-md p-16 mb-8 text-center">
+        <div className="bg-white border border-gray-200 rounded-xl p-16 mb-8 text-center">
             <h2 className="text-xl font-bold text-ascend-black mb-4">Community Guidlines</h2>
             <p className="text-gray-700 leading-relaxed">
                 The community is your interactive space designed to foster connection and positivity. 
@@ -111,7 +111,7 @@ export default function Community() {
             </p>
         </div>
         
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8">
           <h3 className="text-xl font-semibold text-ascend-black mb-4">Share Your Thoughts</h3>
           <div className="flex items-start space-x-4">
             <Avatar src={user?.photoURL} alt={user?.displayName} radius="xl" size="lg" />
@@ -149,7 +149,7 @@ export default function Community() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-white rounded-lg shadow-lg p-6 mb-6 hover:shadow-xl transition-shadow duration-300"
+              className="bg-white border border-gray-200 rounded-xl p-6 mb-6 hover:shadow-xl transition-shadow duration-300"
             >
               <div className="flex items-center mb-4">
                 <Avatar src={post.authorPhotoURL} alt={post.authorName} radius="xl" size="md" />

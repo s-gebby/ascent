@@ -49,7 +49,7 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
   return (
     <>
       {showConfetti && <Confetti />}
-      <div className="flex max-w-xl flex-col items-start justify-between bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="flex max-w-xl flex-col items-start justify-between bg-white border border-gray-200 rounded-xl overflow-hidden">
         <div className="flex items-center gap-x-4 text-xs p-4 bg-gray-50 w-full">
           <time dateTime={goal.createdAt} className="text-gray-500">
             {new Date(goal.createdAt).toLocaleDateString()}
