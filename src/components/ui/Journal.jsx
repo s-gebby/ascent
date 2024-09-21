@@ -258,11 +258,10 @@ return (
         opened={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={selectedEntry?.title}
-        size="lg"
+        size="xl"
       >
         {selectedEntry && (
           <div>
-            <h2 className="text-xl font-semibold text-ascend-blue mb-2">{selectedEntry.title}</h2>
             <p className="text-sm text-gray-600 mb-2">{new Date(selectedEntry.date).toLocaleDateString()}</p>
             <p className="text-sm text-gray-600 mb-4">{selectedEntry.category}</p>
             <p className="mb-4">{selectedEntry.text}</p>
