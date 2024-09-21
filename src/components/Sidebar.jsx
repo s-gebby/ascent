@@ -1,31 +1,30 @@
 import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';export default function Sidebar({ isOpen, setIsOpen, setShowNewGoalForm }) {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [isDashboardExpanded, setIsDashboardExpanded] = useState(false);
+import { Link, useNavigate } from 'react-router-dom';
+import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 
-  const handleLogout = () => {
-    // Add logout logic
-    navigate('/');
-  };
+  export default function Sidebar({ isOpen, setIsOpen }) {
+    const navigate = useNavigate();
+    const [isDashboardExpanded, setIsDashboardExpanded] = useState(false);
 
-  const toggleNestedList = () => {
-    setIsDashboardExpanded(!isDashboardExpanded);
-  };
+    const handleLogout = () => {
+      // Add logout logic
+      navigate('/');
+    };
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
+    const toggleNestedList = () => {
+      setIsDashboardExpanded(!isDashboardExpanded);
+    };
 
-  const handleDashboardClick = () => {
-    navigate('/dashboard');
-  };
+    const toggleSidebar = () => {
+      setIsOpen(!isOpen);
+    };
 
-  
+    const handleDashboardClick = () => {
+      navigate('/dashboard');
+    };
 
-  return (
-    <>
+    return (
+      <>
       <button
         onClick={toggleSidebar}
         className="fixed top-4 right-4 p-2 bg-ascend-black text-white rounded md:hidden z-50"

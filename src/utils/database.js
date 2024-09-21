@@ -49,7 +49,7 @@ export const readGoals = async (userId) => {
 };
 
 export const deleteGoal = (userId, goalId) => {
-  return remove(ref(database, `users/${userId}/goals/${goalId}`));
+  return update(ref(database, `users/${userId}/goals/${goalId}`), { status: "deleted" });
 };
 
 export const updateGoal = (userId, goalId, updates) => {
@@ -59,32 +59,6 @@ export const updateGoal = (userId, goalId, updates) => {
   return update(ref(database, `users/${userId}/goals/${goalId}`), updates);
 };
 
-export const createCalendarEvent = async (userId, event) => {
-  const db = getDatabase();
-  const eventRef = ref(db, `users/${userId}/calendarEvents`);
-  const newEventRef = push(eventRef);
-  await set(newEventRef, event);
-  return newEventRef.key;
-};
-
-export const readCalendarEvents = async (userId) => {
-  const db = getDatabase();
-  const eventsRef = ref(db, `users/${userId}/calendarEvents`);
-  const snapshot = await get(eventsRef);
-  return snapshot.val();
-};
-
-export const updateCalendarEvent = async (userId, eventId, updates) => {
-  const db = getDatabase();
-  const eventRef = ref(db, `users/${userId}/calendarEvents/${eventId}`);
-  await update(eventRef, updates);
-};
-
-export const deleteCalendarEvent = async (userId, eventId) => {
-  const db = getDatabase();
-  const eventRef = ref(db, `users/${userId}/calendarEvents/${eventId}`);
-  await remove(eventRef);
-};
 export const createPost = async (user, content) => {
   const db = getDatabase();
   const postRef = ref(db, 'posts');
@@ -128,4 +102,40 @@ export const encouragePost = async (postId, userId) => {
 
 export const deletePost = (postId) => {
   return remove(ref(database, `posts/${postId}`));
+};
+
+export const createJournalEntry = async (userId, entryData) => {
+  const entriesRef = ref(database, `users/${userId}/journal`);
+  const newEntryRef = push(entriesRef);
+  const entry = {
+    title: entryData.title,
+    text: entryData.text,
+    date: new Date().toISOString(),
+    category: entryData.category || '',
+    tags: entryData.tags || [],
+  };
+  await set(newEntryRef, entry);
+  return newEntryRef.key;
+}
+
+export const updateJournalEntry = async (userId, entryId, updates) => {
+  const entryRef = ref(database, `users/${userId}/journal/${entryId}`);
+  await update(entryRef, updates);
+};
+
+export const getJournalEntries = async (userId) => {
+  const entriesRef = ref(database, `users/${userId}/journal`);
+  const snapshot = await get(entriesRef);
+  if (snapshot.exists()) {
+    return Object.entries(snapshot.val()).map(([id, entry]) => ({
+      id,
+      ...entry
+    }));
+  }
+  return [];
+};
+
+export const deleteJournalEntry = async (userId, entryId) => {
+  const entryRef = ref(database, `users/${userId}/journal/${entryId}`);
+  await remove(entryRef);
 };

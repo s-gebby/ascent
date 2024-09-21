@@ -41,7 +41,7 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
   const handleConfirmDelete = async () => {
     if (auth.currentUser) {
       await deleteGoal(auth.currentUser.uid, goal.id)
-      onDelete(goal.id)
+      onDelete(goal.id) // This should now update the UI to reflect the "deleted" status
     }
     setShowPopup(false)
   }

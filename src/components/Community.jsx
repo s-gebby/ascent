@@ -96,15 +96,15 @@ export default function Community() {
             <h2 className="text-xl font-bold text-ascend-black mb-4">Community Guidlines</h2>
             <p className="text-gray-700 leading-relaxed">
                 The community is your interactive space designed to foster connection and positivity. 
-                Our unique '<span className="text-ascend-orange font-semibold bg-gray-100">E</span>
-                <span className="text-ascend-pink font-semibold bg-gray-100">N</span>
-                <span className="text-ascend-blue font-semibold bg-gray-100">C</span>
-                <span className="text-ascend-green font-semibold bg-gray-100">O</span>
-                <span className="text-ascend-orange font-semibold bg-gray-100">U</span>
-                <span className="text-ascend-pink font-semibold bg-gray-100">R</span>
-                <span className="text-ascend-blue font-semibold bg-gray-100">A</span>
-                <span className="text-ascend-green font-semibold bg-gray-100">G</span>
-                <span className="text-ascend-orange font-semibold bg-gray-100">E</span>' feature empowers you to uplift and support fellow members, creating 
+                Our unique '<span className="text-ascend-orange font-semibold">E</span>
+                <span className="text-ascend-pink font-semibold">N</span>
+                <span className="text-ascend-blue font-semibold">C</span>
+                <span className="text-ascend-green font-semibold">O</span>
+                <span className="text-ascend-orange font-semibold">U</span>
+                <span className="text-ascend-pink font-semibold">R</span>
+                <span className="text-ascend-blue font-semibold">A</span>
+                <span className="text-ascend-green font-semibold">G</span>
+                <span className="text-ascend-orange font-semibold">E</span>' feature empowers you to uplift and support fellow members, creating 
                 an environment where meaningful interactions thrive. Share your insights, experiences, and 
                 goals, and watch as the community rallies around you.<br></br><br></br> Together, we're building a platform 
                 that doesn't just connect - it elevates.
