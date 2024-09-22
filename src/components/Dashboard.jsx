@@ -77,7 +77,7 @@ export default function Dashboard() {
       />
       
       <div className="flex-1 overflow-auto bg-white p-6">
-        <header className="bg-ascend-white border border-gray-200 rounded-xl mb-6 px-4 flex justify-between items-center">
+        <header className="bg-ascend-white border border-gray-300 rounded-xl mb-6 px-4 flex justify-between items-center">
           <div className="py-6 sm:px-6 lg:px-8">
             <h1 className="text-2xl font-bold tracking-tight text-gray-900 uppercase">Goals</h1>
           </div>

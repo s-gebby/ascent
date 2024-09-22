@@ -34,7 +34,7 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
 
   return (
     <motion.div 
-      className="bg-white border border-gray-200 rounded-xl overflow-hidden"
+      className="bg-white border border-gray-300 rounded-xl overflow-hidden"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
@@ -44,7 +44,7 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
           <h2 className="text-xl font-bold text-ascend-green uppercase mb-6 font-archivo-black">Create New Goal</h2>
           
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black ">Goal Title</label>
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black ">1. Goal Title</label>
             <TextInput
               id="title"
               placeholder="Enter your goal title"
@@ -53,7 +53,7 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
             />
           </div>
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black">Goal Description</label>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black">2. Goal Description</label>
             <Textarea
               id="description"
               placeholder="Describe your goal"
@@ -68,7 +68,7 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
 
           <div className="flex flex-col items-end mt-8">
             <div className="flex items-center m-3">
-              <label htmlFor="dailyGoal" className="mr-1 text-sm font-semibold text-ascend-black">Daily Goal</label>
+              <label htmlFor="dailyGoal" className="mr-1 text-sm font-semibold text-ascend-black">4. Daily Goal</label>
               <Checkbox
                 id="dailyGoal"
                 {...form.getInputProps('isDailyGoal', { type: 'checkbox' })}
@@ -87,7 +87,8 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
 
         <div className="md:w-1/3 bg-gray-100 p-6 flex items-center justify-center">
           <div>
-            <label htmlFor="completeBy" className="block text-sm font-medium text-ascend-black mb-1 font-archivo-black capitalize text-center">Complete By</label>
+            <label htmlFor="completeBy" className="block text-sm font-medium text-ascend-black mb-1 font-archivo-black capitalize text-center">3. Complete By</label>
+            
             <DatePicker
               id="completeBy"
               selected={form.values.completeBy}
@@ -95,6 +96,7 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
               inline
               className="rounded-lg shadow-md"
             />
+            <p className='text-xs text-center text-gray-500'>*Select a date you would like to complete this goal by...*</p>
           </div>
         </div>
       </div>

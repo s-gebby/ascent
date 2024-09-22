@@ -49,7 +49,7 @@ export const readGoals = async (userId) => {
 };
 
 export const deleteGoal = (userId, goalId) => {
-  return update(ref(database, `users/${userId}/goals/${goalId}`), { status: "deleted" });
+  return remove(ref(database, `users/${userId}/goals/${goalId}`));
 };
 
 export const updateGoal = (userId, goalId, updates) => {
@@ -138,4 +138,27 @@ export const getJournalEntries = async (userId) => {
 export const deleteJournalEntry = async (userId, entryId) => {
   const entryRef = ref(database, `users/${userId}/journal/${entryId}`);
   await remove(entryRef);
+};
+
+export const moveGoalToCompleted = async (userId, goalId) => {
+  const goalRef = ref(database, `users/${userId}/goals/${goalId}`);
+  const completedGoalsRef = ref(database, `users/${userId}/completedGoals/${goalId}`);
+  
+  const snapshot = await get(goalRef);
+  if (snapshot.exists()) {
+    const goalData = snapshot.val();
+    goalData.completedAt = new Date().toISOString();
+    
+    await set(completedGoalsRef, goalData);
+    await remove(goalRef);
+  }
+};
+
+export const getCompletedGoals = async (userId) => {
+  const completedGoalsRef = ref(database, `users/${userId}/completedGoals`);
+  const snapshot = await get(completedGoalsRef);
+  if (snapshot.exists()) {
+    return snapshot.val();
+  }
+  return null;
 };

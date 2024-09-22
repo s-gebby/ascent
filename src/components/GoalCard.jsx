@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import { PencilIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 import { getAuth } from 'firebase/auth'
-import { updateGoal, deleteGoal } from '../utils/database'
+import { updateGoal, moveGoalToCompleted } from '../utils/database'
 import Confetti from 'react-confetti'
-
 export default function GoalCard({ goal, onEdit, onDelete }) {
   const auth = getAuth()
   const [showConfetti, setShowConfetti] = useState(false)
@@ -40,8 +39,8 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
 
   const handleConfirmDelete = async () => {
     if (auth.currentUser) {
-      await deleteGoal(auth.currentUser.uid, goal.id)
-      onDelete(goal.id) // This should now update the UI to reflect the "deleted" status
+      await moveGoalToCompleted(auth.currentUser.uid, goal.id)
+      onDelete(goal.id)
     }
     setShowPopup(false)
   }
@@ -49,7 +48,7 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
   return (
     <>
       {showConfetti && <Confetti />}
-      <div className="flex max-w-xl flex-col items-start justify-between bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <div className="flex max-w-xl flex-col items-start justify-between bg-white border border-gray-300 rounded-xl overflow-hidden">
         <div className="flex items-center gap-x-4 text-xs p-4 bg-gray-50 w-full">
           <time dateTime={goal.createdAt} className="text-gray-500">
             {new Date(goal.createdAt).toLocaleDateString()}
@@ -84,7 +83,7 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
               </div>
             )}
           </div>
-        <div className="relative mt-4 flex items-center gap-x-4 p-4 border-t border-gray-200 w-full">
+        <div className="relative mt-4 flex items-center gap-x-4 p-4 border-t border-gray-300 w-full">
           <div className="text-sm leading-6 flex-grow">
             {goal.completeBy && (
               <p className="text-gray-600">
@@ -138,4 +137,5 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
         </div>
       )}
     </>
-  )}
+  )
+}

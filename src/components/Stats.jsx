@@ -177,14 +177,14 @@ export default function Stats() {
         isOpen={isSidebarOpen} 
         setIsOpen={setIsSidebarOpen}
       />
-      <div className="flex-1 overflow-auto bg-slate-200 p-8">
+      <div className="flex-1 overflow-auto bg-ascend-white p-8">
         <h1 className="text-3xl font-bold mb-8 text-ascend-black">Goal Statistics</h1>
         <div className="space-y-4">
           {timeFrames.map((frame) => (
             <Disclosure key={frame.label}>
               {({ open }) => (
                 <>
-                  <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-ascend-black bg-ascend-white rounded-lg hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75">
+                  <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-ascend-black bg-ascend-white bg-white border border-gray-300 rounded-xl hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-gray-500 focus-visible:ring-opacity-75">
                     <span>{frame.label}</span>
                     <ChevronUpIcon
                       className={`${
