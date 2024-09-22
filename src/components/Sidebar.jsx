@@ -85,7 +85,7 @@ import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon } from '@heroicons
         </div>
         
         <div className="mt-auto">
-          <Link to="/account" className="block w-full bg-ascend-blue text-white py-2 px-4 rounded hover:text-gray-300 transition duration-300 mb-2 text-center text-sm">
+          <Link to="/Account" className="block w-full bg-ascend-blue text-white py-2 px-4 rounded hover:text-gray-300 transition duration-300 mb-2 text-center text-sm">
             Account
           </Link>
           

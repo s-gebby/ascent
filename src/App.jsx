@@ -11,6 +11,11 @@ import { MantineProvider } from '@mantine/core';
 import { motion } from 'framer-motion';
 import Stats from './components/Stats';
 import Community from "./components/Community";
+import Account from './components/authorization/Account';
+import { AuthProvider } from "./contexts/AuthContext.jsx";
+
+
+
 
 
 function App() {
@@ -28,13 +33,14 @@ function App() {
       primaryColor: 'ascend-black',
     }}
   >
-      <Router>
-        <AppContent />
-      </Router>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
     </MantineProvider>
   );
 }
-
 function AppContent() {
   const [user, setUser] = useState(null);
   const [userGoals, setUserGoals] = useState([]);
@@ -88,6 +94,7 @@ function AppContent() {
         <Route path="/journal" element={user ? <Journal /> : <Navigate to="/login" />} />
         <Route path="/stats" element={user ? <Stats /> : <Navigate to="/login" />} />
         <Route path="/community" element={user ? <Community /> : <Navigate to="/login" />} />
+        <Route path="/account" element={user ? <Account /> : <Navigate to="/login" />} />
       </Routes>
     </>
   );
