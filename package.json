@@ -49,6 +49,7 @@
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.26.2",
     "recharts": "^2.12.7",
+    "tabler-icons-react": "^1.56.0",
     "tailwind-merge": "^2.5.2"
   },
   "devDependencies": {

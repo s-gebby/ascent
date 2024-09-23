@@ -162,3 +162,61 @@ export const getCompletedGoals = async (userId) => {
   }
   return null;
 };
+export const createTask = (userId, taskData) => {
+  const newTaskKey = push(ref(database, `users/${userId}/tasks`)).key;
+  set(ref(database, `users/${userId}/tasks/${newTaskKey}`), {
+    ...taskData,
+    createdAt: new Date().toISOString(),
+  });
+  return newTaskKey;
+};
+
+export const readTasks = async (userId) => {
+  const tasksRef = ref(database, `users/${userId}/tasks`);
+  try {
+    const snapshot = await get(tasksRef);
+    if (snapshot.exists()) {
+      return snapshot.val();
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error reading tasks:", error);
+    throw error;
+  }
+};
+
+export const updateTask = (userId, taskId, updates) => {
+  return update(ref(database, `users/${userId}/tasks/${taskId}`), updates);
+};
+
+export const deleteTask = (userId, taskId) => {
+  return remove(ref(database, `users/${userId}/tasks/${taskId}`));
+};
+
+export const createSubtask = (userId, taskId, subtaskData) => {
+  const newSubtaskKey = push(ref(database, `users/${userId}/tasks/${taskId}/subtasks`)).key;
+  set(ref(database, `users/${userId}/tasks/${taskId}/subtasks/${newSubtaskKey}`), subtaskData);
+  return newSubtaskKey;
+};
+
+export const updateSubtask = (userId, taskId, subtaskId, updates) => {
+  return update(ref(database, `users/${userId}/tasks/${taskId}/subtasks/${subtaskId}`), updates);
+};
+
+export const deleteSubtask = (userId, taskId, subtaskId) => {
+  return remove(ref(database, `users/${userId}/tasks/${taskId}/subtasks/${subtaskId}`));
+};
+
+export const getTaskStats = async (userId) => {
+  const tasksRef = ref(database, `users/${userId}/tasks`);
+  const snapshot = await get(tasksRef);
+  if (snapshot.exists()) {
+    const tasks = snapshot.val();
+    const totalTasks = Object.keys(tasks).length;
+    const completedTasks = Object.values(tasks).filter(task => task.completed).length;
+    const incompleteTasks = totalTasks - completedTasks;
+    return { totalTasks, completedTasks, incompleteTasks };
+  }
+  return { totalTasks: 0, completedTasks: 0, incompleteTasks: 0 };
+};

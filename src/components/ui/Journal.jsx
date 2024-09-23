@@ -232,7 +232,10 @@ return (
               className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer relative"
             >
               <div onClick={() => handleEntryClick(entry)}>
-                <h3 className="font-semibold text-lg text-ascend-black mb-2 truncate">{entry.title}</h3>
+                <h3 className="font-semibold text-lg text-ascend-black mb-2 truncate">
+                  <span className={`inline-block w-2 h-2 rounded-full mr-2 ${categoryColors[entry.category]}`}></span>
+                  {entry.title}
+                </h3>
                 <div className="flex items-center text-sm text-gray-600 mb-2">
                   <CalendarIcon className="h-4 w-4 mr-2" />
                   <span>{new Date(entry.date).toLocaleDateString()}</span>

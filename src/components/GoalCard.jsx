@@ -1,14 +1,15 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { PencilIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 import { getAuth } from 'firebase/auth'
 import { updateGoal, moveGoalToCompleted } from '../utils/database'
 import Confetti from 'react-confetti'
-
+import { Modal, Button } from '@mantine/core'
 
 export default function GoalCard({ goal, onEdit, onDelete }) {
   const auth = getAuth()
   const [showConfetti, setShowConfetti] = useState(false)
   const [showPopup, setShowPopup] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const truncateDescription = (text, maxLength) => {
     if (text.length > maxLength) {
@@ -46,6 +47,10 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
     }
     setShowPopup(false)
   }
+
+  const handleViewDetails = () => {
+    setIsModalOpen(true);
+  };
 
   return (
     <>
@@ -94,6 +99,7 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
             )}
           </div>
           <div className="flex items-center">
+            <Button color="blue" onClick={handleViewDetails} className="mr-2">View Details</Button>
             <button
               onClick={handleComplete}
               className="text-green-500 hover:text-green-600 mr-2"
@@ -138,6 +144,31 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
           </div>
         </div>
       )}
+      <Modal
+        opened={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={goal.title}
+        size="lg"
+      >
+        <div>
+          <h3 className="font-semibold mb-2">Description:</h3>
+          <p className="mb-4">{goal.description}</p>
+          
+          <h3 className="font-semibold mb-2">Linked Journal Entries:</h3>
+          <ul className="list-disc pl-5 mb-4">
+            {goal.linkedJournalEntries && goal.linkedJournalEntries.map(entry => (
+              <li key={entry.id}>{entry.title}</li>
+            ))}
+          </ul>
+          
+          <h3 className="font-semibold mb-2">Linked Tasks:</h3>
+          <ul className="list-disc pl-5 mb-4">
+            {goal.linkedTasks && goal.linkedTasks.map(task => (
+              <li key={task.id}>{task.text}</li>
+            ))}
+          </ul>
+        </div>
+      </Modal>
     </>
   )
 }

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Disclosure } from '@headlessui/react';
 import { ChevronUpIcon } from '@heroicons/react/20/solid';
 import { ShareIcon } from '@heroicons/react/24/outline';
 import { getAuth } from 'firebase/auth';
-import { readGoals } from '../utils/database';
+import { readGoals, getCompletedGoals } from '../utils/database';
 import Sidebar from './Sidebar';
 import { motion } from 'framer-motion';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
@@ -11,8 +11,6 @@ import { jsPDF } from 'jspdf';
 import { saveAs } from 'file-saver'
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-
-
 
 const timeFrames = [
   { label: '1 Month', days: 30 },
@@ -33,28 +31,29 @@ export default function Stats() {
 
   const fetchStats = async () => {
     if (auth.currentUser) {
-      const goals = await readGoals(auth.currentUser.uid);
-      if (goals) {
-        const calculatedStats = calculateStats(goals);
+      const activeGoals = await readGoals(auth.currentUser.uid);
+      const completedGoals = await getCompletedGoals(auth.currentUser.uid);
+      if (activeGoals || completedGoals) {
+        const calculatedStats = calculateStats(activeGoals, completedGoals);
         setStats(calculatedStats);
       }
     }
   };
 
-  const calculateStats = (goals) => {
+  const calculateStats = (activeGoals, completedGoals) => {
     const now = new Date();
     return timeFrames.reduce((acc, frame) => {
       const cutoffDate = frame.days === Infinity ? new Date(0) : new Date(now.getTime() - frame.days * 24 * 60 * 60 * 1000);
       
-      const relevantGoals = Object.values(goals).filter(goal => {
+      const relevantCompletedGoals = Object.values(completedGoals || {}).filter(goal => {
         const completedDate = goal.completedAt ? new Date(goal.completedAt) : null;
         return completedDate && completedDate > cutoffDate;
       });
 
       acc[frame.label] = {
-        completed: relevantGoals.length,
-        inProgress: Object.values(goals).filter(goal => !goal.completedAt).length,
-        total: Object.values(goals).length,
+        completed: relevantCompletedGoals.length,
+        inProgress: Object.values(activeGoals || {}).length,
+        total: (Object.values(activeGoals || {}).length + Object.values(completedGoals || {}).length),
       };
       return acc;
     }, {});
@@ -171,6 +170,7 @@ export default function Stats() {
       </div>
     );
   };
+
   return (
     <div className="flex h-screen">
       <Sidebar 

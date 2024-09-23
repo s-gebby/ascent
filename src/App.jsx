@@ -14,7 +14,7 @@ import Community from "./components/Community";
 import Account from './components/authorization/Account';
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import ReadMore from './components/readmore';
-
+import TaskList from './components/TaskList.jsx';
 
 
 
@@ -97,6 +97,7 @@ function AppContent() {
         <Route path="/community" element={user ? <Community /> : <Navigate to="/login" />} />
         <Route path="/account" element={user ? <Account /> : <Navigate to="/login" />} />
         <Route path="/readmore" element={<ReadMore />} />
+        <Route path="/tasklist" element={user ? <TaskList /> : <Navigate to="/login" />} />
       </Routes>
     </>
   );

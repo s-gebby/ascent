@@ -71,6 +71,9 @@ import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon } from '@heroicons
                     <li className="mb-2">
                       <Link to="/stats" className="block py-1 px-4 hover:bg-gray-700 rounded text-sm">Stats</Link>
                     </li>
+                    <li className="mb-2">
+                      <Link to="/tasklist" className="block py-1 px-4 hover:bg-gray-700 rounded text-sm">Task List</Link>
+                    </li>
                   </ul>
                 )}
               </li>
