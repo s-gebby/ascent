@@ -3,6 +3,8 @@ import { PencilIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outl
 import { getAuth } from 'firebase/auth'
 import { updateGoal, moveGoalToCompleted } from '../utils/database'
 import Confetti from 'react-confetti'
+
+
 export default function GoalCard({ goal, onEdit, onDelete }) {
   const auth = getAuth()
   const [showConfetti, setShowConfetti] = useState(false)
@@ -33,7 +35,7 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
       setTimeout(() => {
         setShowConfetti(false)
         setShowPopup(true)
-      }, 5000); // Show confetti for 5 seconds
+      }, 4000); // Show confetti for 4 seconds
     }
   }
 

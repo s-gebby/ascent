@@ -13,6 +13,7 @@ import Stats from './components/Stats';
 import Community from "./components/Community";
 import Account from './components/authorization/Account';
 import { AuthProvider } from "./contexts/AuthContext.jsx";
+import ReadMore from './components/readmore';
 
 
 
@@ -95,6 +96,7 @@ function AppContent() {
         <Route path="/stats" element={user ? <Stats /> : <Navigate to="/login" />} />
         <Route path="/community" element={user ? <Community /> : <Navigate to="/login" />} />
         <Route path="/account" element={user ? <Account /> : <Navigate to="/login" />} />
+        <Route path="/readmore" element={<ReadMore />} />
       </Routes>
     </>
   );
