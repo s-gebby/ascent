@@ -187,11 +187,14 @@ export default function TaskList() {
       />
       
       <div className="flex-1 overflow-auto bg-white p-6">
-        <header className="bg-ascend-white border border-gray-300 rounded-xl mb-6 px-4">
-          <div className="py-6 sm:px-6 lg:px-8">
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 uppercase">Tasks</h1>
-          </div>
-        </header>
+      <header className="bg-ascend-white border border-gray-300 rounded-xl mb-6 px-4">
+        <div className="py-6 sm:px-6 lg:px-8 flex justify-between items-center">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 uppercase">Task List</h1>
+          <p className="text-sm text-gray-600 max-w-xl">
+            Create and manage your tasks here! Add new tasks, set due dates, and track your progress.
+          </p>
+        </div>
+      </header>
         <div className="md:flex">
           <form onSubmit={handleAddTask} className="p-6 space-y-4 md:w-2/3">
             <h2 className="text-xl font-bold text-ascend-green uppercase mb-6 font-archivo-black">Create New Task</h2>
@@ -274,16 +277,17 @@ export default function TaskList() {
               />
               <p className='text-xs text-center text-gray-500'>*Select a date you would like to complete this task by...*</p>
             </div>
-            <div className="flex items-end mt-8">
+            <div className="mt-2">
               <Button 
                 type="submit" 
+                onClick={handleAddTask}
                 className="bg-ascend-blue text-white font-bold font-archivo-black transition duration-200"
               >
                 Add Task
               </Button>
             </div>
           </div>
-          </div>
+        </div>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 md:p-6">
               <h1 className='text-xl mb-4 md:mb-0'>All Tasks</h1>
               <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 w-full md:w-auto">

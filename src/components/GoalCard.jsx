@@ -3,7 +3,9 @@ import { PencilIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outl
 import { getAuth } from 'firebase/auth'
 import { updateGoal, moveGoalToCompleted } from '../utils/database'
 import Confetti from 'react-confetti'
-import { Modal, Button } from '@mantine/core'
+import { Modal, Button, Tooltip } from '@mantine/core'
+import { MapIcon } from '@heroicons/react/24/outline'
+
 
 export default function GoalCard({ goal, onEdit, onDelete }) {
   const auth = getAuth()
@@ -56,7 +58,7 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
     <>
       {showConfetti && <Confetti />}
       <div className="flex max-w-xl flex-col items-start justify-between bg-white border border-gray-300 rounded-xl overflow-hidden">
-        <div className="flex items-center gap-x-4 text-xs p-4 bg-gray-50 w-full">
+        <div className="flex items-center gap-x-4 text-xs py-2 px-4 bg-gray-50 w-full border-b border-gray-300">
           <time dateTime={goal.createdAt} className="text-gray-500">
             {new Date(goal.createdAt).toLocaleDateString()}
           </time>
@@ -90,35 +92,41 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
               </div>
             )}
           </div>
-        <div className="relative mt-4 flex items-center gap-x-4 p-4 border-t border-gray-300 w-full">
-          <div className="text-sm leading-6 flex-grow">
-            {goal.completeBy && (
-              <p className="text-gray-600">
-                {new Date(goal.completeBy).toLocaleDateString()}
-              </p>
-            )}
-          </div>
-          <div className="flex items-center">
-            <Button color="blue" onClick={handleViewDetails} className="mr-2">View Details</Button>
-            <button
-              onClick={handleComplete}
-              className="text-green-500 hover:text-green-600 mr-2"
-            >
-              <CheckCircleIcon className="h-5 w-5" />
-            </button>
-            <button
-              onClick={() => onEdit(goal)}
-              className="text-yellow-500 hover:text-yellow-600 mr-2"
-            >
-              <PencilIcon className="h-5 w-5" />
-            </button>
-            <button
-              onClick={handleDelete}
-              className="text-red-500 hover:text-red-700"
-            >
-              <TrashIcon className="h-5 w-5" />
-            </button>
-          </div>
+        <div className="flex items-center justify-between w-full px-4 py-2 border-t border-gray-300">
+        <div className="flex items-center">
+    <Tooltip label="View Details" withArrow>
+      <button
+        onClick={handleViewDetails}
+        className="text-ascend-blue hover:text-blue-400 transition-colors duration-300 px-2"
+      >
+        <MapIcon className="h-5 w-5" />
+      </button>
+    </Tooltip>
+    <Tooltip label="Mark as Complete" withArrow>
+      <button
+        onClick={handleComplete}
+        className="text-green-500 hover:text-green-600 px-2"
+      >
+        <CheckCircleIcon className="h-5 w-5" />
+      </button>
+    </Tooltip>
+    <Tooltip label="Edit Goal" withArrow>
+      <button
+        onClick={() => onEdit(goal)}
+        className="text-yellow-500 hover:text-yellow-600 px-2"
+      >
+        <PencilIcon className="h-5 w-5" />
+      </button>
+    </Tooltip>
+    <Tooltip label="Delete Goal" withArrow>
+      <button
+        onClick={handleDelete}
+        className="text-red-500 hover:text-red-700 px-2"
+      >
+        <TrashIcon className="h-5 w-5" />
+      </button>
+    </Tooltip>
+  </div>
         </div>
       </div>
       {showPopup && (
