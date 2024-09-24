@@ -2,11 +2,11 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import AuthPage from './components/authorization/AuthPage';
-import Company from './components/ui/Company';
+import Company from './components/Company';
 import SignUp from './components/authorization/SignUp';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useState, useEffect } from 'react';
-import Journal from './components/ui/Journal';
+import Journal from './components/Journal';
 import { MantineProvider } from '@mantine/core';
 import { motion } from 'framer-motion';
 import Stats from './components/Stats';

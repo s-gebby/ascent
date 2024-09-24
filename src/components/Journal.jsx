@@ -1,14 +1,14 @@
 import { useState, useEffect, Fragment } from 'react'
-import Sidebar from '../Sidebar'
+import Sidebar from './Sidebar'
 import { getAuth } from 'firebase/auth'
-import { createJournalEntry, getJournalEntries, updateJournalEntry } from '../../utils/database'
+import { createJournalEntry, getJournalEntries, updateJournalEntry } from '../utils/database'
 import { Button, TextInput, Select, MultiSelect, Textarea, Modal } from '@mantine/core'
 import { jsPDF } from 'jspdf';
 import { Menu, Transition } from '@headlessui/react';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { CalendarIcon, TagIcon } from '@heroicons/react/20/solid'
 import { TrashIcon } from '@heroicons/react/20/solid';
-import { deleteJournalEntry } from '../../utils/database';
+import { deleteJournalEntry } from '../utils/database';
 
 
 

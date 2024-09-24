@@ -41,7 +41,7 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
     >
       <div className="md:flex ">
         <form onSubmit={form.onSubmit(handleSubmit)} className="p-6 space-y-4 md:w-2/3 ">
-          <h2 className="text-xl font-bold text-ascend-green uppercase mb-6 font-archivo-black">Create New Goal</h2>
+          <h2 className="text-lg font-bold text-ascend-green uppercase mb-6 font-archivo-black">Create New Goal</h2>
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black ">1 - Goal Title</label>
             <TextInput
