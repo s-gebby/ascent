@@ -220,3 +220,28 @@ export const getTaskStats = async (userId) => {
   }
   return { totalTasks: 0, completedTasks: 0, incompleteTasks: 0 };
 };
+
+// Add these functions to your existing database.js file
+
+export const addComment = async (postId, user, content) => {
+  const db = getDatabase();
+  const commentRef = push(ref(db, `posts/${postId}/comments`));
+  const commentData = {
+    userId: user.uid,
+    userName: user.displayName || 'Anonymous',
+    content,
+    timestamp: Date.now(),
+  };
+  await set(commentRef, commentData);
+};
+export const getComments = async (postId) => {
+  const db = getDatabase();
+  const commentsRef = ref(db, `posts/${postId}/comments`);
+  const snapshot = await get(commentsRef);
+  return snapshot.val();
+};
+
+export const deleteComment = async (postId, commentId) => {
+  const db = getDatabase();
+  await remove(ref(db, `posts/${postId}/comments/${commentId}`));
+};
