@@ -180,7 +180,7 @@ export default function TaskList() {
     })
 
   return (
-    <div className="flex h-screen">
+    <div className="flex flex-col md:flex-row h-screen">
       <Sidebar 
         isOpen={isSidebarOpen} 
         setIsOpen={setIsSidebarOpen}
@@ -259,17 +259,9 @@ export default function TaskList() {
                 className="w-full p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 font-archivo"
               />
             </div>
-            <div className="flex items-end mt-8">
-              <Button 
-                type="submit" 
-                className="bg-ascend-blue text-white font-bold font-archivo-black transition duration-200"
-              >
-                Add Task
-              </Button>
-            </div>
           </form>
 
-          <div className="md:w-1/3 bg-gray-100 p-6 flex items-center justify-center">
+          <div className="md:w-1/3 bg-gray-100 p-6 flex flex-col items-center justify-center">
             <div>
               <label htmlFor="completeBy" className="block text-sm font-medium text-ascend-black mb-1 font-archivo-black capitalize text-center">5. Complete By</label>
               
@@ -282,44 +274,53 @@ export default function TaskList() {
               />
               <p className='text-xs text-center text-gray-500'>*Select a date you would like to complete this task by...*</p>
             </div>
+            <div className="flex items-end mt-8">
+              <Button 
+                type="submit" 
+                className="bg-ascend-blue text-white font-bold font-archivo-black transition duration-200"
+              >
+                Add Task
+              </Button>
+            </div>
           </div>
-        </div>
-          <div className="flex justify-between items-center">
-            <h1 className='ml-6 text-xl'>All Tasks </h1>
-            <div className="flex justify-between items-center space-x-4 mr-14">
+          </div>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 md:p-6">
+              <h1 className='text-xl mb-4 md:mb-0'>All Tasks</h1>
+              <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 w-full md:w-auto">
                 <TextInput
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search tasks"
-                icon={<Search size={14} />}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search tasks"
+                  icon={<Search size={14} />}
+                  className="w-full md:w-auto"
                 />
                 <Select
-                value={sortBy}
-                onChange={setSortBy}
-                data={[
+                  value={sortBy}
+                  onChange={setSortBy}
+                  data={[
                     { value: 'dueDate', label: 'Due Date' },
                     { value: 'priority', label: 'Priority' },
                     { value: 'alphabetical', label: 'Alphabetical' },
-                ]}
-                icon={<SortAscending size={12} />}
+                  ]}
+                  icon={<SortAscending size={12} />}
+                  className="w-full md:w-auto"
                 />
+              </div>
             </div>
-          </div>
-
           <div className="space-y-4">
             {filteredTasks.map(task => (
-              <div key={task.id} className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm">
-                <div className="flex items-center">
+              <div key={task.id} className="flex flex-col md:flex-row items-start md:items-center justify-between bg-white p-4 rounded-lg shadow-sm">
+                <div className="flex items-start md:items-center mb-2 md:mb-0">
                   <Checkbox
                     checked={task.completed}
                     onChange={() => handleToggleTask(task.id)}
-                    className="mr-4"
-                                  />
-                                  <div>
-                                    <span className={task.completed ? 'line-through text-gray-500' : ''}>
-                                      <span className={`inline-block w-2 h-2 rounded-full mr-2 ${categoryColors[task.category]}`}></span>
-                                      {task.text}
-                                    </span>
+                    className="mr-4 mt-1 md:mt-0"
+                  />
+                  <div>
+                    <span className={task.completed ? 'line-through text-gray-500' : ''}>
+                      <span className={`inline-block w-2 h-2 rounded-full mr-1 ${categoryColors[task.category]}`}></span>
+                      {task.text}
+                    </span>
                     <div className="text-sm text-gray-500">
                       <span>{task.category}</span>
                       <span className="mx-2">•</span>
@@ -342,9 +343,23 @@ export default function TaskList() {
                     ))}
                   </div>
                 </div>
-                <div className="flex items-center">
-                  <Button color="blue" onClick={() => { setSelectedTask(task); setIsModalOpen(true); }} className="mr-2">Details</Button>
-                  <Button color="red" onClick={() => handleDeleteTask(task.id)}>Delete</Button>
+                <div className="flex items-center justify-end mt-2 md:mt-0">
+                  <Button 
+                    color="ascend-blue" 
+                    onClick={() => { setSelectedTask(task); setIsModalOpen(true); }} 
+                    className="mr-2 text-xs px-2 py-1"
+                    size="xs"
+                  >
+                    Details
+                  </Button>
+                  <Button 
+                    color="red" 
+                    onClick={() => handleDeleteTask(task.id)}
+                    className="text-xs px-2 py-1"
+                    size="xs"
+                  >
+                    Delete
+                  </Button>
                 </div>
               </div>
             ))}
@@ -355,6 +370,8 @@ export default function TaskList() {
           opened={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           title={selectedTask?.text}
+          size="lg"
+          fullScreen={window.innerWidth < 768}
         >
           {selectedTask && (
             <div>

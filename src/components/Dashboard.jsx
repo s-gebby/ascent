@@ -81,7 +81,7 @@ export default function Dashboard() {
           <div className="py-6 sm:px-6 lg:px-8">
             <h1 className="text-2xl font-bold tracking-tight text-gray-900 uppercase">Goals</h1>
           </div>
-          <div className="py-6 sm:px-6 lg:px-8 text-sm italic text-gray-600">
+          <div className="py-6 sm:px-6 lg:px-8 text-sm italic text-gray-600 ml-6 sm:ml-0">
             {currentQuote}
           </div>
         </header>

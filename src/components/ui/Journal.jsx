@@ -197,7 +197,8 @@ return (
               </button>
             ))}
           </div>
-          <Textarea            value={newEntry}
+          <Textarea 
+            value={newEntry}
             onChange={(e) => setNewEntry(e.target.value)}
             placeholder={prompt}
             className="mb-3"
@@ -217,7 +218,7 @@ return (
       </div>
 
       {/* Journal entries section */}
-      <div className="w-full md:w-1/3 lg:w-1/4 bg-white border border-gray-300 rounded-xl p-6 m-6">
+      <div className="w-full bg-white border border-gray-300 rounded-xl p-4 mx-auto my-6 mr-6 max-w-sm">
         <h3 className="text-lg font-semibold text-ascend-green mb-4 text-center">Journal Entries</h3>
         <TextInput
           value={searchTerm}
@@ -229,29 +230,29 @@ return (
           {filterEntries().map(entry => (
             <div 
               key={entry.id} 
-              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer relative"
+              className="bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer relative"
             >
               <div onClick={() => handleEntryClick(entry)}>
-                <h3 className="font-semibold text-lg text-ascend-black mb-2 truncate">
-                  <span className={`inline-block w-2 h-2 rounded-full mr-2 ${categoryColors[entry.category]}`}></span>
+                <h3 className="font-semibold text-sm text-ascend-black mb-1 truncate pr-6">
+                  <span className={`inline-block w-2 h-2 rounded-full mr-1 ${categoryColors[entry.category]}`}></span>
                   {entry.title}
                 </h3>
-                <div className="flex items-center text-sm text-gray-600 mb-2">
-                  <CalendarIcon className="h-4 w-4 mr-2" />
-                  <span>{new Date(entry.date).toLocaleDateString()}</span>
-                  <TagIcon className="h-4 w-4 ml-4 mr-2" />
+                <div className="flex flex-wrap items-center text-xs text-gray-600 mb-1">
+                  <CalendarIcon className="h-3 w-3 mr-1" />
+                  <span className="mr-2">{new Date(entry.date).toLocaleDateString()}</span>
+                  <TagIcon className="h-3 w-3 mr-1" />
                   <span>{entry.category}</span>
                 </div>
-                <p className="text-sm text-gray-700 line-clamp-2">{entry.text}</p>
+                <p className="text-xs text-gray-700 line-clamp-2">{entry.text}</p>
               </div>
               <button 
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDeleteEntry(entry);
                 }}
-                className="absolute bottom-2 right-2 text-red-500 hover:text-red-700"
+                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
               >
-                <TrashIcon className="h-5 w-5" />
+                <TrashIcon className="h-4 w-4" />
               </button>
             </div>
           ))}
