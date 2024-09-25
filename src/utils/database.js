@@ -245,3 +245,14 @@ export const deleteComment = async (postId, commentId) => {
   const db = getDatabase();
   await remove(ref(db, `posts/${postId}/comments/${commentId}`));
 };
+
+const handleToggleTask = async (taskId) => {
+  if (auth.currentUser) {
+    const taskToUpdate = tasks.find(task => task.id === taskId)
+    if (taskToUpdate) {
+      const updatedTask = { ...taskToUpdate, completed: !taskToUpdate.completed }
+      await updateTask(auth.currentUser.uid, taskId, updatedTask)
+      await fetchTasks()
+    }
+  }
+}

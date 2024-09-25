@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { PencilIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 import { getAuth } from 'firebase/auth'
-import { updateGoal, moveGoalToCompleted } from '../utils/database'
+import { updateGoal, moveGoalToCompleted, deleteGoal, createTask, readTasks } from '../utils/database'
 import Confetti from 'react-confetti'
-import { Modal, Button, Tooltip } from '@mantine/core'
-import { MapIcon } from '@heroicons/react/24/outline'
+import { Modal, Tooltip, TextInput, Textarea, Stepper, Button, List } from '@mantine/core'
+import { MapIcon, PlusIcon } from '@heroicons/react/24/outline'
 
 
 export default function GoalCard({ goal, onEdit, onDelete }) {
@@ -12,6 +12,22 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
   const [showConfetti, setShowConfetti] = useState(false)
   const [showPopup, setShowPopup] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
+  const [activeStep, setActiveStep] = useState(0)
+  const [taskTitle, setTaskTitle] = useState('')
+  const [taskDescription, setTaskDescription] = useState('')
+  const [tasks, setTasks] = useState([])
+
+  useEffect(() => {
+    fetchTasks()
+  }, [])
+
+  const fetchTasks = async () => {
+    if (auth.currentUser) {
+      const fetchedTasks = await readTasks(auth.currentUser.uid)
+      setTasks(fetchedTasks ? Object.values(fetchedTasks).filter(task => task.goalId === goal.id) : [])
+    }
+  }
 
   const truncateDescription = (text, maxLength) => {
     if (text.length > maxLength) {
@@ -53,6 +69,39 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
   const handleViewDetails = () => {
     setIsModalOpen(true);
   };
+
+  const handleOpenTaskModal = () => {
+    setIsTaskModalOpen(true)
+  }
+
+  const handleCloseTaskModal = () => {
+    setIsTaskModalOpen(false)
+    setActiveStep(0)
+    setTaskTitle('')
+    setTaskDescription('')
+  }
+
+  const handleNextStep = () => {
+    setActiveStep((current) => (current < 3 ? current + 1 : current))
+  }
+
+  const handlePrevStep = () => {
+    setActiveStep((current) => (current > 0 ? current - 1 : current))
+  }
+
+  const handleCreateTask = async () => {
+    if (auth.currentUser) {
+      const newTask = {
+        title: taskTitle,
+        description: taskDescription,
+        goalId: goal.id,
+        completed: false,
+      }
+      await createTask(auth.currentUser.uid, newTask)
+      await fetchTasks()
+      handleCloseTaskModal()
+    }
+  }
 
   return (
     <>
@@ -126,6 +175,14 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
         <TrashIcon className="h-5 w-5" />
       </button>
     </Tooltip>
+    <Tooltip label="Add Task" withArrow>
+          <button
+            onClick={handleOpenTaskModal}
+            className="text-blue-500 hover:text-blue-600 px-2"
+          >
+            <PlusIcon className="h-5 w-5" />
+          </button>
+        </Tooltip>
   </div>
         </div>
       </div>
@@ -156,25 +213,94 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
         opened={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={goal.title}
-        size="lg"
+        size="xl"
       >
-        <div>
+        <div className="p-4">
           <h3 className="font-semibold mb-2">Description:</h3>
           <p className="mb-4">{goal.description}</p>
           
-          <h3 className="font-semibold mb-2">Linked Journal Entries:</h3>
+          <h3 className="font-semibold mb-2">Tasks:</h3>
+          {tasks.length > 0 ? (
+            <List>
+              {tasks.map(task => (
+                <List.Item key={task.id}>
+                  <div className="flex items-center justify-between">
+                    <span>{task.title}</span>
+                    <input
+                      type="checkbox"
+                      checked={task.completed}
+                      onChange={() => handleToggleTask(task.id)}
+                    />
+                  </div>
+                </List.Item>
+              ))}
+            </List>
+          ) : (
+            <p>No tasks created yet.</p>
+          )}
+          
+          <Button onClick={() => setIsTaskModalOpen(true)} className="mt-4">
+            Create New Task
+          </Button>
+
+          <h3 className="font-semibold mb-2 mt-4">Linked Journal Entries:</h3>
           <ul className="list-disc pl-5 mb-4">
             {goal.linkedJournalEntries && goal.linkedJournalEntries.map(entry => (
               <li key={entry.id}>{entry.title}</li>
             ))}
           </ul>
-          
-          <h3 className="font-semibold mb-2">Linked Tasks:</h3>
-          <ul className="list-disc pl-5 mb-4">
-            {goal.linkedTasks && goal.linkedTasks.map(task => (
-              <li key={task.id}>{task.text}</li>
-            ))}
-          </ul>
+        </div>
+      </Modal>
+
+      <Modal
+        opened={isTaskModalOpen}
+        onClose={handleCloseTaskModal}
+        title="Create Task for Goal"
+        size="lg"
+      >
+        <Stepper active={activeStep} onStepClick={setActiveStep} breakpoint="sm">
+          <Stepper.Step label="Task Info" description="Enter task details">
+            <TextInput
+              label="Task Title"
+              placeholder="Enter task title"
+              value={taskTitle}
+              onChange={(event) => setTaskTitle(event.currentTarget.value)}
+              required
+            />
+            <Textarea
+              label="Task Description"
+              placeholder="Enter task description"
+              value={taskDescription}
+              onChange={(event) => setTaskDescription(event.currentTarget.value)}
+              mt="md"
+            />
+          </Stepper.Step>
+          <Stepper.Step label="Customize" description="Set task parameters">
+            {/* Add customization options here */}
+            <p>Customize your task (e.g., due date, priority, etc.)</p>
+          </Stepper.Step>
+          <Stepper.Step label="Confirm" description="Review and create">
+            <h3>Review Task Details:</h3>
+            <p>Title: {taskTitle}</p>
+            <p>Description: {taskDescription}</p>
+            {/* Display other task details */}
+          </Stepper.Step>
+          <Stepper.Completed>
+            <p>Task is ready to be created!</p>
+          </Stepper.Completed>
+        </Stepper>
+
+        <div className="flex justify-between mt-4">
+          {activeStep > 0 && (
+            <Button variant="default" onClick={handlePrevStep}>
+              Back
+            </Button>
+          )}
+          {activeStep < 3 ? (
+            <Button onClick={handleNextStep}>Next step</Button>
+          ) : (
+            <Button onClick={handleCreateTask}>Create Task</Button>
+          )}
         </div>
       </Modal>
     </>
