@@ -124,11 +124,11 @@ export default function Dashboard() {
           </div>
           
           <TextInput
-            placeholder="Search goals"
+            placeholder="Search Title/Description"
             icon={<Search size={14} />}
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.currentTarget.value)}
-            className="mb-4 max-w-sm mx-auto"
+            className="mb-1 mx-auto"
           />
           <div className="w-full">
               <div className="group relative">
