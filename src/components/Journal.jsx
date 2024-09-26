@@ -175,7 +175,7 @@ return (
         </header>
         
         <div className="bg-white border border-gray-300 rounded-sm p-4 md:p-6 mb-4 md:mb-6">
-          <h3 className="text-lg font-semibold text-ascend-green mb-4">New Journal Entry</h3>
+          <h3 className="text-lg font-semibold text-ascend-black mb-4">New Journal Entry</h3>
           <TextInput
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -219,7 +219,7 @@ return (
 
       {/* Journal entries section */}
       <div className="w-full bg-white border border-gray-300 rounded-sm p-4 mx-auto my-6 mr-6 max-w-sm">
-        <h3 className="text-lg font-semibold text-ascend-green mb-4 text-center">Journal Entries</h3>
+        <h3 className="text-lg font-semibold text-ascend-black mb-4 text-center">Journal Entries</h3>
         <TextInput
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
