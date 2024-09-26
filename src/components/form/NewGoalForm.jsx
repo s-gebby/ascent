@@ -34,7 +34,7 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
 
   return (
     <motion.div 
-      className="bg-white border border-gray-300 rounded-xl overflow-hidden"
+      className="bg-white border border-gray-300 rounded-sm overflow-hidden"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}

@@ -117,7 +117,7 @@ export default function Community() {
   };
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-screen bg-gray-200">
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       
       
@@ -268,7 +268,7 @@ export default function Community() {
             </div>
 
             {/* Sidebar for desktop */}
-            <div className="hidden md:block md:w-80 md:ml-6 border border-gray-300 rounded-md">
+            <div className="hidden md:block md:w-80 md:ml-6 bg-ascend-white border border-gray-300 rounded-md">
               {/* Community Guidelines */}
               <div className="bg-white rounded-lg p-4">
                 <h2 className="text-lg font-bold text-ascend-black mb-2">Community Guidelines</h2>

@@ -160,21 +160,21 @@ export default function Journal() {
     </Menu>
   );
 return (
-  <div className="flex flex-col md:flex-row min-h-screen bg-white">
+  <div className="flex flex-col md:flex-row min-h-screen bg-gray-200">
     <Sidebar 
       isOpen={isSidebarOpen} 
       setIsOpen={setIsSidebarOpen}
     />
-    <div className="flex-1 flex flex-col md:flex-row">
+    <div className="flex-1 flex flex-col p-6 md:flex-row">
       {/* Main content area for writing/editing entries */}
       <div className="w-full md:w-2/3 lg:w-3/4 p-4 md:p-6">
-        <header className="bg-white border border-gray-300 rounded-xl mb-4 md:mb-6 px-4">
+        <header className="bg-white border border-gray-300 rounded-sm mb-4 md:mb-6 px-4">
           <div className="py-4 md:py-6 sm:px-6 lg:px-8">
             <h1 className="text-xl md:text-2xl font-bold tracking-tight text-gray-900 uppercase">Journal</h1>
           </div>
         </header>
         
-        <div className="bg-white border border-gray-300 rounded-xl p-4 md:p-6 mb-4 md:mb-6">
+        <div className="bg-white border border-gray-300 rounded-sm p-4 md:p-6 mb-4 md:mb-6">
           <h3 className="text-lg font-semibold text-ascend-green mb-4">New Journal Entry</h3>
           <TextInput
             value={title}
@@ -218,7 +218,7 @@ return (
       </div>
 
       {/* Journal entries section */}
-      <div className="w-full bg-white border border-gray-300 rounded-xl p-4 mx-auto my-6 mr-6 max-w-sm">
+      <div className="w-full bg-white border border-gray-300 rounded-sm p-4 mx-auto my-6 mr-6 max-w-sm">
         <h3 className="text-lg font-semibold text-ascend-green mb-4 text-center">Journal Entries</h3>
         <TextInput
           value={searchTerm}

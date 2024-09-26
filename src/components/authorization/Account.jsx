@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from "../../contexts/AuthContext.jsx";
-
 import { readUserData, updateUserData } from '../../utils/database'
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { updateProfile } from 'firebase/auth'
 import Sidebar from '../Sidebar.jsx';
+import { motion } from 'framer-motion';
+import { CameraIcon, UserCircleIcon, EnvelopeIcon, CalendarIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+
+
 
 export default function Account() {
   const { currentUser } = useAuth()
@@ -76,109 +79,140 @@ export default function Account() {
 
   if (!userData) return <div className="flex justify-center items-center h-screen">Loading...</div>
   return (
-    <div className="flex">
+    <div className="flex bg-gray-200 min-h-screen">
       <Sidebar isOpen={true} setIsOpen={() => {}} />
-      <div className="flex-1 min-h-screen bg-ascend-white py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto bg-white border border-gray-300 rounded-xl overflow-hidden">
-          <div className="px-4 py-5 sm:px-6 bg-gray-50">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">Account Information</h3>
-            <p className="mt-1 max-w-2xl text-sm text-gray-500">Personal details and account management.</p>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex-1 p-8"
+      >
+        <div className="max-w-4xl mx-auto bg-white rounded-sm shadow-xl overflow-hidden">
+          <div className="px-8 py-6 bg-ascend-black text-white">
+            <h2 className="text-2xl font-bold">Account Information</h2>
+            <p className="mt-2 text-sm text-ascend-blue-light">Manage your personal details and account settings</p>
           </div>
-          <div className="border-t border-gray-200">
-            <dl>
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-ascend-black">Profile Picture</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <img src={currentUser.photoURL || 'https://via.placeholder.com/150'} alt="Profile" className="h-24 w-24 rounded-full object-cover" />
-                  {isEditing && (
-                    <input type="file" onChange={handleFileChange} className="mt-2" />
-                  )}
-                </dd>
+          
+          <div className="p-8">
+            <div className="mb-8 text-center">
+              <div className="relative inline-block">
+                <img 
+                  src={currentUser.photoURL || 'https://via.placeholder.com/150'} 
+                  alt="Profile" 
+                  className="h-32 w-32 rounded-full object-cover shadow-lg"
+                />
+                {isEditing && (
+                  <label htmlFor="profile-upload" className="absolute bottom-0 right-0 bg-ascend-white text-black p-2 rounded-full cursor-pointer">
+                    <CameraIcon className="h-6 w-6" />
+                    <input id="profile-upload" type="file" className="hidden" onChange={handleFileChange} />
+                  </label>
+                )}
               </div>
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-ascend-black">Username</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      className="shadow-sm focus:ring-ascend-blue focus:border-ascend-blue block w-full sm:text-sm border-gray-300 rounded-md"
-                    />
-                  ) : (
-                    userData.username
-                  )}
-                </dd>
-              </div>
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-ascend-black">Email address</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  {isEditing ? (
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    />
-                  ) : (
-                    currentUser.email
-                  )}
-                </dd>
-              </div>
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-ascend-black">Member since</dt>
-                <dd className="mt-1 text-sm font-bold text-ascend-blue sm:mt-0 sm:col-span-2">
-                  {new Date(currentUser.metadata.creationTime).toLocaleDateString()}
-                </dd>
-              </div>
+            </div>
+
+            <div className="space-y-6">
+              <AccountField 
+                icon={<UserCircleIcon className="h-6 w-6 text-ascend-blue" />}
+                label="Username"
+                value={userData.username}
+                isEditing={isEditing}
+                editComponent={
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-ascend-blue focus:ring focus:ring-ascend-blue focus:ring-opacity-50"
+                  />
+                }
+              />
+
+              <AccountField 
+                icon={<EnvelopeIcon className="h-6 w-6 text-ascend-blue" />}
+                label="Email address"
+                value={currentUser.email}
+                isEditing={isEditing}
+                editComponent={
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-ascend-blue focus:ring focus:ring-ascend-blue focus:ring-opacity-50"
+                  />
+                }
+              />
+
+              <AccountField 
+                icon={<CalendarIcon className="h-6 w-6 text-ascend-blue" />}
+                label="Member since"
+                value={new Date(currentUser.metadata.creationTime).toLocaleDateString()}
+              />
+
               {isEditing && (
-                <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                  <dt className="text-sm font-medium text-gray-500">New Password</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                <AccountField 
+                  icon={<LockClosedIcon className="h-6 w-6 text-ascend-blue" />}
+                  label="New Password"
+                  isEditing={true}
+                  editComponent={
                     <input
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-ascend-blue focus:ring focus:ring-ascend-blue focus:ring-opacity-50"
                       placeholder="Leave blank to keep current password"
                     />
-                  </dd>
-                </div>
+                  }
+                />
               )}
-            </dl>
-          </div>
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-              <span className="block sm:inline">{error}</span>
             </div>
-          )}
-          <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-            {isEditing ? (
-              <>
-                <button
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  {isLoading ? 'Saving...' : 'Save Changes'}
-                </button>
-                <button
-                  onClick={() => setIsEditing(false)}
-                  className="ml-3 inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="inline-flex justify-center py-2 px-2 border border-transparent shadow-sm text-xs font-medium rounded-md text-white bg-ascend-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Edit Profile
-              </button>
+
+            {error && (
+              <div className="mt-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
+                <p>{error}</p>
+              </div>
             )}
+
+            <div className="mt-8 flex justify-end">
+              {isEditing ? (
+                <>
+                  <button
+                    onClick={handleSubmit}
+                    disabled={isLoading}
+                    className="px-6 py-2 bg-ascend-green text-white rounded-md shadow hover:bg-ascend-green-dark focus:outline-none focus:ring-2 focus:ring-ascend-green text-xs focus:ring-opacity-50 transition-colors"
+                  >
+                    {isLoading ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="ml-4 px-6 py-2 bg-gray-200 text-xs text-gray-700 rounded-md shadow hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="px-6 py-2 bg-ascend-black text-xs text-white rounded-md shadow focus:outline-none focus:ring-2 focus:ring-ascend-blue focus:ring-opacity-50 transition-colors"
+                >
+                  Edit Profile
+                </button>
+              )}
+            </div>
           </div>
         </div>
+      </motion.div>
+    </div>
+  )
+}
+
+function AccountField({ icon, label, value, isEditing, editComponent }) {
+  return (
+    <div className="flex items-center space-x-4">
+      {icon}
+      <div className="flex-grow">
+        <label className="block text-sm font-medium text-gray-700">{label}</label>
+        {isEditing && editComponent ? editComponent : (
+          <p className="mt-1 text-sm text-gray-900">{value}</p>
+        )}
       </div>
     </div>
   )

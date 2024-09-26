@@ -18,6 +18,13 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
   const [taskDescription, setTaskDescription] = useState('')
   const [tasks, setTasks] = useState([])
 
+  const truncateDescription = (text, maxLength) => {
+    if (text.length > maxLength) {
+      return text.slice(0, maxLength) + '...'
+    }
+    return text
+  }
+
   useEffect(() => {
     fetchTasks()
   }, [])
@@ -28,14 +35,6 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
       setTasks(fetchedTasks ? Object.values(fetchedTasks).filter(task => task.goalId === goal.id) : [])
     }
   }
-
-  const truncateDescription = (text, maxLength) => {
-    if (text.length > maxLength) {
-      return text.slice(0, maxLength) + '...'
-    }
-    return text
-  }
-
   const handleDelete = async () => {
     if (auth.currentUser) {
       await deleteGoal(auth.currentUser.uid, goal.id)
@@ -106,8 +105,8 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
   return (
     <>
       {showConfetti && <Confetti />}
-      <div className="flex max-w-xl flex-col items-start justify-between bg-white border border-gray-300 rounded-xl overflow-hidden">
-        <div className="flex items-center gap-x-4 text-xs py-2 px-4 bg-gray-50 w-full border-b border-gray-300">
+      <div className="flex flex-col w-full h-64 max-w-lg bg-white p-4 border border-gray-300 rounded-sm overflow-hidden">
+        <div className="flex items-center gap-x-2 text-xs py-2 px-4 w-full border-b border-gray-300">
           <time dateTime={goal.createdAt} className="text-gray-500">
             {new Date(goal.createdAt).toLocaleDateString()}
           </time>
@@ -115,67 +114,17 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
             {goal.isDailyGoal ? 'Daily Goal' : 'One-time Goal'}
           </span>
         </div>
-          <div className="group relative p-4 flex-grow">
-            <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
-              {goal.title}
-            </h3>
-            <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
-              {truncateDescription(goal.description, 150)}
-            </p>
-            {goal.milestones && goal.milestones.length > 0 && (
-              <div className="mt-4">
-                <h4 className="font-semibold text-sm text-gray-700">Milestones:</h4>
-                <ul className="mt-2">
-                  {goal.milestones.map((milestone, index) => (
-                    <li key={index} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={milestone.completed}
-                        onChange={() => handleMilestoneToggle(index)}
-                        className="mr-2"
-                      />
-                      <span className={milestone.completed ? 'line-through' : ''}>{milestone.text}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
+        <div className="flex-grow p-4 overflow-hidden">
+          <h3 className="text-lg font-semibold leading-6 text-gray-900 mb-2">
+            {goal.title}
+          </h3>
+          <p className="text-sm leading-6 text-gray-600 overflow-hidden">
+        {truncateDescription(goal.description, 75)}
+      </p>
+        </div>
         <div className="flex items-center justify-between w-full px-4 py-2 border-t border-gray-300">
-        <div className="flex items-center">
-    <Tooltip label="View Details" withArrow>
-      <button
-        onClick={handleViewDetails}
-        className="text-ascend-blue hover:text-blue-400 transition-colors duration-300 px-2"
-      >
-        <MapIcon className="h-5 w-5" />
-      </button>
-    </Tooltip>
-    <Tooltip label="Mark as Complete" withArrow>
-      <button
-        onClick={handleComplete}
-        className="text-green-500 hover:text-green-600 px-2"
-      >
-        <CheckCircleIcon className="h-5 w-5" />
-      </button>
-    </Tooltip>
-    <Tooltip label="Edit Goal" withArrow>
-      <button
-        onClick={() => onEdit(goal)}
-        className="text-yellow-500 hover:text-yellow-600 px-2"
-      >
-        <PencilIcon className="h-5 w-5" />
-      </button>
-    </Tooltip>
-    <Tooltip label="Delete Goal" withArrow>
-      <button
-        onClick={handleDelete}
-        className="text-red-500 hover:text-red-700 px-2"
-      >
-        <TrashIcon className="h-5 w-5" />
-      </button>
-    </Tooltip>
-    <Tooltip label="Add Task" withArrow>
+        
+        <Tooltip label="Add Task" withArrow>
           <button
             onClick={handleOpenTaskModal}
             className="text-blue-500 hover:text-blue-600 px-2"
@@ -183,9 +132,40 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
             <PlusIcon className="h-5 w-5" />
           </button>
         </Tooltip>
-  </div>
-        </div>
+        <Tooltip label="View Details" withArrow>
+          <button
+            onClick={handleViewDetails}
+            className="text-ascend-blue hover:text-blue-400 transition-colors duration-300 px-2"
+          >
+            <MapIcon className="h-5 w-5" />
+          </button>
+        </Tooltip>
+        <Tooltip label="Mark as Complete" withArrow>
+          <button
+            onClick={handleComplete}
+            className="text-green-500 hover:text-green-600 px-2"
+          >
+            <CheckCircleIcon className="h-5 w-5" />
+          </button>
+        </Tooltip>
+        <Tooltip label="Edit Goal" withArrow>
+          <button
+            onClick={() => onEdit(goal)}
+            className="text-yellow-500 hover:text-yellow-600 px-2"
+          >
+            <PencilIcon className="h-5 w-5" />
+          </button>
+        </Tooltip>
+            <Tooltip label="Delete Goal" withArrow>
+          <button
+            onClick={handleDelete}
+            className="text-red-500 hover:text-red-700 px-2"
+          >
+            <TrashIcon className="h-5 w-5" />
+          </button>
+        </Tooltip>
       </div>
+        </div>
       {showPopup && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
           <div className="relative p-5 border w-96 shadow-lg rounded-md bg-white">

@@ -177,7 +177,7 @@ export default function Stats() {
         isOpen={isSidebarOpen} 
         setIsOpen={setIsSidebarOpen}
       />
-      <div className="flex-1 overflow-auto bg-ascend-white p-8">
+      <div className="flex-1 overflow-auto bg-gray-200 p-8">
         <h1 className="text-2xl font-bold mb-8 text-ascend-black">Goal Statistics</h1>
         <div className="space-y-4">
           {timeFrames.map((frame) => (

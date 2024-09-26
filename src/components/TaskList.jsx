@@ -186,7 +186,7 @@ export default function TaskList() {
         setIsOpen={setIsSidebarOpen}
       />
       
-      <div className="flex-1 overflow-auto bg-white p-6">
+      <div className="flex-1 overflow-auto bg-gray-200 p-6">
       <header className="bg-ascend-white border border-gray-300 rounded-xl mb-6 px-4">
         <div className="py-6 sm:px-6 lg:px-8 flex justify-between items-center">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 uppercase">Task List</h1>

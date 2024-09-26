@@ -4,11 +4,20 @@ import NewGoalForm from './form/NewGoalForm'
 import Sidebar from './Sidebar'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { readGoals, createGoal, updateGoal, deleteGoal } from '../utils/database'
+import { Carousel } from '@mantine/carousel'
+import { TextInput } from '@mantine/core'
+import { Search } from 'tabler-icons-react'
+import '@mantine/carousel/styles.css';
+import '@mantine/carousel/styles.css';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
+
+
 
 export default function Dashboard() {
   const [goals, setGoals] = useState([])
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [currentQuote, setCurrentQuote] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
   const auth = getAuth()
 
   useEffect(() => {
@@ -69,6 +78,29 @@ export default function Dashboard() {
     "Strive not to be a success, but rather to be of value. - Albert Einstein"
   ];
 
+  const filteredGoals = goals.filter(goal =>
+    goal.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    goal.description.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+  
+  const CustomPrevControl = ({ onClick }) => (
+    <button 
+      onClick={onClick} 
+      className="absolute left-[-60px] top-1/2 -translate-y-1/2 bg-ascend-black rounded-full p-2 shadow-lg hover:bg-ascend-blue transition-all duration-300 z-10"
+    >
+      <ChevronLeftIcon className="h-6 w-6 text-ascend-white" />
+    </button>
+  );
+  
+  const CustomNextControl = ({ onClick }) => (
+    <button 
+      onClick={onClick} 
+      className="absolute right-[-70px] top-1/2 -translate-y-1/2 bg-ascend-black rounded-full p-2 shadow-lg hover:bg-ascend-blue transition-all duration-300 z-10"
+    >
+      <ChevronRightIcon className="h-6 w-6 text-ascend-white" />
+    </button>
+  );
+
   return (
     <div className="flex h-screen">
       <Sidebar 
@@ -76,8 +108,8 @@ export default function Dashboard() {
         setIsOpen={setIsSidebarOpen}
       />
       
-      <div className="flex-1 overflow-auto bg-white p-6">
-        <header className="bg-ascend-white border border-gray-300 rounded-xl mb-6 px-4 flex justify-between items-center">
+      <div className="flex-1 overflow-auto bg-gray-200 p-12">
+        <header className="bg-ascend-white border border-gray-300 rounded-sm mb-6 px-4 flex justify-between items-center">
           <div className="py-6 sm:px-6 lg:px-8">
             <h1 className="text-2xl font-bold tracking-tight text-gray-900 uppercase">Goals</h1>
           </div>
@@ -91,20 +123,50 @@ export default function Dashboard() {
             <NewGoalForm onAddGoal={handleAddGoal} />
           </div>
           
+          <TextInput
+            placeholder="Search goals"
+            icon={<Search size={14} />}
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.currentTarget.value)}
+            className="mb-4 max-w-sm mx-auto"
+          />
           <div className="w-full">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {goals.map(goal => (
-                <GoalCard
-                  key={goal.id}
-                  goal={goal}
-                  onEdit={handleEditGoal}
-                  onDelete={handleDeleteGoal}
-                />
-              ))}
+              <div className="group relative">
+                <Carousel
+                  slideSize="33.333333%"
+                  slideGap="md"
+                  align="start"
+                  slidesToScroll={1}
+                  loop
+                  withControls={filteredGoals.length > 3}
+                  nextControlIcon={<CustomNextControl />}
+                  previousControlIcon={<CustomPrevControl />}
+                  styles={{
+                    control: {
+                      '&[dataInactive]': {
+                        opacity: 0,
+                        cursor: 'default',
+                      },
+                    },
+                  }}
+                  classNames={{
+                    root: 'carousel-root mx-12 relative',
+                  }}
+                >
+                  {filteredGoals.map(goal => (
+                    <Carousel.Slide key={goal.id} className="px-2">
+                      <GoalCard
+                        goal={goal}
+                        onEdit={handleEditGoal}
+                        onDelete={handleDeleteGoal}
+                      />
+                    </Carousel.Slide>
+                  ))}
+                </Carousel>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    </div>  
   )
 }
