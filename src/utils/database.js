@@ -5,6 +5,7 @@ export const writeUserData = (userId, name, email) => {
   set(ref(database, 'users/' + userId), {
     username: name,
     email: email,
+    createdAt: Date.now()
   });
 };
 
@@ -256,3 +257,28 @@ const handleToggleTask = async (taskId) => {
     }
   }
 }
+
+import { getAuth } from "firebase/auth";
+
+export const getNewestMembers = async (limit = 3) => {
+  const auth = getAuth();
+  if (!auth.currentUser) {
+    console.log("User not authenticated");
+    return [];
+  }
+
+  const usersRef = ref(database, 'users');
+  try {
+    const snapshot = await get(usersRef);
+    if (snapshot.exists()) {
+      const users = Object.entries(snapshot.val())
+        .map(([id, user]) => ({ id, ...user }))
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .slice(0, limit);
+      return users;
+    }
+  } catch (error) {
+    console.error("Error fetching newest members:", error);
+  }
+  return [];
+};

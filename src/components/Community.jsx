@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Sidebar from './Sidebar'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { readPosts, createPost, encouragePost, readUserData, deletePost, addComment, getComments, deleteComment } from '../utils/database.js'
+import { readPosts, createPost, encouragePost, readUserData, deletePost, addComment, getComments, deleteComment, getNewestMembers } from '../utils/database.js'
 import { Avatar, TextInput, Button, Paper, Text, Menu } from '@mantine/core'
 
 import { motion } from 'framer-motion'
@@ -17,7 +17,7 @@ export default function Community() {
   const [user, setUser] = useState(null)
   const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
   const auth = getAuth()
-
+  const [newestMembers, setNewestMembers] = useState([]);
   const [comments, setComments] = useState({});
   const [newComments, setNewComments] = useState({});
 
@@ -41,6 +41,16 @@ export default function Community() {
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const fetchNewestMembers = async () => {
+      if (user) {
+        const members = await getNewestMembers();
+        setNewestMembers(members);
+      }
+    };
+    fetchNewestMembers();
+  }, [user]);
   
   const fetchPosts = async () => {
     try {
@@ -270,7 +280,7 @@ export default function Community() {
             {/* Sidebar for desktop */}
             <div className="hidden md:block md:w-80 md:ml-6 bg-ascend-white border border-gray-300 rounded-md">
               {/* Community Guidelines */}
-              <div className="bg-white rounded-lg p-4">
+              <div className="p-4">
                 <h2 className="text-lg font-bold text-ascend-black mb-2">Community Guidelines</h2>
                 <p className="text-sm text-gray-700">
                 The community is your interactive space designed to foster connection and positivity. Our unique encourage feature empowers you to uplift and support fellow members, creating an environment where meaningful interactions thrive. Share your insights, experiences, and goals, and watch as the community rallies around you.<br></br><br></br>
@@ -279,7 +289,7 @@ export default function Community() {
               </div>
   
               {/* Trending Topics */}
-              <div className="bg-white rounded-lg p-4 mt-4">
+              <div className="p-4 mt-4">
                 <h2 className="text-lg font-bold text-ascend-black mb-2">Trending Topics (not active)</h2>
                 <ul className="space-y-2">
                   <li className="text-sm text-ascend-blue">#GoalSetting</li>
@@ -287,6 +297,25 @@ export default function Community() {
                   <li className="text-sm text-ascend-blue">#Motivation</li>
                 </ul>
               </div>
+
+              {/* Featured Members */}  
+              <div>
+              <h2 className="text-lg font-bold text-ascend-black mb-2">Newest Members</h2>
+              <div className="flex flex-wrap">
+                {newestMembers.map((member) => (
+                  <div key={member.id} className="w-1/3 p-2">
+                    <div className="bg-white rounded-lg p-4 border border-gray-300">
+                      <div className="flex items-center">
+                        <Avatar src={member.photoURL} alt={member.username} size={40} />
+                        <div className="ml-2">
+                          <Text size="sm" weight={500} color="ascend-blue">{member.username}</Text>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
             </div>
           </div>
         </div>
