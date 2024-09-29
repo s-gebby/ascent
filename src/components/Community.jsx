@@ -299,22 +299,26 @@ export default function Community() {
               </div>
 
               {/* Featured Members */}  
-              <div>
+              <div className='p-4 mt-4'>
               <h2 className="text-lg font-bold text-ascend-black mb-2">Newest Members</h2>
-              <div className="flex flex-wrap">
-                {newestMembers.map((member) => (
-                  <div key={member.id} className="w-1/3 p-2">
-                    <div className="bg-white rounded-lg p-4 border border-gray-300">
-                      <div className="flex items-center">
-                        <Avatar src={member.photoURL} alt={member.username} size={40} />
-                        <div className="ml-2">
-                          <Text size="sm" weight={500} color="ascend-blue">{member.username}</Text>
+              {newestMembers && newestMembers.length > 0 ? (
+                <div className="flex flex-wrap">
+                  {newestMembers.map((member) => (
+                    <div key={member.id} className="w-1/3 p-2">
+                      <div className="bg-white rounded-lg p-2 border border-gray-300">
+                        <div className="flex items-center">
+                          <Avatar src={member.photoURL} alt={member.username} size="sm" />
+                          <Text size="xs" weight={500} color="ascend-blue" className="ml-2 truncate">
+                            {member.username}
+                          </Text>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+              <p>No new members to display at the moment.</p>
+              )}
             </div>
             </div>
           </div>
