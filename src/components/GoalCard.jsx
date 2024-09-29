@@ -192,10 +192,10 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
       <Modal
         opened={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={goal.title}
         size="xl"
       >
-        <div className="p-4">
+        <div className="p-2">
+        <h2 className="text-3xl font-bold mb-4 text-center">{goal.title}</h2>
           <h3 className="font-semibold mb-2">Description:</h3>
           <p className="mb-4">{goal.description}</p>
           
@@ -222,6 +222,8 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
           <Button onClick={() => setIsTaskModalOpen(true)} className="mt-4">
             Create New Task
           </Button>
+
+          {/* Make sure to create the functionality for linking journal entries */}
 
           <h3 className="font-semibold mb-2 mt-4">Linked Journal Entries:</h3>
           <ul className="list-disc pl-5 mb-4">
@@ -285,4 +287,5 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
       </Modal>
     </>
   )
+
 }
