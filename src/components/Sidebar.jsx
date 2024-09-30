@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon, HomeIcon, ChartBarIcon, ClipboardIcon, BookOpenIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon, HomeIcon, ChartBarIcon, ClipboardIcon, BookOpenIcon, UserGroupIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 
 
   export default function Sidebar({ isOpen, setIsOpen }) {
@@ -78,12 +78,6 @@ import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon, HomeIcon, ChartBa
                         Stats
                       </Link>
                     </li>
-                    <li className="mb-2">
-                      <Link to="/tasklist" className="flex items-center py-1 px-4 hover:bg-gray-700 rounded text-sm">
-                        <ClipboardIcon className="h-4 w-4 mr-2" />
-                        Task List
-                      </Link>
-                    </li>
                   </ul>
                 )}
               </li>
@@ -97,6 +91,18 @@ import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon, HomeIcon, ChartBa
                 <Link to="/community" className="flex items-center py-2 px-4 hover:bg-ascend-blue rounded text-sm">
                   <UserGroupIcon className="h-5 w-5 mr-2" />
                   Community
+                </Link>
+              </li>
+              <li className="mb-4">
+                <Link to="/goals" className="flex items-center py-2 px-4 hover:bg-ascend-blue rounded text-sm">
+                  <ClipboardDocumentListIcon className="h-5 w-5 mr-2" />
+                  Goals
+                </Link>
+              </li>
+              <li className="mb-4">
+                <Link to="/tasklist" className="flex items-center py-1 px-4 hover:bg-gray-700 rounded text-sm">
+                  <ClipboardIcon className="h-4 w-4 mr-2" />
+                  Task List
                 </Link>
               </li>
             </ul>

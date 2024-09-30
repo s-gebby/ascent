@@ -15,6 +15,8 @@ import Account from './components/authorization/Account';
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import ReadMore from './components/readmore';
 import TaskList from './components/TaskList.jsx';
+import GoalPage from './components/GoalPage';
+
 
 
 
@@ -98,6 +100,8 @@ function AppContent() {
         <Route path="/account" element={user ? <Account /> : <Navigate to="/login" />} />
         <Route path="/readmore" element={<ReadMore />} />
         <Route path="/tasklist" element={user ? <TaskList /> : <Navigate to="/login" />} />
+        <Route path="/goals" element={user ? <GoalPage /> : <Navigate to="/login" />} />
+
       </Routes>
     </>
   );
