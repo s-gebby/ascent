@@ -157,11 +157,11 @@ export default function TaskList() {
     }
   }
 
-  const filteredTasks = tasks
-    .filter(task => 
-      task.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      task.category.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+  const filteredTasks = (tasks || [])
+  .filter(task => 
+    (task.text?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (task.category?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+  )
     .sort((a, b) => {
       if (sortBy === 'dueDate') {
         return sortOrder === 'asc' 

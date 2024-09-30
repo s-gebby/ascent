@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon, HomeIcon, ChartBarIcon, ClipboardIcon, BookOpenIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+
 
   export default function Sidebar({ isOpen, setIsOpen }) {
     const navigate = useNavigate();
@@ -57,7 +58,10 @@ import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon } from '@heroicons
             <ul>
               <li className="mb-4">
                 <div className="flex items-center justify-between py-2 px-4 hover:bg-ascend-blue rounded cursor-pointer text-sm">
-                  <span onClick={handleDashboardClick}>Dashboard</span>
+                  <span onClick={handleDashboardClick} className="flex items-center">
+                    <HomeIcon className="h-5 w-5 mr-2" />
+                    Dashboard
+                  </span>
                   <button onClick={toggleNestedList} className="ml-2">
                     {isDashboardExpanded ? (
                       <ChevronUpIcon className="h-4 w-4" />
@@ -69,19 +73,31 @@ import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon } from '@heroicons
                 {isDashboardExpanded && (
                   <ul className="ml-4 mt-2">
                     <li className="mb-2">
-                      <Link to="/stats" className="block py-1 px-4 hover:bg-gray-700 rounded text-sm">Stats</Link>
+                      <Link to="/stats" className="flex items-center py-1 px-4 hover:bg-gray-700 rounded text-sm">
+                        <ChartBarIcon className="h-4 w-4 mr-2" />
+                        Stats
+                      </Link>
                     </li>
                     <li className="mb-2">
-                      <Link to="/tasklist" className="block py-1 px-4 hover:bg-gray-700 rounded text-sm">Task List</Link>
+                      <Link to="/tasklist" className="flex items-center py-1 px-4 hover:bg-gray-700 rounded text-sm">
+                        <ClipboardIcon className="h-4 w-4 mr-2" />
+                        Task List
+                      </Link>
                     </li>
                   </ul>
                 )}
               </li>
               <li className="mb-4">
-                <Link to="/journal" className="block py-2 px-4 hover:bg-ascend-blue rounded text-sm">Journal</Link>
+                <Link to="/journal" className="flex items-center py-2 px-4 hover:bg-ascend-blue rounded text-sm">
+                  <BookOpenIcon className="h-5 w-5 mr-2" />
+                  Journal
+                </Link>
               </li>
               <li className="mb-4">
-                <Link to="/community" className="block py-2 px-4 hover:bg-ascend-blue rounded text-sm">Community</Link>
+                <Link to="/community" className="flex items-center py-2 px-4 hover:bg-ascend-blue rounded text-sm">
+                  <UserGroupIcon className="h-5 w-5 mr-2" />
+                  Community
+                </Link>
               </li>
             </ul>
           </nav>
