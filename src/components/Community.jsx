@@ -127,7 +127,7 @@ export default function Community() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-200">
+    <div className="flex h-screen bg-ascend-white">
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       
       

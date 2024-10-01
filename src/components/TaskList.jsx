@@ -186,7 +186,7 @@ export default function TaskList() {
         setIsOpen={setIsSidebarOpen}
       />
       
-      <div className="flex-1 overflow-auto bg-gray-200 p-6">
+      <div className="flex-1 overflow-auto bg-ascend-white p-6">
       <header className="bg-ascend-white border border-gray-300 rounded-xl mb-6 px-4">
         <div className="py-6 sm:px-6 lg:px-8 flex justify-between items-center">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 uppercase">Task List</h1>
@@ -239,7 +239,7 @@ export default function TaskList() {
                     className={`px-3 py-1 rounded-full text-sm ${
                       newTaskCategory === option.value
                         ? `${categoryColors[option.value]} text-white`
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        : 'bg-ascend-white text-gray-700 hover:bg-gray-300'
                     }`}
                   >
                     {option.label}

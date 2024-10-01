@@ -5,11 +5,11 @@ import { createJournalEntry, getJournalEntries, updateJournalEntry } from '../ut
 import { Button, TextInput, Select, MultiSelect, Textarea, Modal } from '@mantine/core'
 import { jsPDF } from 'jspdf';
 import { Menu, Transition } from '@headlessui/react';
-import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, BellIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { CalendarIcon, TagIcon } from '@heroicons/react/20/solid'
 import { TrashIcon } from '@heroicons/react/20/solid';
 import { deleteJournalEntry } from '../utils/database';
-
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -38,6 +38,9 @@ export default function Journal() {
   }, []);
 
   const auth = getAuth()
+  const navigate = useNavigate();
+
+
 
   const handleEntryClick = (entry) => {
     setSelectedEntry(entry);
@@ -160,105 +163,120 @@ export default function Journal() {
     </Menu>
   );
 return (
-  <div className="flex flex-col md:flex-row min-h-screen bg-gray-200">
+  <div className="flex flex-col md:flex-row min-h-screen bg-ascend-white">
     <Sidebar 
       isOpen={isSidebarOpen} 
       setIsOpen={setIsSidebarOpen}
     />
-    <div className="flex-1 flex flex-col p-6 md:flex-row">
-      {/* Main content area for writing/editing entries */}
-      <div className="w-full md:w-2/3 lg:w-3/4 p-4 md:p-6">
-        <header className="bg-white border border-gray-300 rounded-sm mb-4 md:mb-6 px-4">
-          <div className="py-4 md:py-6 sm:px-6 lg:px-8">
-            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-gray-900 uppercase">Journal</h1>
-          </div>
-        </header>
-        
-        <div className="bg-white border border-gray-300 rounded-sm p-4 md:p-6 mb-4 md:mb-6">
-          <h3 className="text-lg font-semibold text-ascend-black mb-4">New Journal Entry</h3>
-          <TextInput
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter a title"
-            className="mb-3"
-          />
-          <div className="flex flex-wrap gap-2 mb-3">
-            {categoryOptions.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => setCategory(option.value)}
-                className={`px-3 py-1 rounded-full text-sm ${
-                  category === option.value
-                    ? `${categoryColors[option.value]} text-white`
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-          <Textarea 
-            value={newEntry}
-            onChange={(e) => setNewEntry(e.target.value)}
-            placeholder={prompt}
-            className="mb-3"
-            minRows={10}
-            maxRows={20}
-            maxLength={5000}
-          />
-          <div className="flex justify-between items-center">
-            <Button onClick={() => setPrompt(prompts[Math.floor(Math.random() * prompts.length)])}>
-              New Prompt
-            </Button>
-            <Button onClick={handleSubmit} color="ascend-blue">Save Entry</Button>
-          </div>
-
-          
+    <div className="flex-1 flex flex-col h-screen">
+      <header className="bg-white shadow-sm z-10 p-4 flex justify-between items-center w-full">
+        <h2 className="text-2xl font-semibold text-gray-800">Journal</h2>
+        <div className="flex items-center space-x-4">
+          <BellIcon className="h-6 w-6 text-gray-600" />
+          {auth.currentUser && auth.currentUser.photoURL ? (
+            <img 
+              src={auth.currentUser.photoURL} 
+              alt="Profile" 
+              className="h-8 w-8 rounded-full cursor-pointer"
+              onClick={() => navigate('/account')}
+            />
+          ) : (
+            <UserCircleIcon 
+              className="h-8 w-8 text-gray-600 cursor-pointer" 
+              onClick={() => navigate('/account')}
+            />
+          )}
         </div>
-      </div>
+      </header>
 
-      {/* Journal entries section */}
-      <div className="w-full bg-white border border-gray-300 rounded-sm p-4 mx-auto my-6 mr-6 max-w-sm">
-        <h3 className="text-lg font-semibold text-ascend-black mb-4 text-center">Journal Entries</h3>
-        <TextInput
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search entries..."
-          className="mb-4"
-        />
-        <div className="space-y-4">
-          {filterEntries().map(entry => (
-            <div 
-              key={entry.id} 
-              className="bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer relative"
-            >
-              <div onClick={() => handleEntryClick(entry)}>
-                <h3 className="font-semibold text-sm text-ascend-black mb-1 truncate pr-6">
-                  <span className={`inline-block w-2 h-2 rounded-full mr-1 ${categoryColors[entry.category]}`}></span>
-                  {entry.title}
-                </h3>
-                <div className="flex flex-wrap items-center text-xs text-gray-600 mb-1">
-                  <CalendarIcon className="h-3 w-3 mr-1" />
-                  <span className="mr-2">{new Date(entry.date).toLocaleDateString()}</span>
-                  <TagIcon className="h-3 w-3 mr-1" />
-                  <span>{entry.category}</span>
-                </div>
-                <p className="text-xs text-gray-700 line-clamp-2">{entry.text}</p>
-              </div>
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteEntry(entry);
-                }}
-                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-              >
-                <TrashIcon className="h-4 w-4" />
-              </button>
+      <div className="flex flex-1 overflow-hidden">
+        <div className="w-full md:w-3/4 m-6 overflow-y-auto">
+          <div className="bg-white border border-gray-300 rounded-sm p-4 md:p-6 mb-4 md:mb-6 col-span-full">
+            <h3 className="text-lg font-semibold text-ascend-black mb-4">New Journal Entry</h3>
+            <TextInput
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter a title"
+              className="mb-3"
+            />
+            <div className="flex flex-wrap gap-2 mb-3">
+              {categoryOptions.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => setCategory(option.value)}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    category === option.value
+                      ? `${categoryColors[option.value]} text-white`
+                      : 'bg-ascend-white text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
             </div>
-          ))}
+            <Textarea 
+              value={newEntry}
+              onChange={(e) => setNewEntry(e.target.value)}
+              placeholder={prompt}
+              className="mb-3"
+              minRows={10}
+              maxRows={20}
+              maxLength={5000}
+            />
+            <div className="flex justify-between items-center">
+              <Button onClick={() => setPrompt(prompts[Math.floor(Math.random() * prompts.length)])}>
+                New Prompt
+              </Button>
+              <Button onClick={handleSubmit} color="ascend-blue">Save Entry</Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Journal entries section */}
+        <div className="w-full md:w-1/4 bg-white border border-gray-300 overflow-y-auto m-6">
+          <div className="p-4">
+            <h3 className="text-lg font-semibold text-ascend-black mb-4 text-center">Journal Entries</h3>
+            <TextInput
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search entries..."
+              className="mb-4"
+            />
+            <div className="space-y-4">
+              {filterEntries().map(entry => (
+                <div 
+                  key={entry.id} 
+                  className="bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer relative"
+                >
+                  <div onClick={() => handleEntryClick(entry)}>
+                    <h3 className="font-semibold text-sm text-ascend-black mb-1 truncate pr-6">
+                      <span className={`inline-block w-2 h-2 rounded-full mr-1 ${categoryColors[entry.category]}`}></span>
+                      {entry.title}
+                    </h3>
+                    <div className="flex flex-wrap items-center text-xs text-gray-600 mb-1">
+                      <CalendarIcon className="h-3 w-3 mr-1" />
+                      <span className="mr-2">{new Date(entry.date).toLocaleDateString()}</span>
+                      <TagIcon className="h-3 w-3 mr-1" />
+                      <span>{entry.category}</span>
+                    </div>
+                    <p className="text-xs text-gray-700 line-clamp-2">{entry.text}</p>
+                  </div>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteEntry(entry);
+                    }}
+                    className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-
+    </div>
       {/* Modal for displaying full entry content */}
       <Modal
         opened={isModalOpen}
@@ -294,6 +312,5 @@ return (
         </div>
       </Modal>
     </div>
-  </div>
 )}
 

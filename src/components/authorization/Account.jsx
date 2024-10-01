@@ -79,7 +79,7 @@ export default function Account() {
 
   if (!userData) return <div className="flex justify-center items-center h-screen">Loading...</div>
   return (
-    <div className="flex bg-gray-200 min-h-screen">
+    <div className="flex bg-ascend-white min-h-screen">
       <Sidebar isOpen={true} setIsOpen={() => {}} />
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -183,7 +183,7 @@ export default function Account() {
                   </button>
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="ml-4 px-6 py-2 bg-gray-200 text-xs text-gray-700 rounded-md shadow hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition-colors"
+                    className="ml-4 px-6 py-2 bg-ascend-white text-xs text-gray-700 rounded-md shadow hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition-colors"
                   >
                     Cancel
                   </button>
