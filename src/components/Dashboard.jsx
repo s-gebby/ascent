@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [goals, setGoals] = useState([])
   const auth = getAuth();
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(true);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -110,6 +111,20 @@ export default function Dashboard() {
           </div>
         </header>
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-ascend-white p-4">
+        {showModal && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+            <div className="relative p-5 border w-96 shadow-lg rounded-md bg-white">
+              <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2 text-center">🚨Important🚨</h3>
+              <p className="mb-4 text-sm text-center">This application is currently under construction. Some features may not be fully functional.</p>
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 bg-ascend-blue text-xs text-white rounded hover:bg-ascend-blue-dark mx-auto block"
+              >
+                Understood
+              </button>
+            </div>
+          </div>
+        )}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
             {/* Goal cards */}
             <div className="lg:col-span-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
