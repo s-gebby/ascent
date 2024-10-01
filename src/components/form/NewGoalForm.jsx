@@ -84,7 +84,7 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
           </div>
         </form>
 
-        <div className="md:w-1/3 bg-gray-100 p-6 flex items-center justify-center">
+        <div className="md:w-1/3 p-6 flex items-center justify-center">
           <div>
             <label htmlFor="completeBy" className="block text-sm font-medium text-ascend-black mb-1 font-archivo-black capitalize text-center">3 - Complete By</label>
             
