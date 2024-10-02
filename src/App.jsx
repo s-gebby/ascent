@@ -16,6 +16,7 @@ import { AuthProvider } from "./contexts/AuthContext.jsx";
 import ReadMore from './components/readmore';
 import TaskList from './components/TaskList.jsx';
 import GoalPage from './components/GoalPage';
+import Features from './components/Features.jsx';
 
 
 
@@ -101,6 +102,7 @@ function AppContent() {
         <Route path="/readmore" element={<ReadMore />} />
         <Route path="/tasklist" element={user ? <TaskList /> : <Navigate to="/login" />} />
         <Route path="/goals" element={user ? <GoalPage /> : <Navigate to="/login" />} />
+        <Route path="/features" element={user ? <Features /> : <Navigate to="/login" />} />
 
       </Routes>
     </>
