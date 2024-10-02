@@ -54,7 +54,7 @@ export default function Dashboard() {
 
   const SimpleGoalCard = ({ goal }) => (
     <div className="bg-white rounded-sm shadow p-4">
-      <h3 className="text-lg font-semibold mb-2">{goal.title}</h3>
+      <h3 className="text-md mb-2">{goal.title}</h3>
       <p className="text-sm text-gray-600 mb-2">{truncateDescription(goal.description, 50)}</p>
       <div className="flex justify-between items-center">
         <span className={`px-2 py-1 text-xs rounded-full ${
@@ -94,7 +94,11 @@ export default function Dashboard() {
         <header className="bg-white shadow-sm z-10 p-4 flex justify-between items-center">
           <h2 className="text-2xl font-semibold text-gray-800">Dashboard</h2>
           <div className="flex items-center space-x-4">
-            <BellIcon className="h-6 w-6 text-gray-600" />
+          {user && (
+            <p className="text-xs font-bold text-ascend-black">
+              Greetings, {user.displayName || 'Ascender'}!
+            </p>
+          )}
             {user && user.photoURL ? (
               <img 
                 src={user.photoURL} 
@@ -108,6 +112,7 @@ export default function Dashboard() {
                 onClick={() => navigate('/account')}
               />
             )}
+            <BellIcon className="h-6 w-6 text-gray-600" />
           </div>
         </header>
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-ascend-white p-4">
@@ -115,6 +120,11 @@ export default function Dashboard() {
           <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
             <div className="relative p-5 border w-96 shadow-lg rounded-md bg-white">
               <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2 text-center">🚨Important🚨</h3>
+              {user && (
+                <p className="text-sm text-center m-4 font-bold text-ascend-black">
+                  Hello, {user.displayName || 'Ascender'}!
+                </p>
+              )}
               <p className="mb-4 text-sm text-center">This application is currently under construction. Some features may not be fully functional.</p>
               <button
                 onClick={() => setShowModal(false)}
@@ -125,6 +135,7 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+          
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
             {/* Goal cards */}
             <div className="lg:col-span-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
