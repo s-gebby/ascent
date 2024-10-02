@@ -51,34 +51,6 @@ export default function Dashboard() {
     const goals = await readGoals(uid);
     setTotalGoals(goals ? Object.keys(goals).length : 0);
   };
-
-  const SimpleGoalCard = ({ goal }) => (
-    <div className="bg-white rounded-sm shadow p-4">
-      <h3 className="text-md mb-2">{goal.title}</h3>
-      <p className="text-sm text-gray-600 mb-2">{truncateDescription(goal.description, 50)}</p>
-      <div className="flex justify-between items-center">
-        <span className={`px-2 py-1 text-xs rounded-full ${
-          goal.completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-        }`}>
-          {goal.completed ? 'Completed' : 'In Progress'}
-        </span>
-        <span className="text-sm text-gray-500">{new Date(goal.createdAt).toLocaleDateString()}</span>
-      </div>
-    </div>
-  );
-
-  {/* Placeholders for chartData */}
-  const chartData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        label: 'Goals Completed',
-        data: [3, 5, 2, 8, 6, 7, 4],
-        borderColor: '#1556bf',
-        tension: 0.1
-      },
-    ],
-  };
   {/* Placeholders for tableData */}
   const tableData = [
     { id: 1, goal: 'Learn React', progress: '75%', status: 'In Progress' },
@@ -137,19 +109,6 @@ export default function Dashboard() {
         )}
           
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            {/* Goal cards */}
-            <div className="lg:col-span-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-              {goals.slice(0, 8).map(goal => (
-                <SimpleGoalCard key={goal.id} goal={goal} />
-              ))}
-            </div>
-            {/* Graph */}
-            <div className="lg:col-span-2 bg-white rounded-sm shadow p-4">
-              <h4 className="text-lg font-semibold mb-2">Goal Completion Trend</h4>
-              <div className="h-64">
-                <Line data={chartData} options={{ maintainAspectRatio: false }} />
-              </div>
-            </div>
             {/* Current goals table */}
             <div className="lg:col-span-2 bg-white rounded-sm shadow p-4">
               <h4 className="text-lg font-semibold mb-2">Current Goals</h4>

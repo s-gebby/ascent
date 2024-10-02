@@ -11,6 +11,8 @@ import { jsPDF } from 'jspdf';
 import { saveAs } from 'file-saver'
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
+import { Line } from 'react-chartjs-2';
+
 
 const timeFrames = [
   { label: '1 Month', days: 30 },
@@ -19,6 +21,18 @@ const timeFrames = [
   { label: '1 Year', days: 365 },
   { label: 'All Time', days: Infinity },
 ];
+{/* Placeholders for chartData */}
+const chartData = {
+  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  datasets: [
+    {
+      label: 'Goals Completed',
+      data: [3, 5, 2, 8, 6, 7, 4],
+      borderColor: '#1556bf',
+      tension: 0.1
+    },
+  ],
+};
 
 export default function Stats() {
   const [stats, setStats] = useState({});
@@ -216,6 +230,14 @@ export default function Stats() {
               )}
             </Disclosure>
           ))}
+
+          {/* Graph */}
+          <div className="lg:col-span-2 bg-white rounded-sm shadow p-4">
+              <h4 className="text-lg font-semibold mb-2">Goal Completion Trend</h4>
+              <div className="h-64">
+                <Line data={chartData} options={{ maintainAspectRatio: false }} />
+              </div>
+            </div>
         </div>
       </div>
     </div>
