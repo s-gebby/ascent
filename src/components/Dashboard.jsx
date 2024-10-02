@@ -2,21 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import { getAuth } from 'firebase/auth';
 import { readGoals } from '../utils/database';
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { BellIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { BellIcon, UserCircleIcon, BookOpenIcon, UserGroupIcon, PencilSquareIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+import { Link } from 'react-router-dom'; 
 
 export default function Dashboard() {
   const [totalGoals, setTotalGoals] = useState(0);
@@ -25,7 +13,28 @@ export default function Dashboard() {
   const auth = getAuth();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(true);
+  const handleJournalPromptClick = () => {
+    navigate('/journal');
+  };
 
+  const [randomPrompt, setRandomPrompt] = useState('');
+
+  useEffect(() => {
+    setRandomPrompt(journalPrompts[Math.floor(Math.random() * journalPrompts.length)]);
+  }, []);
+
+  const journalPrompts = [
+    "What's one small step you can take today towards your biggest goal?",
+    "Reflect on a recent challenge you overcame. What did you learn?",
+    "Describe your ideal day. How does it align with your current goals?",
+    "What's a skill you'd like to develop this month? Why is it important to you?",
+    "Write about a person who inspires you. How can you embody their qualities?",
+    "What are three things you're grateful for today?",
+    "If you could give advice to your younger self, what would it be?",
+    "Describe a recent accomplishment. How did it make you feel?",
+    "What's a fear you'd like to overcome? What's one step you can take towards facing it?",
+    "Imagine your life in 5 years. What do you hope to have achieved?"
+  ];
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -108,17 +117,17 @@ export default function Dashboard() {
           </div>
         )}
           
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 ">
             {/* Current goals table */}
-            <div className="lg:col-span-2 bg-white rounded-sm shadow p-4">
+            <div className="lg:col-span-2 bg-white rounded-sm p-4 border border-gray-300">
               <h4 className="text-lg font-semibold mb-2">Current Goals</h4>
               <div className="overflow-x-auto max-h-64">
                 <table className="min-w-full">
                   <thead>
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Goal</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Goal</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -140,16 +149,42 @@ export default function Dashboard() {
                 </table>
               </div>
             </div>
+
+            <div className="lg:col-span-1 bg-white rounded-sm p-4 cursor-pointer border border-gray-300">
+            <h4 className="text-lg font-semibold mb-2">Journal Prompt</h4>
+            <div className="p-4 bg-ascend-blue-light rounded-md">
+              <p className="text-sm text-ascend-blue" 
+              onClick={handleJournalPromptClick}>
+                "{randomPrompt}"
+              </p>
+            </div>
+          </div>
+
+            {/* Quick Links */}
+            <div className="lg:col-span-2 bg-white rounded-sm shadow p-4 border border-gray-300">
+              <h4 className="text-lg font-semibold mb-2">Quick Links</h4>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <Link to="/goals" className="flex items-center p-2 text-ascend-black">
+                  <ChartBarIcon className="h-5 w-5 mr-2" />
+                  <span>Goals</span>
+                </Link>
+                <Link to="/journal" className="flex items-center p-2 text-ascend-black">
+                  <PencilSquareIcon className="h-5 w-5 mr-2" />
+                  <span>Journal</span>
+                </Link>
+                <Link to="/community" className="flex items-center p-2 text-ascend-black">
+                  <UserGroupIcon className="h-5 w-5 mr-2" />
+                  <span>Community</span>
+                </Link>
+                <Link to="/resources" className="flex items-center p-2 text-ascend-black">
+                  <BookOpenIcon className="h-5 w-5 mr-2" />
+                  <span>Resources</span>
+                </Link>
+              </div>
+            </div>
           </div>
         </main>
       </div>
     </div>
   );
-}
-
-function truncateDescription(text, maxLength) {
-  if (text.length > maxLength) {
-    return text.slice(0, maxLength) + '...';
-  }
-  return text;
 }
