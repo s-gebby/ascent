@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 import { Disclosure } from '@headlessui/react';
 import { ChevronUpIcon } from '@heroicons/react/20/solid';
 import { ShareIcon } from '@heroicons/react/24/outline';
@@ -11,8 +13,8 @@ import { jsPDF } from 'jspdf';
 import { saveAs } from 'file-saver'
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-import { Line } from 'react-chartjs-2';
 
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const timeFrames = [
   { label: '1 Month', days: 30 },
@@ -21,26 +23,20 @@ const timeFrames = [
   { label: '1 Year', days: 365 },
   { label: 'All Time', days: Infinity },
 ];
-{/* Placeholders for chartData */}
-const chartData = {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-  datasets: [
-    {
-      label: 'Goals Completed',
-      data: [3, 5, 2, 8, 6, 7, 4],
-      borderColor: '#1556bf',
-      tension: 0.1
-    },
-  ],
-};
 
-export default function Stats() {
+const Stats = () => {
   const [stats, setStats] = useState({});
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const auth = getAuth();
+  const chartRef = useRef(null);
 
   useEffect(() => {
     fetchStats();
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    };
   }, []);
 
   const fetchStats = async () => {
@@ -185,6 +181,30 @@ export default function Stats() {
     );
   };
 
+  const data = {
+    labels: ['Category 1', 'Category 2', 'Category 3'],
+    datasets: [
+      {
+        label: 'Dataset 1',
+        data: [10, 20, 30],
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Chart.js Bar Chart',
+      },
+    },
+  };
+
   return (
     <div className="flex h-screen">
       <Sidebar 
@@ -235,11 +255,13 @@ export default function Stats() {
           <div className="lg:col-span-2 bg-white rounded-sm shadow p-4">
               <h4 className="text-lg font-semibold mb-2">Goal Completion Trend</h4>
               <div className="h-64">
-                <Line data={chartData} options={{ maintainAspectRatio: false }} />
+                <Bar ref={chartRef} options={options} data={data} />
               </div>
             </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Stats;

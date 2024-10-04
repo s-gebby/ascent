@@ -1,5 +1,4 @@
 import { getDatabase, ref, set, get, update, remove, push, child } from "firebase/database";
-
 import { database } from "../firebaseConfig";
 export const writeUserData = (userId, name, email) => {
   set(ref(database, 'users/' + userId), {
@@ -37,7 +36,8 @@ export const readGoals = async (userId) => {
   try {
     const snapshot = await get(goalsRef);
     if (snapshot.exists()) {
-      console.log("Goals data:", snapshot.val());
+      const goalsData = snapshot.val();
+      console.log("Goals data:", JSON.stringify(goalsData, null, 2));
       return snapshot.val();
     } else {
       console.log("No goals found for user:", userId);
@@ -48,7 +48,6 @@ export const readGoals = async (userId) => {
     throw error;
   }
 };
-
 export const deleteGoal = (userId, goalId) => {
   return remove(ref(database, `users/${userId}/goals/${goalId}`));
 };
@@ -280,5 +279,24 @@ export const getNewestMembers = async (limit = 3) => {
   } catch (error) {
     console.error("Error fetching newest members:", error);
   }
+  return [];
+};
+
+export const getRecentPosts = async (limit = 3) => {
+  const db = getDatabase();
+  const postsRef = ref(db, 'posts');
+  const snapshot = await get(postsRef);
+  
+  if (snapshot.exists()) {
+    const posts = [];
+    snapshot.forEach((childSnapshot) => {
+      posts.push({
+        id: childSnapshot.key,
+        ...childSnapshot.val()
+      });
+    });
+    return posts.sort((a, b) => b.timestamp - a.timestamp).slice(0, limit);
+  }
+  
   return [];
 };

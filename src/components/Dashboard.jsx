@@ -1,22 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import { getAuth } from 'firebase/auth';
-import { readGoals } from '../utils/database';
-import { BellIcon, UserCircleIcon, BookOpenIcon, UserGroupIcon, PencilSquareIcon, ChartBarIcon } from '@heroicons/react/24/outline';
+import { readGoals, getRecentPosts } from '../utils/database';
+import { BellIcon, UserCircleIcon, BookOpenIcon, PencilSquareIcon, ClipboardDocumentListIcon, UserGroupIcon, VideoCameraIcon, PlusIcon} from '@heroicons/react/24/outline';
+import { Checkbox } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom'; 
+import MotivationalVideo from './MotivationalVideo';
+import { readTasks, updateTask } from '../utils/database';
+
 
 export default function Dashboard() {
   const [totalGoals, setTotalGoals] = useState(0);
   const [user, setUser] = useState(null);
   const [goals, setGoals] = useState([])
+  const [recentPosts, setRecentPosts] = useState([]);
   const auth = getAuth();
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);{/* Switch to "true" to show under construction modal on login */}
   const handleJournalPromptClick = () => {
     navigate('/journal');
   };
-
+  const [tasks, setTasks] = useState([]);
   const [randomPrompt, setRandomPrompt] = useState('');
 
   useEffect(() => {
@@ -43,6 +47,33 @@ export default function Dashboard() {
       }
     });
 
+    const fetchRecentPosts = async () => {
+      const posts = await getRecentPosts();
+      setRecentPosts(posts);
+    };
+
+    fetchRecentPosts();
+
+    return () => unsubscribe();
+  }, []);
+
+  const fetchTasks = async () => {
+    if (auth.currentUser) {
+      const fetchedTasks = await readTasks(auth.currentUser.uid);
+      if (fetchedTasks) {
+        setTasks(Object.entries(fetchedTasks).map(([id, task]) => ({ id, ...task })));
+      }
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        fetchGoals(user.uid);
+        fetchTasks();
+      }
+    });
+  
     return () => unsubscribe();
   }, []);
 
@@ -60,6 +91,7 @@ export default function Dashboard() {
     const goals = await readGoals(uid);
     setTotalGoals(goals ? Object.keys(goals).length : 0);
   };
+
   {/* Placeholders for tableData */}
   const tableData = [
     { id: 1, goal: 'Learn React', progress: '75%', status: 'In Progress' },
@@ -68,16 +100,26 @@ export default function Dashboard() {
     { id: 4, goal: 'Travel to Japan', progress: '0%', status: 'Not Started' },
   ];
 
+  const handleToggleTask = async (taskId) => {
+    const updatedTasks = tasks.map(task => 
+      task.id === taskId ? { ...task, completed: !task.completed } : task
+    );
+    setTasks(updatedTasks);
+    if (auth.currentUser) {
+      await updateTask(auth.currentUser.uid, taskId, { completed: !tasks.find(t => t.id === taskId).completed });
+    }
+  };
+
   return (
     <div className="flex h-screen bg-ascend-white">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white shadow-sm z-10 p-4 flex justify-between items-center">
-          <h2 className="text-2xl font-semibold text-gray-800">Dashboard</h2>
+        <header className="bg-white shadow-sm z-10 p-4 flex flex-col sm:flex-row justify-between items-center">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-2 sm:mb-0">Dashboard</h2>
           <div className="flex items-center space-x-4">
           {user && (
             <p className="text-xs font-bold text-ascend-black">
-              Greetings, {user.displayName || 'Ascender'}!
+              Welcome, {user.displayName || 'Goal Ascender'}!
             </p>
           )}
             {user && user.photoURL ? (
@@ -97,6 +139,8 @@ export default function Dashboard() {
           </div>
         </header>
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-ascend-white p-4">
+        
+        {/* Under Construction Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
             <div className="relative p-5 border w-96 shadow-lg rounded-md bg-white">
@@ -117,17 +161,21 @@ export default function Dashboard() {
           </div>
         )}
           
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 ">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            
             {/* Current goals table */}
-            <div className="lg:col-span-2 bg-white rounded-sm p-4 border border-gray-300">
-              <h4 className="text-lg font-semibold mb-2">Current Goals</h4>
+            <div className="lg:col-span-2 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300">
+              <h4 className="text-lg text-ascend-black mb-4 flex items-center">
+                <ClipboardDocumentListIcon className="w-6 h-6 mr-2 text-ascend-black" />
+                Current Goals
+              </h4>
               <div className="overflow-x-auto max-h-64">
                 <table className="min-w-full">
                   <thead>
                     <tr>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Goal</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
-                      <th className="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b pb-1">Goal</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b pb-1">Progress</th>
+                      <th className="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b pb-1">Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -150,36 +198,89 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="lg:col-span-1 bg-white rounded-sm p-4 cursor-pointer border border-gray-300">
-            <h4 className="text-lg font-semibold mb-2">Journal Prompt</h4>
-            <div className="p-4 bg-ascend-blue-light rounded-md">
-              <p className="text-sm text-ascend-blue" 
-              onClick={handleJournalPromptClick}>
-                "{randomPrompt}"
-              </p>
-            </div>
-          </div>
 
-            {/* Quick Links */}
-            <div className="lg:col-span-2 bg-white rounded-sm shadow p-4 border border-gray-300">
-              <h4 className="text-lg font-semibold mb-2">Quick Links</h4>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <Link to="/goals" className="flex items-center p-2 text-ascend-black">
-                  <ChartBarIcon className="h-5 w-5 mr-2" />
-                  <span>Goals</span>
-                </Link>
-                <Link to="/journal" className="flex items-center p-2 text-ascend-black">
-                  <PencilSquareIcon className="h-5 w-5 mr-2" />
-                  <span>Journal</span>
-                </Link>
-                <Link to="/community" className="flex items-center p-2 text-ascend-black">
-                  <UserGroupIcon className="h-5 w-5 mr-2" />
-                  <span>Community</span>
-                </Link>
-                <Link to="/resources" className="flex items-center p-2 text-ascend-black">
-                  <BookOpenIcon className="h-5 w-5 mr-2" />
-                  <span>Resources</span>
-                </Link>
+            {/* Recent Posts */}
+            <div className="lg:col-span-1 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300">
+              <h4 className="text-lg text-ascend-black mb-4 flex items-center">
+                <UserGroupIcon className="w-6 h-6 mr-2 text-ascend-black" />
+                Recent Posts
+              </h4>
+              <div className="space-y-4">
+                {recentPosts.map((post) => (
+                  <div key={post.id} className="border-b pb-2">
+                    <p className="font-semibold">{post.authorName}</p>
+                    <p className="text-sm text-gray-600">
+                      {post.content.length > 50 ? post.content.substring(0, 50) + '...' : post.content}
+                    </p>
+                    <p className="text-xs text-gray-400">{new Date(post.timestamp).toLocaleString()}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Daily Prompt */}
+            <div className="lg:col-span-1 md:col-span-1 rounded-sm p-4 border border-gray-300 transition-all duration-300 hover:shadow-md">
+              <h4 className="text-base sm:text-lg text-ascend-black mb-2 sm:mb-4 flex items-center">
+                <BookOpenIcon className="w-6 h-6 mr-2 text-ascend-black" />
+                Daily Prompt
+              </h4>
+              <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-4">Reflect on your journey and learn from your experiences:</p>
+              <div className="bg-white p-6 rounded-md shadow-sm">
+                <p className="text-sm text-ascend-black italic leading-relaxed">
+                  "{randomPrompt}"
+                </p>
+              </div>
+              <button 
+                onClick={handleJournalPromptClick}
+                className="mt-4 sm:mt-6 w-full bg-ascend-black text-white py-1 sm:py-2 px-2 sm:px-4 rounded-md text-xs sm:text-sm flex items-center justify-center"
+              >
+                <PencilSquareIcon className="w-5 h-5 mr-2" />
+                Start Writing
+              </button>
+            </div>
+            
+            {/* Recent Tasks */}
+            <div className="lg:col-span-2 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300 shadow-md">
+              <h4 className="text-lg text-ascend-black mb-4 flex items-center">
+                <ClipboardDocumentListIcon className="w-6 h-6 mr-2 text-ascend-black" />
+                Recent Tasks
+              </h4>
+              <div className="overflow-y-auto max-h-64">
+                {tasks.slice(0, 5).map((task) => (
+                  <div key={task.id} className="flex items-center justify-between py-2 border-b">
+                    <div className="flex items-center">
+                      <Checkbox
+                        checked={task.completed}
+                        onChange={() => handleToggleTask(task.id)}
+                        className="mr-2"
+                      />
+                      <span className={task.completed ? 'line-through text-gray-500' : ''}>
+                        {task.text}
+                      </span>
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => navigate('/tasklist')}
+                className="mt-4 w-full bg-ascend-black text-white py-2 px-4 rounded-md text-sm flex items-center justify-center"
+              >
+                <PlusIcon className="w-5 h-5 mr-2" />
+                View All Tasks
+              </button>
+            </div>
+
+            {/* Motivational Video */}
+            <div className="lg:col-span-2 md:col-span-2 bg-white rounded-sm p-4 border border-gray-300 shadow-md">
+              <h4 className="text-lg text-ascend-black mb-4 flex items-center">
+                <VideoCameraIcon className="w-8 h-8 mr-3 text-ascend-black" />
+                Daily Inspiration
+              </h4>
+              <div>
+                <MotivationalVideo />
               </div>
             </div>
           </div>
