@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import { getAuth } from 'firebase/auth';
 import { readGoals, getRecentPosts } from '../utils/database';
-import { BellIcon, UserCircleIcon, BookOpenIcon, PencilSquareIcon, ClipboardDocumentListIcon, UserGroupIcon, VideoCameraIcon, PlusIcon} from '@heroicons/react/24/outline';
+import { BellIcon, UserCircleIcon, BookOpenIcon, PencilSquareIcon, ClipboardDocumentListIcon, UserGroupIcon, VideoCameraIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { Checkbox } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import MotivationalVideo from './MotivationalVideo';
@@ -208,7 +208,14 @@ export default function Dashboard() {
               <div className="space-y-4">
                 {recentPosts.map((post) => (
                   <div key={post.id} className="border-b pb-2">
-                    <p className="font-semibold">{post.authorName}</p>
+                    <div className="flex items-center mb-1">
+                      <img 
+                        src={post.authorPhotoURL || ' https://t3.ftcdn.net/jpg/06/33/54/78/360_F_633547842_AugYzexTpMJ9z1YcpTKUBoqBF0CUCk10.jpg'} 
+                        alt={post.authorName} 
+                        className="w-6 h-6 rounded-full mr-2"
+                      />
+                      <p className="font-semibold">{post.authorName}</p>
+                    </div>
                     <p className="text-sm text-gray-600">
                       {post.content.length > 50 ? post.content.substring(0, 50) + '...' : post.content}
                     </p>

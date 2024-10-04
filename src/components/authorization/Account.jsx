@@ -97,7 +97,7 @@ export default function Account() {
             <div className="mb-8 text-center">
               <div className="relative inline-block">
                 <img 
-                  src={currentUser.photoURL || 'https://via.placeholder.com/150'} 
+                  src={currentUser.photoURL || 'https://t3.ftcdn.net/jpg/06/33/54/78/360_F_633547842_AugYzexTpMJ9z1YcpTKUBoqBF0CUCk10.jpg'} 
                   alt="Profile" 
                   className="h-32 w-32 rounded-full object-cover shadow-lg"
                 />
