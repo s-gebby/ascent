@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import { getAuth } from 'firebase/auth';
 import { readGoals, getRecentPosts } from '../utils/database';
-import { BellIcon, UserCircleIcon, BookOpenIcon, PencilSquareIcon, ClipboardDocumentListIcon, UserGroupIcon, VideoCameraIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { BellIcon, UserCircleIcon, BookOpenIcon, PencilSquareIcon, ClipboardDocumentListIcon, UserGroupIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
 import { Checkbox } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import MotivationalVideo from './MotivationalVideo';
 import { readTasks, updateTask } from '../utils/database';
+import { motion } from 'framer-motion';
+
+
 
 
 export default function Dashboard() {
@@ -137,34 +140,44 @@ export default function Dashboard() {
             )}
             <BellIcon className="h-6 w-6 text-gray-600" />
           </div>
-        </header>
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-ascend-white p-4">
+              </header>
+              <motion.main
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="flex-1 overflow-x-hidden overflow-y-auto bg-ascend-white p-4"
+              >
         
-        {/* Under Construction Modal */}
-        {showModal && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-            <div className="relative p-5 border w-96 shadow-lg rounded-md bg-white">
-              <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2 text-center">🚨Important🚨</h3>
-              {user && (
-                <p className="text-sm text-center m-4 font-bold text-ascend-black">
-                  Hello, {user.displayName || 'Ascender'}!
-                </p>
-              )}
-              <p className="mb-4 text-sm text-center">This application is currently under construction. Some features may not be fully functional.</p>
-              <button
+              {/* Under Construction Modal */}
+            {showModal && (
+              <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+                <div className="relative p-5 border w-96 shadow-lg rounded-md bg-white">
+                  <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2 text-center">🚨Important🚨</h3>
+                {user && (
+                  <p className="text-sm text-center m-4 font-bold text-ascend-black">
+                    Hello, {user.displayName || 'Ascender'}!
+                  </p>
+                )}
+                <p className="mb-4 text-sm text-center">This application is currently under construction. Some features may not be fully functional.</p>
+                <button
                 onClick={() => setShowModal(false)}
                 className="px-4 py-2 bg-ascend-blue text-xs text-white rounded hover:bg-ascend-blue-dark mx-auto block"
-              >
+                >
                 Understood
               </button>
             </div>
           </div>
         )}
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             
             {/* Current goals table */}
-            <div className="lg:col-span-2 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="lg:col-span-2 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
+            >
               <h4 className="text-lg text-ascend-black mb-4 flex items-center">
                 <ClipboardDocumentListIcon className="w-6 h-6 mr-2 text-ascend-black" />
                 Current Goals
@@ -196,11 +209,15 @@ export default function Dashboard() {
                   </tbody>
                 </table>
               </div>
-            </div>
-
-
+            </motion.div>
+            
             {/* Recent Posts */}
-            <div className="lg:col-span-1 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="lg:col-span-1 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
+            >
               <h4 className="text-lg text-ascend-black mb-4 flex items-center">
                 <UserGroupIcon className="w-6 h-6 mr-2 text-ascend-black" />
                 Recent Posts
@@ -223,10 +240,15 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
             {/* Daily Prompt */}
-            <div className="lg:col-span-1 md:col-span-1 rounded-sm p-4 border border-gray-300 transition-all duration-300 hover:shadow-md">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="lg:col-span-1 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
+            >
               <h4 className="text-base sm:text-lg text-ascend-black mb-2 sm:mb-4 flex items-center">
                 <BookOpenIcon className="w-6 h-6 mr-2 text-ascend-black" />
                 Daily Prompt
@@ -244,15 +266,20 @@ export default function Dashboard() {
                 <PencilSquareIcon className="w-5 h-5 mr-2" />
                 Start Writing
               </button>
-            </div>
+            </motion.div>
             
             {/* Recent Tasks */}
-            <div className="lg:col-span-2 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300 shadow-md">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="lg:col-span-2 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
+            >
               <h4 className="text-lg text-ascend-black mb-4 flex items-center">
                 <ClipboardDocumentListIcon className="w-6 h-6 mr-2 text-ascend-black" />
                 Recent Tasks
               </h4>
-              <div className="overflow-y-auto max-h-64">
+              <div className="overflow-y-auto max-h-64 text-sm">
                 {tasks.slice(0, 5).map((task) => (
                   <div key={task.id} className="flex items-center justify-between py-2 border-b">
                     <div className="flex items-center">
@@ -261,7 +288,7 @@ export default function Dashboard() {
                         onChange={() => handleToggleTask(task.id)}
                         className="mr-2"
                       />
-                      <span className={task.completed ? 'line-through text-gray-500' : ''}>
+                      <span className={task.completed ? 'line-through text-green-500' : ''}>
                         {task.text}
                       </span>
                     </div>
@@ -275,23 +302,27 @@ export default function Dashboard() {
                 onClick={() => navigate('/tasklist')}
                 className="mt-4 w-full bg-ascend-black text-white py-2 px-4 rounded-md text-sm flex items-center justify-center"
               >
-                <PlusIcon className="w-5 h-5 mr-2" />
                 View All Tasks
               </button>
-            </div>
+            </motion.div>
 
             {/* Motivational Video */}
-            <div className="lg:col-span-2 md:col-span-2 bg-white rounded-sm p-4 border border-gray-300 shadow-md">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="lg:col-span-2 md:col-span-2 bg-white rounded-sm p-4 border border-gray-300"
+            >
               <h4 className="text-lg text-ascend-black mb-4 flex items-center">
-                <VideoCameraIcon className="w-8 h-8 mr-3 text-ascend-black" />
-                Daily Inspiration
+                <VideoCameraIcon className="w-6 h-6 mr-2 text-ascend-black" />
+                Motivation
               </h4>
               <div>
                 <MotivationalVideo />
               </div>
-            </div>
-          </div>
-        </main>
+            </motion.div>
+          </motion.div>
+        </motion.main>
       </div>
     </div>
   );
