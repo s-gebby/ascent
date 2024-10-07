@@ -273,7 +273,7 @@ export default function Dashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="lg:col-span-2 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
+              className="lg:col-span1 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
             >
               <h4 className="text-lg text-ascend-black mb-4 flex items-center">
                 <ClipboardDocumentListIcon className="w-6 h-6 mr-2 text-ascend-black" />
@@ -293,7 +293,7 @@ export default function Dashboard() {
                       </span>
                     </div>
                     <span className="text-sm text-gray-500">
-                      {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}
+                      {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'None'}
                     </span>
                   </div>
                 ))}
@@ -305,6 +305,22 @@ export default function Dashboard() {
                 View All Tasks
               </button>
             </motion.div>
+
+            {/* Goals Progress */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="lg:col-span-1 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
+            >
+            <h4 className="text-lg text-ascend-black mb-4 flex items-center">
+              <UserGroupIcon className="w-6 h-6 mr-2 text-ascend-black" />
+              Monthly Progress
+              </h4>
+              <div className="flex items-center justify-between">
+            </div>
+            </motion.div>
+
 
             {/* Motivational Video */}
             <motion.div
