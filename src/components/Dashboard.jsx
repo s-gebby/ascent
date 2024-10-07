@@ -113,34 +113,82 @@ export default function Dashboard() {
     }
   };
 
+  const [newsDropdownOpen, setNewsDropdownOpen] = useState(false);
+
+
+
   return (
     <div className="flex h-screen bg-ascend-white">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white shadow-sm z-10 p-4 flex flex-col sm:flex-row justify-between items-center">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-2 sm:mb-0">Dashboard</h2>
-          <div className="flex items-center space-x-4">
+      <header className="bg-white shadow-sm z-10 p-4 flex flex-col sm:flex-row justify-between items-center">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-2 sm:mb-0">Dashboard</h2>
+        <div className="flex items-center space-x-4">
+        <div className="relative">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-blue focus:border-transparent"
+            />
+            <svg
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          <div className="relative">
+            <button
+              className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none"
+              onClick={() => setNewsDropdownOpen(!newsDropdownOpen)}
+            >
+              <span>News</span>
+              <svg className="ml-1 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+            {newsDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-64 bg-green-100 border border-ascend-black rounded-md shadow-lg py-2 px-4 z-10">
+                <h3 className="text-sm mb-2">Latest Updates</h3>
+                <p className="text-xs mb-2">Search on the main dashboard anything within the app.</p>
+                
+                <h3 className="text-sm mb-2">Feature Announcement</h3>
+                <p className="text-xs mb-2">Coming soon: Artificial Intelligence Accountability Buddy!</p>
+                
+                <h3 className="text-sm mb-2">Community Highlight</h3>
+                <p className="text-xs">We'll be launching to the public here within a couple of days!</p>
+              </div>
+            )}
+          </div>
           {user && (
             <p className="text-xs font-bold text-ascend-black">
               Welcome, {user.displayName || 'Goal Ascender'}!
             </p>
           )}
-            {user && user.photoURL ? (
-              <img 
-                src={user.photoURL} 
-                alt="Profile" 
-                className="h-8 w-8 rounded-full cursor-pointer"
-                onClick={() => navigate('/account')}
-              />
-            ) : (
-              <UserCircleIcon 
-                className="h-8 w-8 text-gray-600 cursor-pointer" 
-                onClick={() => navigate('/account')}
-              />
-            )}
-            <BellIcon className="h-6 w-6 text-gray-600" />
+          {user && user.photoURL ? (
+            <img 
+              src={user.photoURL} 
+              alt="Profile" 
+              className="h-8 w-8 rounded-full cursor-pointer"
+              onClick={() => navigate('/account')}
+            />
+          ) : (
+            <UserCircleIcon 
+              className="h-8 w-8 text-gray-600 cursor-pointer" 
+              onClick={() => navigate('/account')}
+            />
+          )}
+          <BellIcon className="h-6 w-6 text-gray-600" />
           </div>
-              </header>
+      </header>
               <motion.main
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
