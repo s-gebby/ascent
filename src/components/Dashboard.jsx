@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import { getAuth } from 'firebase/auth';
 import { readGoals, getRecentPosts } from '../utils/database';
-import { BellIcon, UserCircleIcon, BookOpenIcon, PencilSquareIcon, ClipboardDocumentListIcon, UserGroupIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
+import { BellIcon, UserCircleIcon, BookOpenIcon, PencilSquareIcon, ClipboardDocumentListIcon, UserGroupIcon, VideoCameraIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { Checkbox } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import MotivationalVideo from './MotivationalVideo';
 import { readTasks, updateTask } from '../utils/database';
 import { motion } from 'framer-motion';
+import { getNewestMembers } from '../utils/database';
 
 
 
@@ -114,6 +115,55 @@ export default function Dashboard() {
   };
 
   const [newsDropdownOpen, setNewsDropdownOpen] = useState(false);
+  const [spotlightMember, setSpotlightMember] = useState(null);
+  const [dailyQuote, setDailyQuote] = useState('');
+  const quotes = [
+  "Success is not final, failure is not fatal: It is the courage to continue that counts. – Winston Churchill",
+  "The only way to do great work is to love what you do. – Steve Jobs",
+  "Don’t count the days; make the days count. – Muhammad Ali",
+  "Discipline is the bridge between goals and accomplishment. – Jim Rohn",
+  "The harder the battle, the sweeter the victory. – Les Brown",
+  "Do something today that your future self will thank you for. – Sean Patrick Flanery",
+  "You miss 100% of the shots you don’t take. – Wayne Gretzky",
+  "Perseverance is not a long race; it’s many short races one after the other. – Walter Elliot",
+  "It always seems impossible until it's done. – Nelson Mandela",
+  "Champions keep playing until they get it right. – Billie Jean King",
+  "Tough times never last, but tough people do. – Robert H. Schuller",
+  "Believe you can and you’re halfway there. – Theodore Roosevelt",
+  "The only limit to our realization of tomorrow is our doubts of today. – Franklin D. Roosevelt",
+  "What lies behind us and what lies before us are tiny matters compared to what lies within us. – Ralph Waldo Emerson",
+  "Dream big and dare to fail. – Norman Vaughan",
+  "Success is walking from failure to failure with no loss of enthusiasm. – Winston Churchill",
+  "Action is the foundational key to all success. – Pablo Picasso",
+  "Your time is limited, don’t waste it living someone else’s life. – Steve Jobs",
+  "The best way to predict your future is to create it. – Abraham Lincoln",
+  "Pain is temporary. Quitting lasts forever. – Lance Armstrong",
+  "The more you sweat in training, the less you bleed in combat. – Richard Marcinko",
+  "He who dares, wins. – SAS motto",
+  "Fortune favors the bold. – Virgil",
+  "Never let the fear of striking out keep you from playing the game. – Babe Ruth",
+  "The man who moves a mountain begins by carrying away small stones. – Confucius",
+  "Failure is simply the opportunity to begin again, this time more intelligently. – Henry Ford",
+  "What you get by achieving your goals is not as important as what you become by achieving them. – Zig Ziglar",
+  "Courage is being scared to death but saddling up anyway. – John Wayne",
+  "It’s not whether you get knocked down, it’s whether you get up. – Vince Lombardi",
+  "If you want to fly, you have to give up the things that weigh you down. – Toni Morrison"
+];
+  useEffect(() => {
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    setDailyQuote(randomQuote);
+  }, []);
+
+
+  useEffect(() => {
+    const fetchSpotlightMember = async () => {
+      const members = await getNewestMembers(1);
+      if (members.length > 0) {
+        setSpotlightMember(members[0]);
+      }
+    };
+    fetchSpotlightMember();
+  }, []);
 
 
 
@@ -121,14 +171,15 @@ export default function Dashboard() {
     <div className="flex h-screen bg-ascend-white">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
-      <header className="bg-white shadow-sm z-10 p-4 flex flex-col sm:flex-row justify-between items-center">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-2 sm:mb-0">Dashboard</h2>
+      <header className="bg-white z-10 p-4 flex flex-col sm:flex-row justify-between items-center">
+        <h2 className="text-3xl font-semibold text-ascend-black">Dashboard</h2>
+        <p className="text-xs italic text-gray-600">"{dailyQuote}"</p>
         <div className="flex items-center space-x-4">
         <div className="relative">
             <input
               type="text"
-              placeholder="Search..."
-              className="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-blue focus:border-transparent"
+              placeholder="Find..."
+              className="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
             />
             <svg
               className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
@@ -147,7 +198,7 @@ export default function Dashboard() {
           </div>
           <div className="relative">
             <button
-              className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none"
+              className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 focus:outline-none"
               onClick={() => setNewsDropdownOpen(!newsDropdownOpen)}
             >
               <span>News</span>
@@ -177,16 +228,16 @@ export default function Dashboard() {
             <img 
               src={user.photoURL} 
               alt="Profile" 
-              className="h-8 w-8 rounded-full cursor-pointer"
+              className="h-8 w-8 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
               onClick={() => navigate('/account')}
             />
           ) : (
             <UserCircleIcon 
-              className="h-8 w-8 text-gray-600 cursor-pointer" 
+              className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
               onClick={() => navigate('/account')}
             />
           )}
-          <BellIcon className="h-6 w-6 text-gray-600" />
+          <BellIcon className="h-6 w-6 text-gray-600 duration-1000"/>
           </div>
       </header>
               <motion.main
@@ -354,22 +405,36 @@ export default function Dashboard() {
               </button>
             </motion.div>
 
-            {/* Goals Progress */}
+            {/* Member Spotlight */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               className="lg:col-span-1 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
             >
-            <h4 className="text-lg text-ascend-black mb-4 flex items-center">
-              <UserGroupIcon className="w-6 h-6 mr-2 text-ascend-black" />
-              Monthly Progress
+              <h4 className="text-lg text-ascend-black mb-4 flex items-center">
+                <SparklesIcon className="w-6 h-6 mr-2 text-ascend-black"/>
+                Member Spotlight
               </h4>
-              <div className="flex items-center justify-between">
-            </div>
+              {spotlightMember ? (
+                <div className="text-sm">
+                  <img 
+                    src={spotlightMember.photoURL || 'https://t3.ftcdn.net/jpg/06/33/54/78/360_F_633547842_AugYzexTpMJ9z1YcpTKUBoqBF0CUCk10.jpg'} 
+                    alt={spotlightMember.displayName} 
+                    className="w-16 h-16 rounded-full mx-auto mb-2"
+                  />
+                  <p className="font-semibold text-center mb-2">{spotlightMember.displayName}</p>
+                  <p className="text-gray-600 mb-2">
+                    {spotlightMember.displayName} recently completed their goal: {spotlightMember.goal.title}
+                  </p>
+                  <p className="italic text-gray-500">
+                    "{spotlightMember.goal.reflection}"
+                  </p>
+                </div>
+              ) : (
+                <p className='font-semibold text-center mt-16'>No spotlight today...<br></br><br></br><span className='text-xl'>Keep attacking your goals!!!</span></p>
+              )}
             </motion.div>
-
-
             {/* Motivational Video */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}

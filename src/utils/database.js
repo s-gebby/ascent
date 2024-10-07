@@ -300,3 +300,30 @@ export const getRecentPosts = async (limit = 3) => {
   
   return [];
 };
+
+export const getRandomSpotlightMember = async () => {
+  const db = getDatabase();
+  const usersRef = ref(db, 'users');
+  const snapshot = await get(usersRef);
+  
+  if (snapshot.exists()) {
+    const users = Object.entries(snapshot.val())
+      .map(([id, user]) => ({ id, ...user }))
+      .filter(user => user.completedGoals && Object.keys(user.completedGoals).length > 0);
+    
+    if (users.length > 0) {
+      const randomUser = users[Math.floor(Math.random() * users.length)];
+      const completedGoals = Object.values(randomUser.completedGoals);
+      const randomGoal = completedGoals[Math.floor(Math.random() * completedGoals.length)];
+      
+      return {
+        id: randomUser.id,
+        displayName: randomUser.username,
+        photoURL: randomUser.photoURL,
+        goal: randomGoal
+      };
+    }
+  }
+  
+  return null;
+};
