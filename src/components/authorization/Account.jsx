@@ -6,8 +6,7 @@ import { updateProfile } from 'firebase/auth'
 import Sidebar from '../Sidebar.jsx';
 import { motion } from 'framer-motion';
 import { CameraIcon, UserCircleIcon, EnvelopeIcon, CalendarIcon, LockClosedIcon } from '@heroicons/react/24/outline';
-
-
+import { useNavigate } from 'react-router-dom';
 
 export default function Account() {
   const { currentUser } = useAuth()
@@ -19,6 +18,8 @@ export default function Account() {
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -37,6 +38,11 @@ export default function Account() {
       setProfilePicture(e.target.files[0])
     }
   }
+
+  const handleLogout = () => {
+    // Add logout logic
+    navigate('/');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -90,7 +96,13 @@ export default function Account() {
         <div className="max-w-4xl mx-auto bg-white rounded-sm shadow-xl overflow-hidden">
           <div className="px-8 py-6 bg-ascend-black text-white">
             <h2 className="text-2xl font-bold">Account Information</h2>
-            <p className="mt-2 text-sm text-ascend-blue-light">Manage your personal details and account settings</p>
+            <p className="mt-2 mb-6 text-sm text-ascend-blue-light">Manage your personal details and account settings</p>
+            <button
+            onClick={handleLogout}
+            className="px-6 py-2 bg-red-500 text-xs text-white rounded-md shadow focus:outline-none focus:ring-2 focus:ring-ascend-black focus:ring-opacity-50 transition-colors"
+          >
+            Log Out
+          </button>
           </div>
           
           <div className="p-8">
@@ -183,7 +195,7 @@ export default function Account() {
                   </button>
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="ml-4 px-6 py-2 bg-ascend-white text-xs text-gray-700 rounded-md shadow hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition-colors"
+                    className="ml-2 px-6 py-2 bg-ascend-orange text-xs text-ascend-white rounded-md shadow focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition-colors"
                   >
                     Cancel
                   </button>

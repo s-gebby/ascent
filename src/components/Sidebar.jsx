@@ -82,27 +82,27 @@ import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon, HomeIcon, ChartBa
                 )}
               </li>
               <li className="mb-4">
-                <Link to="/journal" className="flex items-center py-2 px-4 hover:bg-ascend-blue rounded text-sm">
-                  <BookOpenIcon className="h-5 w-5 mr-2" />
-                  Journal
-                </Link>
-              </li>
-              <li className="mb-4">
-                <Link to="/community" className="flex items-center py-2 px-4 hover:bg-ascend-blue rounded text-sm">
-                  <UserGroupIcon className="h-5 w-5 mr-2" />
-                  Community
-                </Link>
-              </li>
-              <li className="mb-4">
                 <Link to="/goals" className="flex items-center py-2 px-4 hover:bg-ascend-blue rounded text-sm">
                   <ClipboardDocumentListIcon className="h-5 w-5 mr-2" />
                   Goals
                 </Link>
               </li>
               <li className="mb-4">
-                <Link to="/tasklist" className="flex items-center py-1 px-4 hover:bg-gray-700 rounded text-sm">
+                <Link to="/journal" className="flex items-center py-2 px-4 hover:bg-ascend-blue rounded text-sm">
+                  <BookOpenIcon className="h-5 w-5 mr-2" />
+                  Journal
+                </Link>
+              </li>
+              <li className="mb-4">
+                <Link to="/tasklist" className="flex items-center py-2 px-4 hover:bg-ascend-blue rounded text-sm">
                   <ClipboardIcon className="h-4 w-4 mr-2" />
                   Task List
+                </Link>
+              </li>
+              <li className="mb-4">
+                <Link to="/community" className="flex items-center py-2 px-4 hover:bg-ascend-blue rounded text-sm">
+                  <UserGroupIcon className="h-5 w-5 mr-2" />
+                  Community
                 </Link>
               </li>
             </ul>

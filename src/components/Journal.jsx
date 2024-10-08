@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from 'react'
 import Sidebar from './Sidebar'
-import { getAuth } from 'firebase/auth'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { createJournalEntry, getJournalEntries, updateJournalEntry } from '../utils/database'
 import { Button, TextInput, Select, MultiSelect, Textarea, Modal } from '@mantine/core'
 import { jsPDF } from 'jspdf';
@@ -39,6 +39,8 @@ export default function Journal() {
 
   const auth = getAuth()
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
 
 
 
@@ -73,11 +75,15 @@ export default function Journal() {
     finance: 'bg-ascend-orange',
     other: 'bg-gray-600'
   };
-
   useEffect(() => {
-    fetchEntries()
-  }, [])
+    const auth = getAuth()
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser)
+    })
 
+    // Cleanup subscription on unmount
+    return () => unsubscribe()
+  }, [])
   const fetchEntries = async () => {
     if (auth.currentUser) {
       const fetchedEntries = await getJournalEntries(auth.currentUser.uid)
@@ -169,24 +175,50 @@ return (
       setIsOpen={setIsSidebarOpen}
     />
     <div className="flex-1 flex flex-col h-screen">
-      <header className="bg-white shadow-sm z-10 p-4 flex justify-between items-center w-full">
-        <h2 className="text-2xl font-semibold text-gray-800">Journal</h2>
+    <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center">
+        <h2 className="text-3xl ml-2 font-semibold text-ascend-black">Journal</h2>
         <div className="flex items-center space-x-4">
-          <BellIcon className="h-6 w-6 text-gray-600" />
-          {auth.currentUser && auth.currentUser.photoURL ? (
+        <div className="relative">
+            <input
+              type="text"
+              placeholder="Find..."
+              className="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
+            />
+            <svg
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          {user && (
+            <p className="text-xs font-bold text-ascend-black">
+              Welcome, {user.displayName || 'Goal Ascender'}!
+            </p>
+          )}
+          {user && user.photoURL ? (
             <img 
-              src={auth.currentUser.photoURL} 
+              src={user.photoURL} 
               alt="Profile" 
-              className="h-8 w-8 rounded-full cursor-pointer"
+              className="h-8 w-8 mr-2 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
               onClick={() => navigate('/account')}
             />
           ) : (
             <UserCircleIcon 
-              className="h-8 w-8 text-gray-600 cursor-pointer" 
+              className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
               onClick={() => navigate('/account')}
             />
           )}
-        </div>
+          <BellIcon className="h-6 w-6 text-gray-600 duration-1000 mr-2"/>
+          </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">

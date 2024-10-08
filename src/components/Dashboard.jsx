@@ -171,8 +171,8 @@ export default function Dashboard() {
     <div className="flex h-screen bg-ascend-white">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
-      <header className="bg-white z-10 p-4 flex flex-col sm:flex-row justify-between items-center">
-        <h2 className="text-3xl font-semibold text-ascend-black">Dashboard</h2>
+      <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center">
+        <h2 className="text-3xl ml-2 font-semibold text-ascend-black">Dashboard</h2>
         <p className="text-xs italic text-gray-600">"{dailyQuote}"</p>
         <div className="flex items-center space-x-4">
         <div className="relative">
@@ -228,7 +228,7 @@ export default function Dashboard() {
             <img 
               src={user.photoURL} 
               alt="Profile" 
-              className="h-8 w-8 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
+              className="h-8 w-8 mr-2 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
               onClick={() => navigate('/account')}
             />
           ) : (
@@ -237,7 +237,7 @@ export default function Dashboard() {
               onClick={() => navigate('/account')}
             />
           )}
-          <BellIcon className="h-6 w-6 text-gray-600 duration-1000"/>
+          <BellIcon className="h-6 w-6 text-gray-600 duration-1000 mr-2"/>
           </div>
       </header>
               <motion.main

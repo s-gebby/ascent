@@ -3,9 +3,9 @@ import Sidebar from './Sidebar'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { readPosts, createPost, encouragePost, readUserData, deletePost, addComment, getComments, deleteComment, getNewestMembers } from '../utils/database.js'
 import { Avatar, TextInput, Button, Paper, Text, Menu } from '@mantine/core'
-
+import { Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { HeartIcon, TrashIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline';
+import { HeartIcon, TrashIcon, EllipsisVerticalIcon, BellIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 
 
 
@@ -20,8 +20,17 @@ export default function Community() {
   const [newestMembers, setNewestMembers] = useState([]);
   const [comments, setComments] = useState({});
   const [newComments, setNewComments] = useState({});
+  const [navigate] = useState(false);
 
-
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+  
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -132,6 +141,51 @@ export default function Community() {
       
       
       <div className="flex-1 overflow-auto">
+      <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center">
+        <h2 className="text-3xl ml-2 font-semibold text-ascend-black">Community</h2>
+        <div className="flex items-center space-x-4">
+        <div className="relative">
+            <input
+              type="text"
+              placeholder="Find..."
+              className="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
+            />
+            <svg
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          {user && (
+            <p className="text-xs font-bold text-ascend-black">
+              Welcome, {user.displayName || 'Goal Ascender'}!
+            </p>
+          )}
+          {user && user.photoURL ? (
+            <img 
+              src={user.photoURL} 
+              alt="Profile" 
+              className="h-8 w-8 mr-2 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
+              onClick={() => navigate('/account')}
+            />
+          ) : (
+            <UserCircleIcon 
+              className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
+              onClick={() => navigate('/account')}
+            />
+          )}
+          <BellIcon className="h-6 w-6 text-gray-600 duration-1000 mr-2"/>
+          </div>
+      </header>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row">
             {/* Sidebar for mobile */}
