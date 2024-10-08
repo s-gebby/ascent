@@ -17,7 +17,7 @@ export default function Dashboard() {
   const [currentGoals, setCurrentGoals] = useState([]);
   const auth = getAuth();
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);{/* Switch to "true" to show under construction modal on login */}
+  const [showModal, setShowModal] = useState(true);{/* Switch to "true" to show under construction modal on login */}
   const handleJournalPromptClick = () => {
     navigate('/journal');
   };
