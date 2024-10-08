@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import MotivationalVideo from './MotivationalVideo';
 import { readTasks, updateTask } from '../utils/database';
 import { motion } from 'framer-motion';
-import { getNewestMembers } from '../utils/database';
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -133,7 +132,6 @@ export default function Dashboard() {
   };
 
   const [newsDropdownOpen, setNewsDropdownOpen] = useState(false);
-  const [spotlightMember, setSpotlightMember] = useState(null);
   const [dailyQuote, setDailyQuote] = useState('');
   const quotes = [
   "Success is not final, failure is not fatal: It is the courage to continue that counts. – Winston Churchill",
@@ -172,16 +170,6 @@ export default function Dashboard() {
     setDailyQuote(randomQuote);
   }, []);
 
-
-  useEffect(() => {
-    const fetchSpotlightMember = async () => {
-      const members = await getNewestMembers(3);
-      if (members.length > 0) {
-        setSpotlightMember(members[0]);
-      }
-    };
-    fetchSpotlightMember();
-  }, []);
 
   return (
     <div className="flex h-screen bg-ascend-white">
@@ -421,33 +409,10 @@ export default function Dashboard() {
                 View All Tasks
               </button>
             </motion.div>
-            {/* Member Spotlight */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="lg:col-span-1 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
-            >
-              <h4 className="text-lg text-ascend-black mb-4 flex items-center">
-                <SparklesIcon className="w-6 h-6 mr-2 text-ascend-black"/>
-                Member Spotlight
-              </h4>
-              {spotlightMember ? (
-                <div className="text-sm">
-                  <img 
-                    src={spotlightMember.photoURL || 'default-avatar-url.jpg'} 
-                    alt={spotlightMember.username} 
-                    className="w-16 h-16 rounded-full mx-auto mb-2"
-                  />
-                  <p className="font-semibold text-center mb-2">{spotlightMember.username}</p>
-                  <p className="text-gray-600 mb-2">
-                    Joined: {new Date(spotlightMember.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-              ) : (
-                <p className='font-semibold text-center mt-16'>No spotlight member yet</p>
-              )}
-            </motion.div>
+            {/* Spotlight Member */}
+            
+                
+      
             {/* Motivational Video */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
