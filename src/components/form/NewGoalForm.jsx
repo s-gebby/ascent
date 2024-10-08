@@ -1,35 +1,30 @@
-import React from 'react';
+import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import "../../styles/datepicker-custom.css";
 
 import { motion } from 'framer-motion';
-import { TextInput, Textarea, Checkbox, Button } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { TextInput, Textarea, Button, Checkbox } from '@mantine/core';
 
-export default function NewGoalForm({ onAddGoal, onCancel }) {
-  const form = useForm({
-    initialValues: {
-      title: '',
-      description: '',
-      completeBy: null,
-      isDailyGoal: false,
-      milestones: [],
-    },
-    validate: {
-      title: (value) => (value ? null : 'Title is required'),
-      description: (value) => (value ? null : 'Description is required'),
-      completeBy: (value, values) => 
-        (!values.isDailyGoal && !value) ? 'Please select a completion date or mark as a daily goal' : null,
-    },
+export default function NewGoalForm({ onAddGoal }) {
+  const [goalData, setGoalData] = useState({
+    title: '',
+    description: '',
+    completeBy: null,
+    isDailyGoal: false,
   });
+  const [initialTask, setInitialTask] = useState('');
 
-  const handleSubmit = (values) => {
-    onAddGoal({
-      ...values,
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newGoal = {
+      ...goalData,
       createdAt: new Date().toISOString(),
-    });
-    form.reset();
+      initialTask: initialTask ? { title: initialTask, completed: false } : null,
+    };
+    onAddGoal(newGoal);
+    setGoalData({ title: '', description: '', completeBy: null, isDailyGoal: false });
+    setInitialTask('');
   };
 
   return (
@@ -40,14 +35,15 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
       exit={{ opacity: 0, y: -20 }}
     >
       <div className="md:flex ">
-        <form onSubmit={form.onSubmit(handleSubmit)} className="p-6 space-y-4 md:w-2/3 ">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4 md:w-2/3 ">
           <h2 className="text-lg font-bold text-ascend-green uppercase mb-6 font-archivo-black">Create New Goal</h2>
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black ">1 - Goal Title</label>
             <TextInput
               id="title"
               placeholder="Enter your goal title"
-              {...form.getInputProps('title')}
+              value={goalData.title}
+              onChange={(e) => setGoalData({...goalData, title: e.target.value})}
               className="w-full p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 font-archivo"
             />
           </div>
@@ -56,21 +52,19 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
             <Textarea
               id="description"
               placeholder="Describe your goal"
-              {...form.getInputProps('description')}
+              value={goalData.description}
+              onChange={(e) => setGoalData({...goalData, description: e.target.value})}
               className="w-full p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 font-archivo"
             />
           </div>
-
-          {form.errors && (
-            <p className="text-ascend-pink text-sm font-archivo">{Object.values(form.errors)[0]}</p>
-          )}
 
           <div className="flex flex-col items-end mt-8">
             <div className="flex items-center m-3">
               <label htmlFor="dailyGoal" className="mr-1 text-sm font-semibold text-ascend-black">4 - Daily Goal</label>
               <Checkbox
                 id="dailyGoal"
-                {...form.getInputProps('isDailyGoal', { type: 'checkbox' })}
+                checked={goalData.isDailyGoal}
+                onChange={(e) => setGoalData({...goalData, isDailyGoal: e.target.checked})}
                 color="ascend-green"
                 className="w-2 h-5 bg-gray-100 border-gray-900 rounded focus:ring-ascend-blue focus:ring-2"
               />
@@ -79,7 +73,7 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
               type="submit" 
               className="bg-ascend-blue text-white font-bold font-archivo-black transition duration-200"
             >
-              Add Goal
+              Create Goal
             </Button>
           </div>
         </form>
@@ -90,8 +84,8 @@ export default function NewGoalForm({ onAddGoal, onCancel }) {
             
             <DatePicker
               id="completeBy"
-              selected={form.values.completeBy}
-              onChange={(date) => form.setFieldValue('completeBy', date)}
+              selected={goalData.completeBy}
+              onChange={(date) => setGoalData({...goalData, completeBy: date})}
               inline
               className="rounded-lg shadow-md"
             />

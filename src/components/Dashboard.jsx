@@ -10,14 +10,11 @@ import { readTasks, updateTask } from '../utils/database';
 import { motion } from 'framer-motion';
 import { getNewestMembers } from '../utils/database';
 
-
-
-
 export default function Dashboard() {
-  const [totalGoals, setTotalGoals] = useState(0);
   const [user, setUser] = useState(null);
   const [goals, setGoals] = useState([])
   const [recentPosts, setRecentPosts] = useState([]);
+  const [currentGoals, setCurrentGoals] = useState([]);
   const auth = getAuth();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);{/* Switch to "true" to show under construction modal on login */}
@@ -26,6 +23,8 @@ export default function Dashboard() {
   };
   const [tasks, setTasks] = useState([]);
   const [randomPrompt, setRandomPrompt] = useState('');
+  const [recentTasks, setRecentTasks] = useState([]);
+
 
   useEffect(() => {
     setRandomPrompt(journalPrompts[Math.floor(Math.random() * journalPrompts.length)]);
@@ -63,47 +62,66 @@ export default function Dashboard() {
 
   const fetchTasks = async () => {
     if (auth.currentUser) {
-      const fetchedTasks = await readTasks(auth.currentUser.uid);
-      if (fetchedTasks) {
-        setTasks(Object.entries(fetchedTasks).map(([id, task]) => ({ id, ...task })));
+      try {
+        const fetchedTasks = await readTasks(auth.currentUser.uid);
+        setTasks(fetchedTasks || []);
+      } catch (error) {
+        console.error("Error fetching tasks:", error.message);
+        // Handle the error, perhaps by setting an error state
+        setTasks([]);
       }
+    } else {
+      console.log("No authenticated user");
+      setTasks([]);
     }
   };
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        fetchGoals(user.uid);
-        fetchTasks();
+    const fetchRecentTasks = async () => {
+      if (auth.currentUser) {
+        const fetchedTasks = await readTasks(auth.currentUser.uid);
+        setRecentTasks(fetchedTasks.slice(0, 5)); // Get the 5 most recent tasks
       }
-    });
+    };
   
-    return () => unsubscribe();
-  }, []);
+    fetchRecentTasks();
+  }, [auth.currentUser]);
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      fetchGoals();
+    }
+  }, [auth.currentUser]);
+
+  const handleAddGoal = async (goalData) => {
+    if (auth.currentUser) {
+      const newGoalId = await createGoal(auth.currentUser.uid, goalData);
+      setGoals(prevGoals => [...prevGoals, { id: newGoalId, ...goalData }]);
+    }
+  };
 
   useEffect(() => {
     const fetchGoals = async () => {
       if (auth.currentUser) {
         const fetchedGoals = await readGoals(auth.currentUser.uid);
-        setGoals(fetchedGoals ? Object.values(fetchedGoals) : []);
+        if (fetchedGoals) {
+          const goalsArray = Object.entries(fetchedGoals)
+            .map(([id, goal]) => ({ id, ...goal }))
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 4);
+          setCurrentGoals(goalsArray);
+        }
       }
     };
     fetchGoals();
   }, [auth.currentUser]);
 
-  const fetchGoals = async (uid) => {
-    const goals = await readGoals(uid);
-    setTotalGoals(goals ? Object.keys(goals).length : 0);
+  const fetchGoals = async () => {
+    if (auth.currentUser) {
+      const fetchedGoals = await readGoals(auth.currentUser.uid);
+      setGoals(fetchedGoals || []);
+    }
   };
-
-  {/* Placeholders for tableData */}
-  const tableData = [
-    { id: 1, goal: 'Learn React', progress: '75%', status: 'In Progress' },
-    { id: 2, goal: 'Run a Marathon', progress: '30%', status: 'In Progress' },
-    { id: 3, goal: 'Write a Book', progress: '100%', status: 'Completed' },
-    { id: 4, goal: 'Travel to Japan', progress: '0%', status: 'Not Started' },
-  ];
-
   const handleToggleTask = async (taskId) => {
     const updatedTasks = tasks.map(task => 
       task.id === taskId ? { ...task, completed: !task.completed } : task
@@ -157,15 +175,13 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchSpotlightMember = async () => {
-      const members = await getNewestMembers(1);
+      const members = await getNewestMembers(3);
       if (members.length > 0) {
         setSpotlightMember(members[0]);
       }
     };
     fetchSpotlightMember();
   }, []);
-
-
 
   return (
     <div className="flex h-screen bg-ascend-white">
@@ -291,16 +307,18 @@ export default function Dashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {tableData.map((item) => (
-                      <tr key={item.id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.goal}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.progress}</td>
+                    {currentGoals.map((goal) => (
+                      <tr key={goal.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{goal.title}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {goal.progress ? `${goal.progress}%` : 'Not set'}
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            item.status === 'Completed' ? 'bg-green-100 text-green-800' : 
-                            item.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                            goal.completed ? 'bg-green-100 text-green-800' : 
+                            'bg-yellow-100 text-yellow-800'
                           }`}>
-                            {item.status}
+                            {goal.completed ? 'Completed' : 'In Progress'}
                           </span>
                         </td>
                       </tr>
@@ -366,20 +384,19 @@ export default function Dashboard() {
                 Start Writing
               </button>
             </motion.div>
-            
             {/* Recent Tasks */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="lg:col-span1 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
+              className="lg:col-span-1 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
             >
               <h4 className="text-lg text-ascend-black mb-4 flex items-center">
                 <ClipboardDocumentListIcon className="w-6 h-6 mr-2 text-ascend-black" />
                 Recent Tasks
               </h4>
               <div className="overflow-y-auto max-h-64 text-sm">
-                {tasks.slice(0, 5).map((task) => (
+                {recentTasks.map((task) => (
                   <div key={task.id} className="flex items-center justify-between py-2 border-b">
                     <div className="flex items-center">
                       <Checkbox
@@ -388,7 +405,7 @@ export default function Dashboard() {
                         className="mr-2"
                       />
                       <span className={task.completed ? 'line-through text-green-500' : ''}>
-                        {task.text}
+                        {task.title}
                       </span>
                     </div>
                     <span className="text-sm text-gray-500">
@@ -404,7 +421,6 @@ export default function Dashboard() {
                 View All Tasks
               </button>
             </motion.div>
-
             {/* Member Spotlight */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -419,20 +435,17 @@ export default function Dashboard() {
               {spotlightMember ? (
                 <div className="text-sm">
                   <img 
-                    src={spotlightMember.photoURL || 'https://t3.ftcdn.net/jpg/06/33/54/78/360_F_633547842_AugYzexTpMJ9z1YcpTKUBoqBF0CUCk10.jpg'} 
-                    alt={spotlightMember.displayName} 
+                    src={spotlightMember.photoURL || 'default-avatar-url.jpg'} 
+                    alt={spotlightMember.username} 
                     className="w-16 h-16 rounded-full mx-auto mb-2"
                   />
-                  <p className="font-semibold text-center mb-2">{spotlightMember.displayName}</p>
+                  <p className="font-semibold text-center mb-2">{spotlightMember.username}</p>
                   <p className="text-gray-600 mb-2">
-                    {spotlightMember.displayName} recently completed their goal: {spotlightMember.goal.title}
-                  </p>
-                  <p className="italic text-gray-500">
-                    "{spotlightMember.goal.reflection}"
+                    Joined: {new Date(spotlightMember.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               ) : (
-                <p className='font-semibold text-center mt-16'>No spotlight today...<br></br><br></br><span className='text-xl'>Keep attacking your goals!!!</span></p>
+                <p className='font-semibold text-center mt-16'>No spotlight member yet</p>
               )}
             </motion.div>
             {/* Motivational Video */}

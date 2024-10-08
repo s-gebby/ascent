@@ -1,462 +1,210 @@
-import { useState, useEffect } from 'react'
-import Sidebar from './Sidebar'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { readTasks, createTask, updateTask, deleteTask, createSubtask, updateSubtask, deleteSubtask, getTaskStats } from '../utils/database'
-import { TextInput, Button, Checkbox, Select, Textarea, Modal } from '@mantine/core'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
-import "../styles/datepicker-custom.css"
-import { Search, SortAscending } from 'tabler-icons-react'
-import { BellIcon, UserCircleIcon } from '@heroicons/react/24/outline'
+import { useState, useEffect } from 'react';
+import { getAuth } from 'firebase/auth';
+import { readTasks, createTask, updateTask, deleteTask, readGoals } from '../utils/database';
+import { TextInput, Button, Select, Textarea, Modal, Checkbox, ActionIcon, Tooltip } from '@mantine/core';
+import Sidebar from './Sidebar';
+import { BellIcon, UserCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 
 export default function TaskList() {
-  const [tasks, setTasks] = useState([])
-  const [newTask, setNewTask] = useState('')
-  const [newTaskCategory, setNewTaskCategory] = useState('')
-  const [newTaskPriority, setNewTaskPriority] = useState('medium')
-  const [newTaskDueDate, setNewTaskDueDate] = useState(null)
-  const [newTaskDescription, setNewTaskDescription] = useState('')
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [sortBy, setSortBy] = useState('dueDate')
-  const [sortOrder, setSortOrder] = useState('asc')
-  const [selectedTask, setSelectedTask] = useState(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [newSubtask, setNewSubtask] = useState('')
-  const [taskStats, setTaskStats] = useState({ totalTasks: 0, completedTasks: 0, incompleteTasks: 0 })
-  const auth = getAuth()
+  const [tasks, setTasks] = useState([]);
+  const [goals, setGoals] = useState([]);
+  const [newTask, setNewTask] = useState({ title: '', description: '', goalId: null });
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const auth = getAuth();
   const navigate = useNavigate();
-  const categoryColors = {
-    personal: 'bg-ascend-green',
-    work: 'bg-ascend-blue',
-    health: 'bg-ascend-pink',
-    finance: 'bg-ascend-orange',
-    other: 'bg-gray-600'
-  };
-  
-
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        fetchTasks()
-        fetchTaskStats()
-      } else {
-        setTasks([])
-        setTaskStats({ totalTasks: 0, completedTasks: 0, incompleteTasks: 0 })
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      console.log("Auth state changed. Current user:", currentUser?.uid);
+      setUser(currentUser);
+      if (currentUser) {
+        fetchTasks();
       }
-    })
+    });
 
-    return () => unsubscribe()
-  }, [auth])
+    return () => unsubscribe();
+  }, []);
 
   const fetchTasks = async () => {
     if (auth.currentUser) {
       try {
-        const fetchedTasks = await readTasks(auth.currentUser.uid)
-        if (fetchedTasks) {
-          setTasks(Object.entries(fetchedTasks).map(([id, task]) => ({ id, ...task })))
-        } else {
-          setTasks([])
-        }
+        console.log("Fetching tasks for user:", auth.currentUser.uid);
+        const fetchedTasks = await readTasks(auth.currentUser.uid);
+        console.log("Fetched tasks:", fetchedTasks);
+        setTasks(fetchedTasks || []);
       } catch (error) {
-        console.error("Error fetching tasks:", error)
+        console.error("Error fetching tasks:", error.message, error.stack);
+        setTasks([]);
+      }
+    } else {
+      console.log("No authenticated user");
+      setTasks([]);
+    }
+  };
+  
+
+  useEffect(() => {
+    const fetchGoals = async () => {
+      if (auth.currentUser) {
+        try {
+          const fetchedGoals = await readGoals(auth.currentUser.uid);
+          setGoals(fetchedGoals || []);
+        } catch (error) {
+          console.error("Error fetching goals:", error);
+        }
+      }
+    };
+    fetchGoals();
+  }, [auth.currentUser]);
+
+
+  const [isAddingTask] = useState(false);
+
+  const handleAddTask = async () => {
+    if (newTask.title && newTask.goalId && auth.currentUser) {
+      try {
+        const taskData = {
+          ...newTask,
+          completed: false,
+          createdAt: new Date().toISOString()
+        };
+        await createTask(auth.currentUser.uid, taskData);
+        setNewTask({ title: '', description: '', goalId: null });
+        setIsModalOpen(false);
+        fetchTasks();
+      } catch (error) {
+        console.error("Error adding task:", error);
       }
     }
-  }
-
-  const fetchTaskStats = async () => {
-    if (auth.currentUser) {
-      const stats = await getTaskStats(auth.currentUser.uid)
-      setTaskStats(stats)
-    }
-  }
-
-  const handleAddTask = async (e) => {
-    e.preventDefault()
-    if (newTask.trim() && auth.currentUser) {
-      const taskData = {
-        text: newTask,
-        completed: false,
-        category: newTaskCategory,
-        priority: newTaskPriority,
-        dueDate: newTaskDueDate ? newTaskDueDate.toISOString() : null,
-        description: newTaskDescription,
-      }
-      const taskId = await createTask(auth.currentUser.uid, taskData)
-      setTasks(prevTasks => [...prevTasks, { id: taskId, ...taskData }])
-      setNewTask('')
-      setNewTaskCategory('')
-      setNewTaskPriority('medium')
-      setNewTaskDueDate(null)
-      setNewTaskDescription('')
-      fetchTaskStats()
-    }
-  }
+  };
 
   const handleToggleTask = async (taskId) => {
-    const updatedTasks = tasks.map(task => 
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    )
-    setTasks(updatedTasks)
-    if (auth.currentUser) {
-      await updateTask(auth.currentUser.uid, taskId, { completed: !tasks.find(t => t.id === taskId).completed })
-      fetchTaskStats()
+    const taskToUpdate = tasks.find(task => task.id === taskId);
+    if (taskToUpdate) {
+      const updatedTask = { ...taskToUpdate, completed: !taskToUpdate.completed };
+      await updateTask(auth.currentUser.uid, taskId, updatedTask);
+      fetchTasks();
     }
-  }
+  };
 
   const handleDeleteTask = async (taskId) => {
-    setTasks(tasks.filter(task => task.id !== taskId))
-    if (auth.currentUser) {
-      await deleteTask(auth.currentUser.uid, taskId)
-      fetchTaskStats()
-    }
-  }
-
-  const handleAddSubtask = async (e) => {
-    e.preventDefault()
-    if (newSubtask.trim() && selectedTask && auth.currentUser) {
-      const subtaskData = { text: newSubtask, completed: false }
-      const subtaskId = await createSubtask(auth.currentUser.uid, selectedTask.id, subtaskData)
-      setTasks(prevTasks => prevTasks.map(task => 
-        task.id === selectedTask.id 
-          ? { ...task, subtasks: { ...task.subtasks, [subtaskId]: subtaskData } }
-          : task
-      ))
-      setNewSubtask('')
-    }
-  }
-
-  const handleToggleSubtask = async (taskId, subtaskId) => {
-    const updatedTasks = tasks.map(task => 
-      task.id === taskId 
-        ? { 
-            ...task, 
-            subtasks: { 
-              ...task.subtasks, 
-              [subtaskId]: { 
-                ...task.subtasks[subtaskId], 
-                completed: !task.subtasks[subtaskId].completed 
-              } 
-            } 
-          }
-        : task
-    )
-    setTasks(updatedTasks)
-    if (auth.currentUser) {
-      await updateSubtask(auth.currentUser.uid, taskId, subtaskId, { completed: !tasks.find(t => t.id === taskId).subtasks[subtaskId].completed })
-    }
-  }
-
-  const handleDeleteSubtask = async (taskId, subtaskId) => {
-    setTasks(prevTasks => prevTasks.map(task => 
-      task.id === taskId 
-        ? { ...task, subtasks: Object.fromEntries(Object.entries(task.subtasks).filter(([id]) => id !== subtaskId)) }
-        : task
-    ))
-    if (auth.currentUser) {
-      await deleteSubtask(auth.currentUser.uid, taskId, subtaskId)
-    }
-  }
-
-  const filteredTasks = (tasks || [])
-  .filter(task => 
-    (task.text?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (task.category?.toLowerCase() || '').includes(searchTerm.toLowerCase())
-  )
-    .sort((a, b) => {
-      if (sortBy === 'dueDate') {
-        return sortOrder === 'asc' 
-          ? new Date(a.dueDate) - new Date(b.dueDate)
-          : new Date(b.dueDate) - new Date(a.dueDate)
-      } else if (sortBy === 'priority') {
-        const priorityOrder = { high: 3, medium: 2, low: 1 }
-        return sortOrder === 'asc'
-          ? priorityOrder[a.priority] - priorityOrder[b.priority]
-          : priorityOrder[b.priority] - priorityOrder[a.priority]
-      } else {
-        return sortOrder === 'asc'
-          ? a.text.localeCompare(b.text)
-          : b.text.localeCompare(a.text)
-      }
-    })
-
-    useEffect(() => {
-      const auth = getAuth();
-      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-        setUser(currentUser);
-      });
-    
-      // Cleanup subscription on unmount
-      return () => unsubscribe();
-    }, []);
+    await deleteTask(auth.currentUser.uid, taskId);
+    fetchTasks();
+  };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen">
+    <div className="flex h-screen bg-ascend-white">
       <Sidebar 
         isOpen={isSidebarOpen} 
         setIsOpen={setIsSidebarOpen}
       />
-      
-      <div className="flex-1 overflow-auto bg-ascend-white">
-      <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center">
-        <h2 className="text-3xl ml-2 font-semibold text-ascend-black">Task List</h2>
-        <div className="flex items-center space-x-4">
-        <div className="relative">
-            <input
-              type="text"
-              placeholder="Find..."
-              className="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
-            />
-            <svg
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center">
+          <h2 className="text-3xl ml-2 font-semibold text-ascend-black">Task List</h2>
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Find..."
+                className="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
               />
-            </svg>
-          </div>
-          {user && (
-            <p className="text-xs font-bold text-ascend-black">
-              Welcome, {user.displayName || 'Goal Ascender'}!
-            </p>
-          )}
-          {user && user.photoURL ? (
-            <img 
-              src={user.photoURL} 
-              alt="Profile" 
-              className="h-8 w-8 mr-2 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
-              onClick={() => navigate('/account')}
-            />
-          ) : (
-            <UserCircleIcon 
-              className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
-              onClick={() => navigate('/account')}
-            />
-          )}
-          <BellIcon className="h-6 w-6 text-gray-600 duration-1000 mr-2"/>
-          </div>
-      </header>
-        <div className="md:flex">
-          <form onSubmit={handleAddTask} className="p-6 space-y-4 md:w-2/3">
-            <h2 className="text-xl font-bold text-ascend-green uppercase mb-6 font-archivo-black">Create New Task</h2>
-            
-            <div>
-              <label htmlFor="taskTitle" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black">1. Task Title</label>
-              <TextInput
-                id="taskTitle"
-                value={newTask}
-                onChange={(e) => setNewTask(e.target.value)}
-                placeholder="Enter your task title"
-                className="w-full p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 font-archivo"
-              />
-            </div>
-            <div>
-              <label htmlFor="taskDescription" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black">2. Task Description</label>
-              <Textarea
-                id="taskDescription"
-                value={newTaskDescription}
-                onChange={(e) => setNewTaskDescription(e.target.value)}
-                placeholder="Describe your task"
-                className="w-full p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 font-archivo"
-              />
-            </div>
-            <div>
-              <label htmlFor="taskCategory" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black">3. Task Category</label>
-              <div className="flex flex-wrap gap-2 mb-3">
-                {[
-                  { value: 'personal', label: 'Personal' },
-                  { value: 'work', label: 'Work' },
-                  { value: 'health', label: 'Health' },
-                  { value: 'finance', label: 'Finance' },
-                  { value: 'other', label: 'Other' },
-                ].map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      setNewTaskCategory(option.value)
-                    }}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      newTaskCategory === option.value
-                        ? `${categoryColors[option.value]} text-white`
-                        : 'bg-ascend-white text-gray-700 hover:bg-gray-300'
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <label htmlFor="taskPriority" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black">4. Task Priority</label>
-              <Select
-                id="taskPriority"
-                value={newTaskPriority}
-                onChange={setNewTaskPriority}
-                placeholder="Select priority"
-                data={[
-                  { value: 'high', label: 'High' },
-                  { value: 'medium', label: 'Medium' },
-                  { value: 'low', label: 'Low' },
-                ]}
-                className="w-full p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 font-archivo"
-              />
-            </div>
-          </form>
-
-          <div className="md:w-1/3 bg-gray-100 p-6 flex flex-col items-center justify-center">
-            <div>
-              <label htmlFor="completeBy" className="block text-sm font-medium text-ascend-black mb-1 font-archivo-black capitalize text-center">5. Complete By</label>
-              
-              <DatePicker
-                id="completeBy"
-                selected={newTaskDueDate}
-                onChange={(date) => setNewTaskDueDate(date)}
-                inline
-                className="rounded-lg shadow-md"
-              />
-              <p className='text-xs text-center text-gray-500'>*Select a date you would like to complete this task by...*</p>
-            </div>
-            <div className="mt-2">
-              <Button 
-                type="submit" 
-                onClick={handleAddTask}
-                className="bg-ascend-blue text-white font-bold font-archivo-black transition duration-200"
+              <svg
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                Add Task
-              </Button>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
             </div>
+            {user && (
+              <p className="text-xs font-bold text-ascend-black">
+                Welcome, {user.displayName || 'Goal Ascender'}!
+              </p>
+            )}
+            {user && user.photoURL ? (
+              <img 
+                src={user.photoURL} 
+                alt="Profile" 
+                className="h-8 w-8 mr-2 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
+                onClick={() => navigate('/account')}
+              />
+            ) : (
+              <UserCircleIcon 
+                className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
+                onClick={() => navigate('/account')}
+              />
+            )}
+            <BellIcon className="h-6 w-6 text-gray-600 duration-1000 mr-2"/>
           </div>
-        </div>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 md:p-6">
-              <h1 className='text-xl mb-4 md:mb-0'>All Tasks</h1>
-              <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 w-full md:w-auto">
-                <TextInput
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search tasks"
-                  icon={<Search size={14} />}
-                  className="w-full md:w-auto"
-                />
-                <Select
-                  value={sortBy}
-                  onChange={setSortBy}
-                  data={[
-                    { value: 'dueDate', label: 'Due Date' },
-                    { value: 'priority', label: 'Priority' },
-                    { value: 'alphabetical', label: 'Alphabetical' },
-                  ]}
-                  icon={<SortAscending size={12} />}
-                  className="w-full md:w-auto"
-                />
-              </div>
-            </div>
+        </header>
+        
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-ascend-white p-4">
+          <Button onClick={() => setIsModalOpen(true)} className="mb-4 bg-ascend-green hover:bg-ascend-blue transition-colors duration-300">Add New Task</Button>
+          
+          <Modal opened={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add New Task">
+            <TextInput
+              label="Task Title"
+              value={newTask.title}
+              onChange={(e) => setNewTask({...newTask, title: e.target.value})}
+              className="mb-4"
+            />
+            <Textarea
+              label="Task Description"
+              value={newTask.description}
+              onChange={(e) => setNewTask({...newTask, description: e.target.value})}
+              className="mb-4"
+            />
+            <Select
+              label="Associated Goal"
+              data={Object.entries(goals).map(([id, goal]) => ({ value: id, label: goal.title }))}
+              value={newTask.goalId}
+              onChange={(value) => setNewTask({...newTask, goalId: value})}
+              className="mb-4"
+            />
+            <Button 
+              onClick={handleAddTask} 
+              loading={isAddingTask}
+              className="bg-ascend-green hover:bg-ascend-blue transition-colors duration-300"
+            >
+              Add Task
+            </Button>
+          </Modal>
           <div className="space-y-4">
-            {filteredTasks.map(task => (
-              <div key={task.id} className="flex flex-col md:flex-row items-start md:items-center justify-between bg-white p-4 rounded-lg shadow-sm">
-                <div className="flex items-start md:items-center mb-2 md:mb-0">
+            {tasks.map(task => (
+              <div key={task.id} className="bg-white p-4 rounded-lg shadow flex items-center justify-between">
+                <div className="flex items-center space-x-4">
                   <Checkbox
                     checked={task.completed}
                     onChange={() => handleToggleTask(task.id)}
-                    className="mr-4 mt-1 md:mt-0"
+                    className="cursor-pointer"
                   />
                   <div>
-                    <span className={task.completed ? 'line-through text-gray-500' : ''}>
-                      <span className={`inline-block w-2 h-2 rounded-full mr-1 ${categoryColors[task.category]}`}></span>
-                      {task.text}
-                    </span>
-                    <div className="text-sm text-gray-500">
-                      <span>{task.category}</span>
-                      <span className="mx-2">•</span>
-                      <span>{task.priority}</span>
-                      {task.dueDate && (
-                        <>
-                          <span className="mx-2">•</span>
-                          <span>{new Date(task.dueDate).toLocaleDateString()}</span>
-                        </>
-                      )}
-                    </div>
-                    {task.subtasks && Object.entries(task.subtasks).map(([subtaskId, subtask]) => (
-                      <div key={subtaskId} className="ml-6 mt-2 flex items-center">
-                        <Checkbox
-                          checked={subtask.completed}
-                          onChange={() => handleToggleSubtask(task.id, subtaskId)}
-                        />
-                        <span className="ml-2">{subtask.text}</span>
-                      </div>
-                    ))}
+                    <h3 className={`text-lg font-semibold ${task.completed ? 'line-through text-gray-500' : 'text-ascend-black'}`}>{task.title}</h3>
+                    <p className="text-sm text-gray-600">{task.description}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Goal: {goals && goals[task.goalId] ? goals[task.goalId].title : 'No associated goal'}
+                    </p>
                   </div>
                 </div>
-                <div className="flex items-center justify-end mt-2 md:mt-0">
-                  <Button 
-                    color="ascend-blue" 
-                    onClick={() => { setSelectedTask(task); setIsModalOpen(true); }} 
-                    className="mr-2 text-xs px-2 py-1"
-                    size="xs"
-                  >
-                    Details
-                  </Button>
-                  <Button 
-                    color="red" 
-                    onClick={() => handleDeleteTask(task.id)}
-                    className="text-xs px-2 py-1"
-                    size="xs"
-                  >
-                    Delete
-                  </Button>
-                </div>
+                <Tooltip label="Delete Task" position="left">
+                  <ActionIcon onClick={() => handleDeleteTask(task.id)} color="red" variant="subtle">
+                    <TrashIcon className="h-5 w-5" />
+                  </ActionIcon>
+                </Tooltip>
               </div>
             ))}
           </div>
-        </div>
-
-        <Modal
-          opened={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title={selectedTask?.text}
-          size="lg"
-          fullScreen={window.innerWidth < 768}
-        >
-          {selectedTask && (
-            <div>
-              <p>{selectedTask.description}</p>
-              <h4 className="mt-4 mb-2 font-semibold">Subtasks</h4>
-              <ul className="space-y-2">
-                {selectedTask.subtasks && Object.entries(selectedTask.subtasks).map(([id, subtask]) => (
-                  <li key={id} className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <Checkbox
-                        checked={subtask.completed}
-                        onChange={() => handleToggleSubtask(selectedTask.id, id)}
-                      />
-                      <span className="ml-2">{subtask.text}</span>
-                    </div>
-                    <Button color="red" onClick={() => handleDeleteSubtask(selectedTask.id, id)}>Delete</Button>
-                  </li>
-                ))}
-              </ul>
-              <form onSubmit={handleAddSubtask} className="mt-4">
-                <TextInput
-                  value={newSubtask}
-                  onChange={(e) => setNewSubtask(e.target.value)}
-                  placeholder="Add a subtask"
-                  className="mb-2"
-                />
-                <Button type="submit" color="ascend-blue">Add Subtask</Button>
-              </form>
-            </div>
-          )}
-        </Modal>
+        </main>
       </div>
-  )
+    </div>
+  );
 }

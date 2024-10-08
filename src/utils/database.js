@@ -176,9 +176,9 @@ export const readTasks = async (userId) => {
   try {
     const snapshot = await get(tasksRef);
     if (snapshot.exists()) {
-      return snapshot.val();
+      return Object.entries(snapshot.val()).map(([id, task]) => ({ id, ...task }));
     } else {
-      return null;
+      return [];
     }
   } catch (error) {
     console.error("Error reading tasks:", error);
@@ -186,6 +186,21 @@ export const readTasks = async (userId) => {
   }
 };
 
+export const readTasksForGoal = async (userId, goalId) => {
+  const tasksRef = ref(database, `users/${userId}/tasks`);
+  try {
+    const snapshot = await get(tasksRef);
+    if (snapshot.exists()) {
+      const allTasks = Object.entries(snapshot.val()).map(([id, task]) => ({ id, ...task }));
+      return allTasks.filter(task => task.goalId === goalId);
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error("Error reading tasks for goal:", error);
+    throw error;
+  }
+};
 export const updateTask = (userId, taskId, updates) => {
   return update(ref(database, `users/${userId}/tasks/${taskId}`), updates);
 };

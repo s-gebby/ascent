@@ -11,10 +11,7 @@ import '@mantine/carousel/styles.css';
 import '@mantine/carousel/styles.css';
 import { ChevronLeftIcon, ChevronRightIcon, BellIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
-
-
-
-
+import TaskList from './TaskList'
 
 export default function GoalPage() {
   const [user, setUser] = useState(null)
@@ -149,55 +146,55 @@ export default function GoalPage() {
           </div>
       </header>
         
-        <div className="flex flex-col gap-6 p-8">
-          <div className="w-full">
-            <NewGoalForm onAddGoal={handleAddGoal} />
-          </div>
-          
-          <TextInput
-            placeholder="Search Title/Description"
-            icon={<Search size={14} />}
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.currentTarget.value)}
-            className="mb-1 mx-auto"
-          />
-          <div className="w-full">
-              <div className="group relative">
-                <Carousel
-                  slideSize="33.333333%"
-                  slideGap="md"
-                  align="start"
-                  slidesToScroll={1}
-                  loop
-                  withControls={filteredGoals.length > 3}
-                  nextControlIcon={<CustomNextControl />}
-                  previousControlIcon={<CustomPrevControl />}
-                  styles={{
-                    control: {
-                      '&[dataInactive]': {
-                        opacity: 0,
-                        cursor: 'default',
-                      },
+      <div className="flex flex-col gap-6 p-8">
+        <div className="w-full">
+          <NewGoalForm onAddGoal={handleAddGoal} />
+        </div>
+        
+        <TextInput
+          placeholder="Search Title/Description"
+          icon={<Search size={14} />}
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.currentTarget.value)}
+          className="mb-1 mx-auto"
+        />
+        <div className="w-full">
+            <div className="group relative">
+              <Carousel
+                slideSize="33.333333%"
+                slideGap="md"
+                align="start"
+                slidesToScroll={1}
+                loop
+                withControls={filteredGoals.length > 3}
+                nextControlIcon={<CustomNextControl />}
+                previousControlIcon={<CustomPrevControl />}
+                styles={{
+                  control: {
+                    '&[dataInactive]': {
+                      opacity: 0,
+                      cursor: 'default',
                     },
-                  }}
-                  classNames={{
-                    root: 'carousel-root mx-12 relative',
-                  }}
-                >
-                  {filteredGoals.map(goal => (
-                    <Carousel.Slide key={goal.id} className="px-2">
-                      <GoalCard
-                        goal={goal}
-                        onEdit={handleEditGoal}
-                        onDelete={handleDeleteGoal}
-                      />
-                    </Carousel.Slide>
-                  ))}
-                </Carousel>
-              </div>
+                  },
+                }}
+                classNames={{
+                  root: 'carousel-root mx-12 relative',
+                }}
+              >
+                {filteredGoals.map(goal => (
+                  <Carousel.Slide key={goal.id} className="px-2">
+                    <GoalCard
+                      goal={goal}
+                      onEdit={handleEditGoal}
+                      onDelete={handleDeleteGoal}
+                    />
+                  </Carousel.Slide>
+                ))}
+              </Carousel>
             </div>
           </div>
         </div>
+      </div>
     </div>  
   )
 }

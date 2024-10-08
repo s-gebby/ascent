@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { PencilIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 import { getAuth } from 'firebase/auth'
-import { updateGoal, moveGoalToCompleted, deleteGoal, createTask, readTasks } from '../utils/database'
+import { updateGoal, moveGoalToCompleted, deleteGoal, createTask, readTasksForGoal } from '../utils/database'
 import Confetti from 'react-confetti'
 import { Modal, Tooltip, TextInput, Textarea, Stepper, Button, List } from '@mantine/core'
 import { MapIcon, PlusIcon } from '@heroicons/react/24/outline'
@@ -27,12 +27,12 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
 
   useEffect(() => {
     fetchTasks()
-  }, [])
+  }, [goal.id])
 
   const fetchTasks = async () => {
     if (auth.currentUser) {
-      const fetchedTasks = await readTasks(auth.currentUser.uid)
-      setTasks(fetchedTasks ? Object.values(fetchedTasks).filter(task => task.goalId === goal.id) : [])
+      const fetchedTasks = await readTasksForGoal(auth.currentUser.uid, goal.id)
+      setTasks(fetchedTasks)
     }
   }
   const handleDelete = async () => {
