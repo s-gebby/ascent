@@ -207,7 +207,7 @@ export default function Dashboard() {
               </svg>
             </button>
             {newsDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-64 bg-green-100 border border-ascend-black rounded-md shadow-lg py-2 px-4 z-10">
+              <div className="absolute right-0 mt-2 w-64 bg-pink-100 border border-ascend-black rounded-md shadow-lg py-2 px-4 z-10">
                 <h3 className="text-sm mb-2">Latest Updates</h3>
                 <p className="text-xs mb-2">Search on the main dashboard anything within the app.</p>
                 

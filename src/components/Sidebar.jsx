@@ -3,13 +3,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon, HomeIcon, ChartBarIcon, ClipboardIcon, BookOpenIcon, UserGroupIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 
 
-  export default function Sidebar({ isOpen, setIsOpen }) {
-    const navigate = useNavigate();
-    const [isDashboardExpanded, setIsDashboardExpanded] = useState(false);
+export default function Sidebar({ isOpen, setIsOpen }) {
+  const navigate = useNavigate();
+  const [isDashboardExpanded, setIsDashboardExpanded] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
     const handleLogout = () => {
       // Add logout logic
       navigate('/');
+    };
+
+    const handleUpgradeClick = (e) => {
+      e.preventDefault();
+      setShowModal(true);
     };
 
     const toggleNestedList = () => {
@@ -110,18 +116,22 @@ import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon, HomeIcon, ChartBa
         </div>
         
         <div className="mt-auto">
-          <Link to="/Account" className="block w-full bg-ascend-blue text-white py-2 px-4 rounded hover:text-gray-300 transition duration-300 mb-2 text-center text-sm">
-            Account
-          </Link>
-          
-          <button
-            onClick={handleLogout}
-            className="w-full bg-red-600 text-white py-2 px-4 rounded hover:text-gray-300 transition duration-300 text-sm"
-          >
-            Log Out
+          <button onClick={handleUpgradeClick} className="block w-full bg-ascend-blue text-white py-2 px-4 rounded hover:text-gray-300 transition duration-300 mb-2 text-center text-sm">
+            Upgrade
           </button>
         </div>
       </div>
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl">
+            <h2 className="text-xl font-bold mb-4">Coming Soon!</h2>
+            <p className="mb-4">A paid version will be launched soon. If you are currently a member, it will be a free rollout for you.</p>
+            <button onClick={() => setShowModal(false)} className="bg-ascend-black text-xs text-white py-2 px-4 rounded hover:bg-red-600">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
