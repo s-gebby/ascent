@@ -3,10 +3,9 @@ import Sidebar from './Sidebar'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { readPosts, createPost, encouragePost, readUserData, deletePost, addComment, getComments, deleteComment, getNewestMembers } from '../utils/database.js'
 import { Avatar, TextInput, Button, Paper, Text, Menu } from '@mantine/core'
-import { Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { HeartIcon, TrashIcon, EllipsisVerticalIcon, BellIcon, UserCircleIcon } from '@heroicons/react/24/outline';
-
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -20,7 +19,8 @@ export default function Community() {
   const [newestMembers, setNewestMembers] = useState([]);
   const [comments, setComments] = useState({});
   const [newComments, setNewComments] = useState({});
-  const [navigate] = useState(false);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const auth = getAuth();

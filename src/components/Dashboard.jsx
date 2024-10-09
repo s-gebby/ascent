@@ -372,6 +372,7 @@ export default function Dashboard() {
                 Start Writing
               </button>
             </motion.div>
+            
             {/* Recent Tasks */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -419,8 +420,11 @@ export default function Dashboard() {
             >
               <h4 className="text-lg text-ascend-black mb-4 flex items-center">
                 <SparklesIcon className="w-6 h-6 mr-2 text-ascend-black" />
-                Spotlight Member
+                Monthly Spotlight
               </h4>
+              <p>
+                {/* Replace with actual spotlight member data */}
+              </p>
             </motion.div>
       
             {/* Motivational Video */}

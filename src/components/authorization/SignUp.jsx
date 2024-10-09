@@ -21,7 +21,7 @@ export default function SignUp() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
       const user = userCredential.user
       await writeUserData(user.uid, user.email.split('@')[0], user.email)
-      navigate("/dashboard")
+      navigate("/onboarding")
     } catch (error) {
       alert(error.message)
     }

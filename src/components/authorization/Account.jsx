@@ -133,7 +133,7 @@ export default function Account() {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-ascend-blue focus:ring focus:ring-ascend-blue focus:ring-opacity-50"
+                    className="mt-1 block w-full rounded-md border border-2 border-gray-300 shadow-sm"
                   />
                 }
               />
@@ -148,7 +148,7 @@ export default function Account() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-ascend-blue focus:ring focus:ring-ascend-blue focus:ring-opacity-50"
+                    className="mt-1 block w-full rounded-md border border-2 border-gray-300 shadow-sm"
                   />
                 }
               />
@@ -169,7 +169,7 @@ export default function Account() {
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-ascend-blue focus:ring focus:ring-ascend-blue focus:ring-opacity-50"
+                      className="mt-1 block w-full rounded-md border border-2 border-gray-300 shadow-sm"
                       placeholder="Leave blank to keep current password"
                     />
                   }

@@ -48,8 +48,6 @@ export const readGoals = async (userId) => {
     throw error;
   }
 };
-
-
 export const deleteGoal = (userId, goalId) => {
   return remove(ref(database, `users/${userId}/goals/${goalId}`));
 };
