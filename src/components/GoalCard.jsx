@@ -1,22 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { PencilIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 import { getAuth } from 'firebase/auth'
-import { updateGoal, moveGoalToCompleted, deleteGoal, createTask, readTasksForGoal } from '../utils/database'
+import { updateGoal, moveGoalToCompleted, deleteGoal } from '../utils/database'
 import Confetti from 'react-confetti'
-import { Modal, Tooltip, TextInput, Textarea, Stepper, Button, List } from '@mantine/core'
-import { MapIcon, PlusIcon } from '@heroicons/react/24/outline'
-
+import { Modal, Tooltip } from '@mantine/core'
+import { MapIcon } from '@heroicons/react/24/outline'
 
 export default function GoalCard({ goal, onEdit, onDelete }) {
   const auth = getAuth()
   const [showConfetti, setShowConfetti] = useState(false)
   const [showPopup, setShowPopup] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
-  const [activeStep, setActiveStep] = useState(0)
-  const [taskTitle, setTaskTitle] = useState('')
-  const [taskDescription, setTaskDescription] = useState('')
-  const [tasks, setTasks] = useState([])
 
   const truncateDescription = (text, maxLength) => {
     if (text.length > maxLength) {
@@ -25,16 +19,6 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
     return text
   }
 
-  useEffect(() => {
-    fetchTasks()
-  }, [goal.id])
-
-  const fetchTasks = async () => {
-    if (auth.currentUser) {
-      const fetchedTasks = await readTasksForGoal(auth.currentUser.uid, goal.id)
-      setTasks(fetchedTasks)
-    }
-  }
   const handleDelete = async () => {
     if (auth.currentUser) {
       await deleteGoal(auth.currentUser.uid, goal.id)
@@ -69,39 +53,6 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
     setIsModalOpen(true);
   };
 
-  const handleOpenTaskModal = () => {
-    setIsTaskModalOpen(true)
-  }
-
-  const handleCloseTaskModal = () => {
-    setIsTaskModalOpen(false)
-    setActiveStep(0)
-    setTaskTitle('')
-    setTaskDescription('')
-  }
-
-  const handleNextStep = () => {
-    setActiveStep((current) => (current < 3 ? current + 1 : current))
-  }
-
-  const handlePrevStep = () => {
-    setActiveStep((current) => (current > 0 ? current - 1 : current))
-  }
-
-  const handleCreateTask = async () => {
-    if (auth.currentUser) {
-      const newTask = {
-        title: taskTitle,
-        description: taskDescription,
-        goalId: goal.id,
-        completed: false,
-      }
-      await createTask(auth.currentUser.uid, newTask)
-      await fetchTasks()
-      handleCloseTaskModal()
-    }
-  }
-
   return (
     <>
       {showConfetti && <Confetti />}
@@ -119,57 +70,48 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
             {goal.title}
           </h3>
           <p className="text-sm leading-6 text-gray-600 overflow-hidden">
-        {truncateDescription(goal.description, 75)}
-      </p>
+            {truncateDescription(goal.description, 75)}
+          </p>
         </div>
         <div className="flex items-center justify-between w-full px-4 py-2 border-t border-gray-300">
-        
-        <Tooltip label="Add Task" withArrow>
-          <button
-            onClick={handleOpenTaskModal}
-            className="text-blue-500 hover:text-blue-600 px-2"
-          >
-            <PlusIcon className="h-5 w-5" />
-          </button>
-        </Tooltip>
-        <Tooltip label="View Details" withArrow>
-          <button
-            onClick={handleViewDetails}
-            className="text-ascend-blue hover:text-blue-400 transition-colors duration-300 px-2"
-          >
-            <MapIcon className="h-5 w-5" />
-          </button>
-        </Tooltip>
-        <Tooltip label="Mark as Complete" withArrow>
-          <button
-            onClick={handleComplete}
-            className="text-green-500 hover:text-green-600 px-2"
-          >
-            <CheckCircleIcon className="h-5 w-5" />
-          </button>
-        </Tooltip>
-        <Tooltip label="Edit Goal" withArrow>
-          <button
-            onClick={() => onEdit(goal)}
-            className="text-yellow-500 hover:text-yellow-600 px-2"
-          >
-            <PencilIcon className="h-5 w-5" />
-          </button>
-        </Tooltip>
-            <Tooltip label="Delete Goal" withArrow>
-          <button
-            onClick={handleDelete}
-            className="text-red-500 hover:text-red-700 px-2"
-          >
-            <TrashIcon className="h-5 w-5" />
-          </button>
-        </Tooltip>
-      </div>
+          <Tooltip label="View Details" withArrow>
+            <button
+              onClick={handleViewDetails}
+              className="text-ascend-blue hover:text-blue-400 transition-colors duration-300 px-2"
+            >
+              <MapIcon className="h-5 w-5" />
+            </button>
+          </Tooltip>
+          <Tooltip label="Mark as Complete" withArrow>
+            <button
+              onClick={handleComplete}
+              className="text-green-500 hover:text-green-600 px-2"
+            >
+              <CheckCircleIcon className="h-5 w-5" />
+            </button>
+          </Tooltip>
+          <Tooltip label="Edit Goal" withArrow>
+            <button
+              onClick={() => onEdit(goal)}
+              className="text-yellow-500 hover:text-yellow-600 px-2"
+            >
+              <PencilIcon className="h-5 w-5" />
+            </button>
+          </Tooltip>
+          <Tooltip label="Delete Goal" withArrow>
+            <button
+              onClick={handleDelete}
+              className="text-red-500 hover:text-red-700 px-2"
+            >
+              <TrashIcon className="h-5 w-5" />
+            </button>
+          </Tooltip>
         </div>
+      </div>
       {showPopup && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
           <div className="relative p-5 border w-96 shadow-lg rounded-md bg-white">
-            <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">LET'S GOOO!</h3>
+            <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">Congrats!</h3>
             <p className="mb-4">Congrats on completing your goal! You're making real progress.</p>
             <p className="mb-4">Would you like to delete your<br></br><span className='font-archivo-black uppercase text-sm'>completed</span> goal?</p>
             <div className="flex justify-end">
@@ -195,35 +137,9 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
         size="xl"
       >
         <div className="p-2">
-        <h2 className="text-3xl font-bold mb-4 text-center">{goal.title}</h2>
+          <h2 className="text-3xl font-bold mb-4 text-center">{goal.title}</h2>
           <h3 className="font-semibold mb-2">Description:</h3>
           <p className="mb-4">{goal.description}</p>
-          
-          <h3 className="font-semibold mb-2">Tasks:</h3>
-          {tasks.length > 0 ? (
-            <List>
-              {tasks.map(task => (
-                <List.Item key={task.id}>
-                  <div className="flex items-center justify-between">
-                    <span>{task.title}</span>
-                    <input
-                      type="checkbox"
-                      checked={task.completed}
-                      onChange={() => handleToggleTask(task.id)}
-                    />
-                  </div>
-                </List.Item>
-              ))}
-            </List>
-          ) : (
-            <p>No tasks created yet.</p>
-          )}
-          
-          <Button onClick={() => setIsTaskModalOpen(true)} className="mt-4">
-            Create New Task
-          </Button>
-
-          {/* Make sure to create the functionality for linking journal entries */}
 
           <h3 className="font-semibold mb-2 mt-4">Linked Journal Entries:</h3>
           <ul className="list-disc pl-5 mb-4">
@@ -233,59 +149,6 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
           </ul>
         </div>
       </Modal>
-
-      <Modal
-        opened={isTaskModalOpen}
-        onClose={handleCloseTaskModal}
-        title="Create Task for Goal"
-        size="lg"
-      >
-        <Stepper active={activeStep} onStepClick={setActiveStep} breakpoint="sm">
-          <Stepper.Step label="Task Info" description="Enter task details">
-            <TextInput
-              label="Task Title"
-              placeholder="Enter task title"
-              value={taskTitle}
-              onChange={(event) => setTaskTitle(event.currentTarget.value)}
-              required
-            />
-            <Textarea
-              label="Task Description"
-              placeholder="Enter task description"
-              value={taskDescription}
-              onChange={(event) => setTaskDescription(event.currentTarget.value)}
-              mt="md"
-            />
-          </Stepper.Step>
-          <Stepper.Step label="Customize" description="Set task parameters">
-            {/* Add customization options here */}
-            <p>Customize your task (e.g., due date, priority, etc.)</p>
-          </Stepper.Step>
-          <Stepper.Step label="Confirm" description="Review and create">
-            <h3>Review Task Details:</h3>
-            <p>Title: {taskTitle}</p>
-            <p>Description: {taskDescription}</p>
-            {/* Display other task details */}
-          </Stepper.Step>
-          <Stepper.Completed>
-            <p>Task is ready to be created!</p>
-          </Stepper.Completed>
-        </Stepper>
-
-        <div className="flex justify-between mt-4">
-          {activeStep > 0 && (
-            <Button variant="default" onClick={handlePrevStep}>
-              Back
-            </Button>
-          )}
-          {activeStep < 3 ? (
-            <Button onClick={handleNextStep}>Next step</Button>
-          ) : (
-            <Button onClick={handleCreateTask}>Create Task</Button>
-          )}
-        </div>
-      </Modal>
     </>
   )
-
 }

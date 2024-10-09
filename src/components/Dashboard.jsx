@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import { getAuth } from 'firebase/auth';
 import { readGoals, getRecentPosts } from '../utils/database';
-import { BellIcon, UserCircleIcon, BookOpenIcon, PencilSquareIcon, ClipboardDocumentListIcon, UserGroupIcon, VideoCameraIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { BellIcon, UserCircleIcon, BookOpenIcon, PencilSquareIcon, ClipboardDocumentListIcon, UserGroupIcon, VideoCameraIcon, SparklesIcon, ClipboardIcon } from '@heroicons/react/24/outline';
 import { Checkbox } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import MotivationalVideo from './MotivationalVideo';
@@ -16,7 +16,7 @@ export default function Dashboard() {
   const [currentGoals, setCurrentGoals] = useState([]);
   const auth = getAuth();
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(true);{/* Switch to "true" to show under construction modal on login */}
+  const [showModal, setShowModal] = useState(false);{/* Switch to "true" to show under construction modal on login */}
   const handleJournalPromptClick = () => {
     navigate('/journal');
   };
@@ -380,7 +380,7 @@ export default function Dashboard() {
               className="lg:col-span-1 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
             >
               <h4 className="text-lg text-ascend-black mb-4 flex items-center">
-                <ClipboardDocumentListIcon className="w-6 h-6 mr-2 text-ascend-black" />
+                <ClipboardIcon className="w-6 h-6 mr-2 text-ascend-black" />
                 Recent Tasks
               </h4>
               <div className="overflow-y-auto max-h-64 text-sm">
@@ -409,9 +409,19 @@ export default function Dashboard() {
                 View All Tasks
               </button>
             </motion.div>
-            {/* Spotlight Member */}
             
-                
+            {/* Spotlight Member */}
+            <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="lg:col-span-1 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
+            >
+              <h4 className="text-lg text-ascend-black mb-4 flex items-center">
+                <SparklesIcon className="w-6 h-6 mr-2 text-ascend-black" />
+                Spotlight Member
+              </h4>
+            </motion.div>
       
             {/* Motivational Video */}
             <motion.div
