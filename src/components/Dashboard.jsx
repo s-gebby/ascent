@@ -202,7 +202,7 @@ export default function Dashboard() {
           </div>
           <div className="relative">
             <button
-              className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 focus:outline-none"
+              className="flex items-center text-sm font-medium text-gray-600 hover:text-ascend-green focus:outline-none"
               onClick={() => setNewsDropdownOpen(!newsDropdownOpen)}
             >
               <span>News</span>
@@ -211,15 +211,19 @@ export default function Dashboard() {
               </svg>
             </button>
             {newsDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-64 bg-pink-100 border border-ascend-black rounded-md shadow-lg py-2 px-4 z-10">
-                <h3 className="text-sm mb-2">Latest Updates</h3>
-                <p className="text-xs mb-2">Search on the main dashboard anything within the app.</p>
+              <div className="absolute right-0 mt-2 w-64 bg-gray-300 border border-ascend-black rounded-md shadow-lg py-2 px-4 z-10">
+                <h3 className="text-md mb-2 text-center">Latest Updates</h3>
+                <p className="text-xs mb-2 text-center">Fixed the completion features when completing a goal!</p>
+                <p className="text-xs mb-2 text-center">Questions? <a href="mailto:silasgebhart12@gmail.com" className="text-md font-bold text-ascend-blue hover:underline">
+                  Email me!
+                </a></p>
                 
-                <h3 className="text-sm mb-2">Feature Announcement</h3>
-                <p className="text-xs mb-2">Coming soon: Artificial Intelligence Accountability Buddy!</p>
                 
-                <h3 className="text-sm mb-2">Community Highlight</h3>
-                <p className="text-xs">We'll be launching to the public here within a couple of days!</p>
+                <h3 className="text-md mb-2 text-center">Feature Announcement</h3>
+                <p className="text-xs mb-2 text-center">Coming soon: Artificial Intelligence Accountability Buddy!</p>
+                
+                <h3 className="text-md mb-2 text-center">Community Highlight</h3>
+                <p className="text-xs text-center">We'll be launching to the public here within a couple of days!</p>
               </div>
             )}
           </div>
