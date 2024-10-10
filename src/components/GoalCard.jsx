@@ -2,13 +2,11 @@ import { useState } from 'react'
 import { PencilIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 import { getAuth } from 'firebase/auth'
 import { updateGoal, moveGoalToCompleted, deleteGoal } from '../utils/database'
-import Confetti from 'react-confetti'
 import { Modal, Tooltip } from '@mantine/core'
 import { MapIcon } from '@heroicons/react/24/outline'
 
-export default function GoalCard({ goal, onEdit, onDelete }) {
+export default function GoalCard({ goal, onEdit, onDelete, onComplete }) {  
   const auth = getAuth()
-  const [showConfetti, setShowConfetti] = useState(false)
   const [showPopup, setShowPopup] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -33,11 +31,7 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
         completedAt: new Date().toISOString()
       }
       await updateGoal(auth.currentUser.uid, goal.id, updates)
-      setShowConfetti(true)
-      setTimeout(() => {
-        setShowConfetti(false)
-        setShowPopup(true)
-      }, 4000); // Show confetti for 4 seconds
+      onComplete(goal)
     }
   }
 
@@ -52,10 +46,8 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
   const handleViewDetails = () => {
     setIsModalOpen(true);
   };
-
   return (
     <>
-      {showConfetti && <Confetti />}
       <div className="flex flex-col w-full h-64 max-w-lg bg-white p-4 border border-gray-300 rounded-sm overflow-hidden">
         <div className="flex items-center gap-x-2 text-xs py-2 px-4 w-full border-b border-gray-300">
           <time dateTime={goal.createdAt} className="text-gray-500">
@@ -142,11 +134,7 @@ export default function GoalCard({ goal, onEdit, onDelete }) {
           <p className="mb-4">{goal.description}</p>
 
           <h3 className="font-semibold mb-2 mt-4">Linked Journal Entries:</h3>
-          <ul className="list-disc pl-5 mb-4">
-            {goal.linkedJournalEntries && goal.linkedJournalEntries.map(entry => (
-              <li key={entry.id}>{entry.title}</li>
-            ))}
-          </ul>
+          
         </div>
       </Modal>
     </>

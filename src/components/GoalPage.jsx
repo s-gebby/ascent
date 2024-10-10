@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import Confetti from 'react-confetti'
+import { Modal } from '@mantine/core'
 import GoalCard from './GoalCard'
 import NewGoalForm from './form/NewGoalForm'
 import Sidebar from './Sidebar'
@@ -9,18 +11,21 @@ import { TextInput } from '@mantine/core'
 import { Search } from 'tabler-icons-react'
 import '@mantine/carousel/styles.css';
 import '@mantine/carousel/styles.css';
-import { ChevronLeftIcon, ChevronRightIcon, BellIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import { ChevronLeftIcon, ChevronRightIcon, BellIcon, UserCircleIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
 import TaskList from './TaskList'
+
 
 export default function GoalPage() {
   const [user, setUser] = useState(null)
   const [goals, setGoals] = useState([])
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [showConfetti, setShowConfetti] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [completedGoal, setCompletedGoal] = useState(null)
   const navigate = useNavigate()
   const auth = getAuth()
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser)
@@ -35,6 +40,15 @@ export default function GoalPage() {
 
     return () => unsubscribe()
   }, [])
+
+  const handleGoalComplete = (goal) => {
+    setShowConfetti(true)
+    setCompletedGoal(goal)
+    setIsModalOpen(true)
+    setTimeout(() => {
+      setShowConfetti(false)
+    }, 6000)
+  }
   const fetchGoals = async () => {
     if (auth.currentUser) {
       try {
@@ -91,110 +105,132 @@ export default function GoalPage() {
       <ChevronRightIcon className="h-6 w-6 text-ascend-white" />
     </button>
   );
-
   return (
     <div className="flex h-screen">
+      {showConfetti && <Confetti />}
       <Sidebar 
         isOpen={isSidebarOpen} 
         setIsOpen={setIsSidebarOpen}
       />
       
+    
       <div className="flex-1 overflow-auto bg-ascend-white">
-      <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center">
-        <h2 className="text-3xl ml-2 font-semibold text-ascend-black">Goals</h2>
-        <div className="flex items-center space-x-4">
-        <div className="relative">
-            <input
-              type="text"
-              placeholder="Find..."
-              className="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
-            />
-            <svg
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center">
+          <h2 className="text-3xl ml-2 font-semibold text-ascend-black">Goals</h2>
+          <div className="flex items-center space-x-4">
+          <div className="relative">
+              <input
+                type="text"
+                placeholder="Find..."
+                className="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
               />
-            </svg>
-          </div>
-          {user && (
-            <p className="text-xs font-bold text-ascend-black">
-              Welcome, {user.displayName || 'Goal Ascender'}!
-            </p>
-          )}
-          {user && user.photoURL ? (
-            <img 
-              src={user.photoURL} 
-              alt="Profile" 
-              className="h-8 w-8 mr-2 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
-              onClick={() => navigate('/account')}
-            />
-          ) : (
-            <UserCircleIcon 
-              className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
-              onClick={() => navigate('/account')}
-            />
-          )}
-          <BellIcon className="h-6 w-6 text-gray-600 duration-1000 mr-2"/>
-          </div>
-      </header>
-        
-      <div className="flex flex-col gap-6 p-8">
-        <div className="w-full">
-          <NewGoalForm onAddGoal={handleAddGoal} />
-        </div>
-        
-        <TextInput
-          placeholder="Search Title/Description"
-          icon={<Search size={14} />}
-          value={searchTerm}
-          onChange={(event) => setSearchTerm(event.currentTarget.value)}
-          className="mb-1 mx-auto"
-        />
-        <div className="w-full">
-            <div className="group relative">
-              <Carousel
-                slideSize="33.333333%"
-                slideGap="md"
-                align="start"
-                slidesToScroll={1}
-                loop
-                withControls={filteredGoals.length > 3}
-                nextControlIcon={<CustomNextControl />}
-                previousControlIcon={<CustomPrevControl />}
-                styles={{
-                  control: {
-                    '&[dataInactive]': {
-                      opacity: 0,
-                      cursor: 'default',
-                    },
-                  },
-                }}
-                classNames={{
-                  root: 'carousel-root mx-12 relative',
-                }}
+              <svg
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                {filteredGoals.map(goal => (
-                  <Carousel.Slide key={goal.id} className="px-2">
-                    <GoalCard
-                      goal={goal}
-                      onEdit={handleEditGoal}
-                      onDelete={handleDeleteGoal}
-                    />
-                  </Carousel.Slide>
-                ))}
-              </Carousel>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </div>
+            
+            {user && (
+              <p className="text-xs font-bold text-ascend-black">
+                Welcome, {user.displayName || 'Goal Ascender'}!
+              </p>
+            )}
+            {user && user.photoURL ? (
+              <img 
+                src={user.photoURL} 
+                alt="Profile" 
+                className="h-8 w-8 mr-2 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
+                onClick={() => navigate('/account')}
+              />
+            ) : (
+              <UserCircleIcon 
+                className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
+                onClick={() => navigate('/account')}
+              />
+            )}
+            <BellIcon className="h-6 w-6 text-gray-600 duration-1000 mr-2"/>
+            </div>
+        </header>
+        
+        <div className="flex flex-col gap-6 p-8">
+          <div className="w-full">
+            <NewGoalForm onAddGoal={handleAddGoal} />
+          </div>
+        
+          <TextInput
+            placeholder="Search Title/Description"
+            icon={<Search size={14} />}
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.currentTarget.value)}
+            className="mb-1 mx-auto"
+          />
+          <div className="w-full">
+              <div className="group relative">
+                <Carousel
+                  slideSize="33.333333%"
+                  slideGap="md"
+                  align="start"
+                  slidesToScroll={1}
+                  loop
+                  withControls={filteredGoals.length > 3}
+                  nextControlIcon={<CustomNextControl />}
+                  previousControlIcon={<CustomPrevControl />}
+                  styles={{
+                    control: {
+                      '&[dataInactive]': {
+                        opacity: 0,
+                        cursor: 'default',
+                      },
+                    },
+                  }}
+                  classNames={{
+                    root: 'carousel-root mx-12 relative',
+                  }}
+                >
+                  {filteredGoals.map(goal => (
+                    <Carousel.Slide key={goal.id} className="px-2">
+                      <GoalCard
+                        goal={goal}
+                        onEdit={handleEditGoal}
+                        onDelete={handleDeleteGoal}
+                        onComplete={handleGoalComplete}
+                      />
+                    </Carousel.Slide>
+                  ))}
+                </Carousel>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>  
-  )
-}
+        <Modal
+          opened={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title={<h2 className="text-2xl font-bold text-ascend-black">Goal Completed!</h2>}
+          size="lg"
+          centered
+          classNames={{
+            header: 'bg-ascend-white p-4',
+            body: 'p-6',
+            close: 'text-ascend-blue hover:bg-ascend-blue hover:bg-opacity-10 transition-colors duration-200',
+          }}
+        >
+          <div className="text-center">
+            <div className="mb-4">
+              <CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto" />
+            </div>
+            <h3 className="text-xl font-semibold mb-4 text-ascend-black">{completedGoal?.title}</h3>
+            <p className="mb-4 text-ascend-black">{completedGoal?.description}</p>
+          </div>
+        </Modal>
+    </div>
+  )}
