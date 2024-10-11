@@ -426,9 +426,14 @@ export default function Dashboard() {
                 <SparklesIcon className="w-6 h-6 mr-2 text-ascend-black" />
                 Monthly Spotlight
               </h4>
-              <p>
+              <div className='flex flex-col items-center'>
                 {/* Replace with actual spotlight member data */}
-              </p>
+                <span className="text-lg font-semibold text-center mt-4 uppercase">Coming Soon!</span>
+                <br></br>
+                <p className="text-sm text-gray-500 text-center">
+                We are excited to introduce a new feature that celebrates our members' dedication and perseverance in achieving their goals. As part of this initiative, members will have the opportunity to share their personal stories detailing their journey to success.<br></br><br></br>Once we have gathered a selection of stories, our team will anonymously review and select one member to be featured as the spotlight of the month. This initiative is designed to inspire and motivate others to continue striving toward their aspirations.<br></br><br></br>Keep ascending! Together, we will reach new heights!
+                </p>  
+              </div>
             </motion.div>
       
             {/* Motivational Video */}
