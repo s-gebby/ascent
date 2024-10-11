@@ -9,7 +9,7 @@ export default function Home() {
       <div className="relative isolate px-6 pt-14 lg:px-8">
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-            <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-700 ring-1 ring-gray-900/30 hover:ring-gray-900/60">
+            <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-700 ring-1 ring-gray-900/30 hover:ring-2 hover:ring-gray-900/60">
               More on the way...{' '}
               <Link to="/readmore" className="font-semibold text-ascend-blue">
                 <span aria-hidden="true" className="absolute inset-0" />
