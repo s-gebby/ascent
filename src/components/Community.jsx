@@ -20,7 +20,7 @@ export default function Community() {
   const [comments, setComments] = useState({});
   const [newComments, setNewComments] = useState({});
   const navigate = useNavigate();
-
+  const [characterCount, setCharacterCount] = useState(0);
 
   useEffect(() => {
     const auth = getAuth();
@@ -50,6 +50,8 @@ export default function Community() {
 
     return () => unsubscribe();
   }, []);
+
+  
 
   useEffect(() => {
     const fetchNewestMembers = async () => {
@@ -212,28 +214,47 @@ export default function Community() {
                 </div>
               </div>
             </div>
-
             {/* Main content */}
-            <div className="flex-grow space-y-6">
+            <div className="flex-grow space-y-6 max-w-3xl">
               {/* Create Post section */}
               <div className="bg-white border border-gray-300 rounded-md p-6">
                 <h3 className="text-lg font-semibold text-ascend-black mb-2">Share Your Thoughts</h3>
                 <div className="flex flex-col sm:flex-row items-start space-y-2 sm:space-y-0 sm:space-x-4">
                   <Avatar src={user?.photoURL} alt={user?.displayName} radius="xl" size="lg" />
-                  <TextInput
+                  <textarea
                     placeholder="What's on your mind?"
                     value={newPostContent}
-                    onChange={(event) => setNewPostContent(event.currentTarget.value)}
-                    className="flex-grow w-full sm:w-auto"
+                    onChange={(event) => {
+                      setNewPostContent(event.target.value);
+                      setCharacterCount(event.target.value.length);
+                    }}
+                    maxLength={1000}
+                    className="flex-grow w-full sm:w-auto p-2 border border-gray-300 rounded-md resize-y min-h-[100px] focus:outline-none focus:ring-2 focus:ring-ascend-blue focus:border-transparent"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Tab') {
+                        e.preventDefault();
+                        const start = e.target.selectionStart;
+                        const end = e.target.selectionEnd;
+                        setNewPostContent(
+                          newPostContent.substring(0, start) + '\t' + newPostContent.substring(end)
+                        );
+                        e.target.selectionStart = e.target.selectionEnd = start + 1;
+                      }
+                    }}
                   />
-                  <Button onClick={handleCreatePost} color="ascend-blue" className="w-full sm:w-auto">Post</Button>
                 </div>
+                <div className="flex justify-end mt-2 text-sm text-gray-500">
+                  {characterCount}/1000 
+                </div>
+                <div className="flex justify-end mt-2">
+                <Button onClick={handleCreatePost} color="ascend-blue" className="w-full sm:w-auto ">Post</Button>
+                </div> 
               </div>
   
               {/* Posts */}
               {posts && posts.length > 0 ? (
                 posts.map((post) => (
-                  <Paper key={post.id} p="md" className="mb-4 border border-gray-300 rounded-xl">
+                  <Paper key={post.id} p="md" className="mb-4 border border-gray-300 rounded-xl w-full">
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -241,7 +262,7 @@ export default function Community() {
                       className="flex"
                     >
                       {/* Encourage button */}
-                      <div className="flex flex-col items-center mr-4">
+                      <div className="flex-shrink-0 mr-4">
                         <Button 
                           variant="light" 
                           color="ascend-green" 
@@ -254,7 +275,7 @@ export default function Community() {
                       </div>
     
                       {/* Post content */}
-                      <div className="flex-grow relative">
+                      <div className="flex-grow relative overflow-hidden">
                         <div className="flex items-center mb-2">
                           <Avatar src={post.authorPhotoURL} alt={post.authorName} radius="xl" size="sm" />
                           <span className="ml-2 font-bold text-ascend-blue">{post.authorName}</span>
@@ -280,7 +301,7 @@ export default function Community() {
                             </Menu>
                           </div>
                         )}
-                        <p className="text-gray-700">{post.content}</p>
+                        <p className="text-gray-700 whitespace-pre-wrap break-words">{post.content}</p>
                       </div>
                     </motion.div>
                     
