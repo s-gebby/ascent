@@ -41,6 +41,11 @@ export default function Journal() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    if (user) {
+      fetchEntries();
+    }
+  }, [user]);
 
 
 
@@ -85,18 +90,18 @@ export default function Journal() {
     return () => unsubscribe()
   }, [])
   const fetchEntries = async () => {
-    if (auth.currentUser) {
-      const fetchedEntries = await getJournalEntries(auth.currentUser.uid)
+    if (user) {
+      const fetchedEntries = await getJournalEntries(user.uid)
       if (fetchedEntries) {
-        setEntries(Object.entries(fetchedEntries).map(([id, entry]) => ({ id, ...entry })))
+        setEntries(fetchedEntries)
       }
     }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (newEntry.trim() && auth.currentUser) {
-      await createJournalEntry(auth.currentUser.uid, {
+    if (newEntry.trim() && user) {
+      await createJournalEntry(user.uid, {
         title,
         text: newEntry,
         category,
