@@ -121,15 +121,6 @@ export default function Dashboard() {
       setGoals(fetchedGoals || []);
     }
   };
-  const handleToggleTask = async (taskId) => {
-    const updatedTasks = tasks.map(task => 
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    );
-    setTasks(updatedTasks);
-    if (auth.currentUser) {
-      await updateTask(auth.currentUser.uid, taskId, { completed: !tasks.find(t => t.id === taskId).completed });
-    }
-  };
 
   const [newsDropdownOpen, setNewsDropdownOpen] = useState(false);
   const [dailyQuote, setDailyQuote] = useState('');
@@ -392,11 +383,6 @@ export default function Dashboard() {
                 {recentTasks.map((task) => (
                   <div key={task.id} className="flex items-center justify-between py-2 border-b">
                     <div className="flex items-center">
-                      <Checkbox
-                        checked={task.completed}
-                        onChange={() => handleToggleTask(task.id)}
-                        className="mr-2"
-                      />
                       <span className={task.completed ? 'line-through text-green-500' : ''}>
                         {task.title}
                       </span>
