@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAuth } from 'firebase/auth';
 import { readTasks, createTask, updateTask, deleteTask, readGoals } from '../utils/database';
-import { TextInput, Button, Select, Textarea, Modal, Checkbox, ActionIcon, Tooltip, Paper, Group, Text, Badge, Progress } from '@mantine/core';
+import { TextInput, Button, Select, Textarea, Modal, Checkbox, Paper, Group, Text, Badge, Progress } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from './Sidebar';
@@ -157,12 +157,12 @@ const moveTaskToActive = (taskId) => {
   };
 
   return (
-    <div className="flex h-screen bg-ascend-white">
+    <div className="flex flex-col h-screen bg-ascend-white md:flex-row">
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white z-10 p-2 flex justify-between items-center">
-          <h2 className="text-3xl font-semibold text-ascend-black">Task List</h2>
-          <div className="flex items-center space-x-4">
+        <header className="bg-white z-10 p-2 flex flex-col md:flex-row justify-between items-center">
+          <h2 className="text-2xl md:text-3xl font-semibold text-ascend-black mb-2 md:mb-0">Task List</h2>
+          <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
             <TextInput
               placeholder="Find..."
               icon={<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>}
@@ -189,8 +189,7 @@ const moveTaskToActive = (taskId) => {
             <BellIcon className="h-6 w-6 text-gray-600 transition-all duration-300 hover:text-ascend-green cursor-pointer"/>
           </div>
         </header>
-
-        <main className="flex-1 overflow-x-hidden overflow-y-auto p-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6">
           <Paper className="mb-6 text-ascend-black max-w-4xl mx-auto">
             <h1 className="text-2xl mb-2 text-center text-ascend-black">
               Why Tasks?
@@ -200,46 +199,47 @@ const moveTaskToActive = (taskId) => {
                 Breaking down your goals into manageable tasks is a proven strategy for success.
               </p>
               <div className="flex items-center justify-center mb-2">
-                <div className="w-16 h-1 bg-ascend-green rounded"></div>
+                <div className="w-16 h-1 mt-2 bg-ascend-black rounded"></div>
               </div>
-              <div className='flex flex-row mb-4 text-ascend-black text-sm ml-16'>
-              <ul className="list-none space-y-4 p-2 mb-4 ml-16">
-                {[
-                  "Clear, actionable steps towards your objectives",
-                  "A sense of progress and accomplishment",
-                ].map((item, index) => (
-                  <li key={index} className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-ascend-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <ul className="list-none space-y-4 p-2 mb-4 text-ascend-black text-sm ml-16">
-                {[
-                  "Better prioritization of your daily activities",
-                  "Enhanced ability to track and measure your progress",
-                ].map((item, index) => (
-                  <li key={index} className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-ascend-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              </div>
-              <p className='text-center text-md font-semibold text-ascend-blue italic'>
-                Remember: Every task completed is a step closer to achieving your goals.
-              </p>
             </div>
           </Paper>
-            <Group position="apart" className="mb-6">
-              <Button onClick={open}>
-              Add New Task
+
+
+          <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 mt-2">
+              
+              {/* Task Statistics */}
+              <Paper p="md" withBorder className="flex-1">
+                <Text size="lg" weight={700} className="mb-4 text-center">Task Statistics</Text>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center">
+                    <Text size="xl" weight={700} color="blue">{totalTasks}</Text>
+                    <Text size="sm">Total Tasks</Text>
+                  </div>
+                  <div className="text-center">
+                    <Text size="xl" weight={700} color="green">{completedTasksCount}</Text>
+                    <Text size="sm">Completed</Text>
+                  </div>
+                  <div className="text-center">
+                    <Text size="xl" weight={700} color="orange">{pendingTasks}</Text>
+                    <Text size="sm">Pending</Text>
+                  </div>
+                </div>
+                {/* Progress Bar */}
+                <Progress
+                  sections={[
+                    { value: (completedTasksCount / totalTasks) * 100, color: 'ascend-green' },
+                    { value: (pendingTasks / totalTasks) * 100, color: 'ascend-orange' },
+                  ]}
+                  size="lg"
+                  className="mt-4"
+                />
+              </Paper>
+            </div>
+            <Group position="apart" className="mb-6 mt-6 flex-col md:flex-row w-full">
+              <Button onClick={open} className="w-full md:w-auto mb-2 md:mb-0">
+                Add New Task
               </Button>
-              <Group>
+              <Group className="flex-col md:flex-row w-full md:w-auto space-y-2 md:space-y-0">
                 <Select
                   placeholder="Sort by"
                   data={[
@@ -248,6 +248,7 @@ const moveTaskToActive = (taskId) => {
                   ]}
                   value={sortBy}
                   onChange={setSortBy}
+                  className="w-full md:w-auto"
                 />
                 <Select
                   placeholder="Filter"
@@ -258,10 +259,11 @@ const moveTaskToActive = (taskId) => {
                   ]}
                   value={filterCompleted}
                   onChange={setFilterCompleted}
+                  className="w-full md:w-auto"
                 />
               </Group>
             </Group>
-          
+            {/* Task List */}
             <AnimatePresence>
               {sortedAndFilteredTasks.map(task => (
                 <motion.div
@@ -271,8 +273,8 @@ const moveTaskToActive = (taskId) => {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Paper p="md" withBorder className="mb-4 transition-all duration-300 hover:shadow-md">
-                    <Group position="apart">
+                  <Paper p="sm" withBorder className="mb-4 transition-all duration-300 hover:shadow-md">
+                    <div className="flex justify-between items-start">
                       <Group>
                         <Checkbox
                           checked={task.completed}
@@ -280,79 +282,28 @@ const moveTaskToActive = (taskId) => {
                           className="cursor-pointer"
                         />
                         <div>
-                          <Text size="lg" weight={500} className={task.completed ? 'line-through text-gray-500' : 'text-ascend-black'}>
-                            {task.title}
-                          </Text>
-                          <Text size="sm" color="dimmed">{task.description}</Text>
-                          <Badge color="ascend-blue" size="sm" className="mt-2">
-                            {goals && goals[task.goalId] ? goals[task.goalId].title : 'No associated goal'}
-                          </Badge>
+                          <Text size="sm">{task.title}</Text>
+                          <Text size="xs" color="dimmed">{task.description}</Text>
+                          <Group mt="xs">
+                            <Badge color="ascend-blue" size="sm">
+                              {goals && goals[task.goalId] ? goals[task.goalId].title : 'No associated goal'}
+                            </Badge>
+                            <Badge leftSection={<CalendarIcon className="h-3 w-3" />} color="ascend-green" size="sm">
+                              Due in {calculateCountdown(task.dueDate)}
+                            </Badge>
+                          </Group>
                         </div>
                       </Group>
-                      <Group spacing="xs">
-                        <Tooltip label="Edit Task">
-                          <ActionIcon onClick={() => handleEditTask(task)} color="ascend-orange" variant="light">
-                            <PencilIcon className="h-4 w-4" />
-                          </ActionIcon>
-                        </Tooltip>
-                        <Tooltip label="Delete Task">
-                          <ActionIcon onClick={() => handleDeleteTask(task.id)} color="red" variant="light">
-                            <TrashIcon className="h-4 w-4" />
-                          </ActionIcon>
-                        </Tooltip>
+                      <Group>
+                        <button onClick={() => handleEditTask(task)} size="xs"><PencilIcon className="h-4 w-4 text-ascend-orange" /></button>
+                        <button onClick={() => handleDeleteTask(task.id)} size="xs"><TrashIcon className="h-4 w-4 text-red-500" /></button>
                       </Group>
-                    </Group>
+                    </div>
                   </Paper>
                 </motion.div>
               ))}
             </AnimatePresence>
-            
-            {/* Upcoming Tasks Section */}
-            <div className="flex space-x-6 mt-8">
-              <Paper p="md" withBorder className="flex-1">
-                <Text size="lg" weight={700} className="mb-4">Upcoming Tasks</Text>
-                {tasks
-                  .filter(task => !task.completed && task.dueDate)
-                  .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-                  .slice(0, 5)
-                  .map(task => (
-                    <Group key={task.id} position="apart" className="mb-2">
-                      <Text size="sm">{task.title}</Text>
-                      <Badge leftSection={<CalendarIcon className="h-3 w-3" />} color="ascend-pink" size="sm">
-                        Due in {calculateCountdown(task.dueDate)}
-                      </Badge>
-                    </Group>
-                  ))}
-              </Paper>
-              
-              {/* Task Statistics */}
-              <Paper p="md" withBorder className="flex-1">
-                <Text size="lg" weight={700} className="mb-4">Task Statistics</Text>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <Text size="xl" weight={700} color="blue">{totalTasks}</Text>
-                    <Text size="sm" color="dimmed">Total Tasks</Text>
-                  </div>
-                  <div className="text-center">
-                    <Text size="xl" weight={700} color="green">{completedTasksCount}</Text>
-                    <Text size="sm" color="dimmed">Completed</Text>
-                  </div>
-                  <div className="text-center">
-                    <Text size="xl" weight={700} color="orange">{pendingTasks}</Text>
-                    <Text size="sm" color="dimmed">Pending</Text>
-                  </div>
-                </div>
-                <Progress
-                  sections={[
-                    { value: (completedTasksCount / totalTasks) * 100, color: 'ascend-green' },
-                    { value: (pendingTasks / totalTasks) * 100, color: 'ascend-orange' },
-                  ]}
-                  size="lg"
-                  className="mt-4"
-                />
-              </Paper>
-              </div>
-        </main>
+          </main>
 
       <Modal opened={opened} onClose={close} title={editingTask ? "Edit Task" : "Add New Task"}>
         <TextInput
