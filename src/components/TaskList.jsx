@@ -156,7 +156,7 @@ const moveTaskToActive = (taskId) => {
     <div className="flex h-screen bg-ascend-white">
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white shadow-sm z-10 p-4 flex justify-between items-center">
+        <header className="bg-white z-10 p-2 flex justify-between items-center">
           <h2 className="text-3xl font-semibold text-ascend-black">Task List</h2>
           <div className="flex items-center space-x-4">
             <TextInput
@@ -186,12 +186,12 @@ const moveTaskToActive = (taskId) => {
           </div>
         </header>
 
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-ascend-white p-6">
-        <Paper shadow="sm" className="mb-6 text-ascend-black max-w-4xl mx-auto">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-6">
+        <Paper className="mb-6 text-ascend-black max-w-4xl mx-auto">
           <h1 className="text-2xl mb-2 text-center text-ascend-black">
             Why Tasks?
           </h1>
-          <div className="bg-white p-1 rounded-lg shadow-inner">
+          <div className="p-1 rounded-lg">
             <p className="mb-2 text-center text-md text-ascend-black"> 
               Breaking down your goals into manageable tasks is a proven strategy for success.
             </p>
@@ -271,7 +271,7 @@ const moveTaskToActive = (taskId) => {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <Paper shadow="sm" p="md" withBorder className="mb-4 transition-all duration-300 hover:shadow-md">
+                <Paper p="md" withBorder className="mb-4 transition-all duration-300 hover:shadow-md">
                   <Group position="apart">
                     <Group>
                       <Checkbox
@@ -307,7 +307,7 @@ const moveTaskToActive = (taskId) => {
             ))}
           </AnimatePresence>
           <div className="flex space-x-6 mt-8">
-            <Paper shadow="sm" p="md" withBorder className="flex-1">
+            <Paper p="md" withBorder className="flex-1">
               <Text size="lg" weight={700} className="mb-4">Upcoming Tasks</Text>
               {tasks
                 .filter(task => !task.completed && task.dueDate)
@@ -323,26 +323,27 @@ const moveTaskToActive = (taskId) => {
                 ))}
             </Paper>
             
-            <Paper shadow="sm" p="md" withBorder className="flex-1">
+            {/* Task Statistics */}
+            <Paper p="md" withBorder className="flex-1">
               <Text size="lg" weight={700} className="mb-4">Task Statistics</Text>
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
-                  <Text size="xl" weight={700} color="blue">{tasks.length}</Text>
+                  <Text size="xl" weight={700} color="blue">{tasks.length + completedTasks.length}</Text>
                   <Text size="sm" color="dimmed">Total Tasks</Text>
                 </div>
                 <div className="text-center">
-                  <Text size="xl" weight={700} color="green">{tasks.filter(task => task.completed).length}</Text>
+                  <Text size="xl" weight={700} color="green">{completedTasks.length}</Text>
                   <Text size="sm" color="dimmed">Completed</Text>
                 </div>
                 <div className="text-center">
-                  <Text size="xl" weight={700} color="orange">{tasks.filter(task => !task.completed).length}</Text>
+                  <Text size="xl" weight={700} color="orange">{tasks.length}</Text>
                   <Text size="sm" color="dimmed">Pending</Text>
                 </div>
               </div>
               <Progress
                 sections={[
-                  { value: (tasks.filter(task => task.completed).length / tasks.length) * 100, color: 'green' },
-                  { value: (tasks.filter(task => !task.completed).length / tasks.length) * 100, color: 'orange' },
+                  { value: (completedTasks.length / (tasks.length + completedTasks.length)) * 100, color: 'green' },
+                  { value: (tasks.length / (tasks.length + completedTasks.length)) * 100, color: 'orange' },
                 ]}
                 size="lg"
                 className="mt-4"
@@ -350,11 +351,11 @@ const moveTaskToActive = (taskId) => {
             </Paper>
           </div>
 
-          <Paper shadow="sm" p="md" withBorder className="mt-6">
+          <Paper p="md" withBorder className="mt-6">
             <Text size="lg" weight={700} className="mb-4">Completed Tasks</Text>
             {completedTasks.map(task => (
               <Group key={task.id} position="apart" className="mb-2">
-                <Text size="sm" strikethrough>{task.title}</Text>
+                <Text size="sm">{task.title}</Text>
                 <Checkbox
                   checked={true}
                   onChange={() => moveTaskToActive(task.id)}
