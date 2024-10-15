@@ -2,33 +2,24 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { XMarkIcon, Bars3Icon, ChevronDownIcon, ChevronUpIcon, HomeIcon, ChartBarIcon, ClipboardIcon, BookOpenIcon, UserGroupIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 
-
-export default function Sidebar({ isOpen, setIsOpen }) {
+export default function Sidebar() {
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
   const [isDashboardExpanded, setIsDashboardExpanded] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
-    const handleLogout = () => {
-      // Add logout logic
-      navigate('/');
-    };
-
-    const handleUpgradeClick = (e) => {
-      e.preventDefault();
-      setShowModal(true);
-    };
-
-    const toggleNestedList = () => {
-      setIsDashboardExpanded(!isDashboardExpanded);
-    };
-
-    const toggleSidebar = () => {
-      setIsOpen(!isOpen);
-    };
-
-    const handleDashboardClick = () => {
-      navigate('/dashboard');
-    };
+  const handleUpgradeClick = (e) => {
+    e.preventDefault();
+    setShowModal(true);
+  };
+  const toggleNestedList = () => {
+    setIsDashboardExpanded(!isDashboardExpanded);
+  };
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
+  const handleDashboardClick = () => {
+    navigate('/dashboard');
+  };
 
     return (
       <>

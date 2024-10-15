@@ -11,9 +11,8 @@ import { TextInput } from '@mantine/core'
 import { Search } from 'tabler-icons-react'
 import '@mantine/carousel/styles.css';
 import '@mantine/carousel/styles.css';
-import { ChevronLeftIcon, ChevronRightIcon, BellIcon, UserCircleIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
+import { ChevronLeftIcon, ChevronRightIcon, BellIcon, UserCircleIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
-import TaskList from './TaskList'
 
 
 export default function GoalPage() {
@@ -115,52 +114,41 @@ export default function GoalPage() {
       
     
       <div className="flex-1 overflow-auto bg-ascend-white">
-        <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center p-4">
-          <h2 className="text-3xl font-semibold text-ascend-black">Goals</h2>
-          <div className="flex items-center space-x-4">
-          <div className="relative">
+      <header className="bg-white z-10 p-4 shadow-md">
+        <div className="flex flex-col space-y-2 sm:flex-row sm:justify-between sm:items-center">
+          <h2 className="text-2xl font-semibold text-ascend-black">Goals</h2>
+          <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4 items-center">
+            <div className="w-full sm:w-auto">
               <input
                 type="text"
                 placeholder="Find..."
-                className="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
+                className="w-full sm:w-auto pl-2 pr-8 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
               />
-              <svg
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            </div>
+            <div className="flex items-center space-x-4">
+              {user && (
+                <p className="text-xs font-bold text-ascend-black">
+                  Welcome, {user.displayName || 'Goal Ascender'}!
+                </p>
+              )}
+              {user && user.photoURL ? (
+                <img 
+                  src={user.photoURL} 
+                  alt="Profile" 
+                  className="h-8 w-8 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
+                  onClick={() => navigate('/account')}
                 />
-              </svg>
+              ) : (
+                <UserCircleIcon 
+                  className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
+                  onClick={() => navigate('/account')}
+                />
+              )}
+              <BellIcon className="h-6 w-6 text-gray-600 "/>
             </div>
-            
-            {user && (
-              <p className="text-xs font-bold text-ascend-black">
-                Welcome, {user.displayName || 'Goal Ascender'}!
-              </p>
-            )}
-            {user && user.photoURL ? (
-              <img 
-                src={user.photoURL} 
-                alt="Profile" 
-                className="h-8 w-8 mr-2 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
-                onClick={() => navigate('/account')}
-              />
-            ) : (
-              <UserCircleIcon 
-                className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
-                onClick={() => navigate('/account')}
-              />
-            )}
-            <BellIcon className="h-6 w-6 text-gray-600 duration-1000 mr-2"/>
-            </div>
-        </header>
+          </div>
+        </div>
+      </header>
         
         <div className="flex flex-col gap-6 p-8">
           <div className="w-full">

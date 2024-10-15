@@ -3,7 +3,6 @@ import Sidebar from './Sidebar';
 import { getAuth } from 'firebase/auth';
 import { readGoals, getRecentPosts } from '../utils/database';
 import { BellIcon, UserCircleIcon, BookOpenIcon, PencilSquareIcon, ClipboardDocumentListIcon, UserGroupIcon, VideoCameraIcon, SparklesIcon, ClipboardIcon } from '@heroicons/react/24/outline';
-import { Checkbox } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import MotivationalVideo from './MotivationalVideo';
 import { readTasks, updateTask } from '../utils/database';
@@ -20,7 +19,7 @@ export default function Dashboard() {
   const handleJournalPromptClick = () => {
     navigate('/journal');
   };
-  const [tasks, setTasks] = useState([]);
+  const [setTasks] = useState([]);
   const [randomPrompt, setRandomPrompt] = useState('');
   const [recentTasks, setRecentTasks] = useState([]);
 
@@ -166,106 +165,108 @@ export default function Dashboard() {
     <div className="flex h-screen bg-ascend-white">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
-      <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center p-4">
-        <h2 className="text-3xl font-semibold text-ascend-black">Dashboard</h2>
-        <p className="text-xs italic text-gray-600">"{dailyQuote}"</p>
-        <div className="flex items-center space-x-4">
-        <div className="relative">
-            <input
-              type="text"
-              placeholder="Find..."
-              className="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
-            />
-            <svg
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-          <div className="relative">
-            <button
-              className="flex items-center text-sm font-medium text-gray-600 hover:text-ascend-green focus:outline-none"
-              onClick={() => setNewsDropdownOpen(!newsDropdownOpen)}
-            >
-              <span>News</span>
-              <svg className="ml-1 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </button>
-            {newsDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-64 bg-gray-300 border border-ascend-black rounded-md shadow-lg py-2 px-4 z-10">
-                <h3 className="text-md mb-2 text-center">Latest Updates</h3>
-                <p className="text-xs mb-2 text-center">Fixed the completion features when completing a goal!</p>
-                <p className="text-xs mb-2 text-center">Questions? <a href="mailto:silasgebhart12@gmail.com" className="text-md font-bold text-ascend-blue hover:underline">
-                  Email me!
-                </a></p>
-                
-                
-                <h3 className="text-md mb-2 text-center">Feature Announcement</h3>
-                <p className="text-xs mb-2 text-center">Coming soon: Artificial Intelligence Accountability Buddy!</p>
-                
-                <h3 className="text-md mb-2 text-center">Community Highlight</h3>
-                <p className="text-xs text-center">We'll be launching to the public here within a couple of days!</p>
-              </div>
-            )}
-          </div>
-          {user && (
-            <p className="text-xs font-bold text-ascend-black">
-              Welcome, {user.displayName || 'Goal Ascender'}!
-            </p>
-          )}
-          {user && user.photoURL ? (
-            <img 
-              src={user.photoURL} 
-              alt="Profile" 
-              className="h-8 w-8 mr-2 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
-              onClick={() => navigate('/account')}
-            />
-          ) : (
-            <UserCircleIcon 
-              className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
-              onClick={() => navigate('/account')}
-            />
-          )}
-          <BellIcon className="h-6 w-6 text-gray-600 duration-1000 mr-2"/>
-          </div>
-      </header>
-              <motion.main
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                className="flex-1 overflow-x-hidden overflow-y-auto bg-ascend-white p-4"
+        <header className="bg-white z-10 p-4 shadow-md">
+          <div className="flex flex-col space-y-2 sm:flex-row sm:justify-between sm:items-center">
+            <h2 className="text-2xl font-semibold text-ascend-black">Dashboard</h2>
+            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4 items-center">
+              <div className="w-full sm:w-auto">
+                <input
+                  type="text"
+                  placeholder="Find..."
+                  className="w-full sm:w-auto pl-2 pr-2 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
+                /><svg
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-        
-              {/* Under Construction Modal */}
-            {showModal && (
-              <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-                <div className="relative p-5 border w-96 shadow-lg rounded-md bg-white">
-                  <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2 text-center">🚨Important🚨</h3>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>              </div>
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <button
+                    className="flex items-center text-sm font-medium text-gray-600 hover:text-ascend-green focus:outline-none"
+                    onClick={() => setNewsDropdownOpen(!newsDropdownOpen)}
+                  >
+                    <span>News</span>
+                    <svg className="ml-1 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                  {/* News dropdown content */}{newsDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-64 bg-gray-300 border border-ascend-black rounded-md shadow-lg py-2 px-4 z-10">
+              <h3 className="text-md mb-2 text-center">Latest Updates</h3>
+              <p className="text-xs mb-2 text-center">Fixed the completion features when completing a goal!</p>
+              <p className="text-xs mb-2 text-center">Questions? <a href="mailto:silasgebhart12@gmail.com" className="text-md font-bold text-ascend-blue hover:underline">
+                Email me!
+              </a></p>
+              
+              
+              <h3 className="text-md mb-2 text-center">Feature Announcement</h3>
+              <p className="text-xs mb-2 text-center">Coming soon: Artificial Intelligence Accountability Buddy!</p>
+              
+              <h3 className="text-md mb-2 text-center">Community Highlight</h3>
+              <p className="text-xs text-center">We'll be launching to the public here within a couple of days!</p>
+            </div>
+          )}
+                </div>
                 {user && (
-                  <p className="text-sm text-center m-4 font-bold text-ascend-black">
-                    Hello, {user.displayName || 'Ascender'}!
+                  <p className="text-xs font-bold text-ascend-black">
+                    Welcome, {user.displayName || 'Goal Ascender'}!
                   </p>
                 )}
-                <p className="mb-4 text-sm text-center">This application is currently under construction. Some features may not be fully functional.</p>
-                <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-ascend-blue text-xs text-white rounded hover:bg-ascend-blue-dark mx-auto block"
-                >
-                Understood
-              </button>
+                {user && user.photoURL ? (
+                  <img 
+                    src={user.photoURL} 
+                    alt="Profile" 
+                    className="h-8 w-8 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
+                    onClick={() => navigate('/account')}
+                  />
+                ) : (
+                  <UserCircleIcon 
+                    className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
+                    onClick={() => navigate('/account')}
+                  />
+                )}
+                <BellIcon className="h-6 w-6 text-gray-600 duration-1000"/>
+              </div>
             </div>
           </div>
-        )}
+          <p className="text-xs italic text-gray-600 mt-2 text-center sm:text-left">"{dailyQuote}"</p>
+        </header>
+        <motion.main
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="flex-1 overflow-x-hidden overflow-y-auto bg-ascend-white p-4"
+        >
+        
+              {/* Under Construction Modal */}
+          {showModal && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+              <div className="relative p-5 border w-96 shadow-lg rounded-md bg-white">
+                <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2 text-center">🚨Important🚨</h3>
+              {user && (
+                <p className="text-sm text-center m-4 font-bold text-ascend-black">
+                  Hello, {user.displayName || 'Ascender'}!
+                </p>
+              )}
+              <p className="mb-4 text-sm text-center">This application is currently under construction. Some features may not be fully functional.</p>
+              <button
+              onClick={() => setShowModal(false)}
+              className="px-4 py-2 bg-ascend-blue text-xs text-white rounded hover:bg-ascend-blue-dark mx-auto block"
+              >
+              Understood
+            </button>
+          </div>
+        </div>
+      )}
           
           <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             
@@ -416,7 +417,7 @@ export default function Dashboard() {
                 {/* Replace with actual spotlight member data */}
                 <span className="text-lg font-semibold text-center mt-4 uppercase">Coming Soon!</span>
                 <br></br>
-                <p className="text-sm text-gray-500 text-center">
+                <p className="text-sm text-ascend-black text-center leading-relaxed">
                 We are excited to introduce a new feature that celebrates our members' dedication and perseverance in achieving their goals. As part of this initiative, members will have the opportunity to share their personal stories detailing their journey to success.<br></br><br></br>Once we have gathered a selection of stories, our team will anonymously review and select one member to be featured as the spotlight of the month. This initiative is designed to inspire and motivate others to continue striving toward their aspirations.<br></br><br></br>Keep ascending! Together, we will reach new heights!
                 </p>  
               </div>
@@ -429,12 +430,26 @@ export default function Dashboard() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="lg:col-span-2 md:col-span-2 bg-white rounded-sm p-4 border border-gray-300"
             >
-              <h4 className="text-lg text-ascend-black mb-4 flex items-center">
-                <VideoCameraIcon className="w-6 h-6 mr-2 text-ascend-black" />
-                Motivation
-              </h4>
-              <div>
-                <MotivationalVideo />
+              <div className="flex flex-col space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="text-xl text-ascend-black flex items-center">
+                    <VideoCameraIcon className="w-6 h-6 mr-2 text-ascend-black" />
+                    Daily Motivation
+                  </h4>
+                  <p className="text-xs text-blue-500 leading-tight mr-1">
+                    Updated <span className='italic'>weekly</span> with new motivational content!
+                  </p>
+                </div>
+                <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6">
+                  <div className="w-full md:w-2/3">
+                    <MotivationalVideo />
+                  </div>
+                  <div className="w-full md:w-1/3">
+                    <p className="text-sm text-ascend-black leading-relaxed text-justify mt-4">
+                      This powerful tool for personal growth offers inspiration, fresh perspectives, and emotional boosts. These videos reinforce goals, provide valuable insights, and cultivate a positive mindset. By triggering immediate action and fostering a sense of community, they significantly enhance your journey towards achieving your aspirations. Watch this week's video to ignite your motivation and stay focused on your path to success!
+                    </p>
+                  </div>
+                </div>
               </div>
             </motion.div>
           </motion.div>

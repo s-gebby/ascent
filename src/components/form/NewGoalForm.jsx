@@ -36,9 +36,9 @@ export default function NewGoalForm({ onAddGoal }) {
     >
       <div className="md:flex ">
         <form onSubmit={handleSubmit} className="p-6 space-y-4 md:w-2/3 ">
-          <h2 className="text-lg font-bold text-ascend-green uppercase mb-6 font-archivo-black">Create New Goal</h2>
+          <h2 className="text-md font-bold text-ascend-black uppercase mb-6 font-archivo-black">Create New Goal</h2>
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black ">1 - Goal Title</label>
+            <label htmlFor="title" className="block text-sm font-medium text-ascend-black mb-1 font-archivo-black ">1 - Goal Title</label>
             <TextInput
               id="title"
               placeholder="Enter your goal title"
@@ -48,7 +48,7 @@ export default function NewGoalForm({ onAddGoal }) {
             />
           </div>
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1 font-archivo-black">2 - Goal Description</label>
+            <label htmlFor="description" className="block text-sm font-medium text-ascend-black mb-1 font-archivo-black">2 - Goal Description</label>
             <Textarea
               id="description"
               placeholder="Describe your goal"
