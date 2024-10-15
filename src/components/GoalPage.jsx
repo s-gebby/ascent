@@ -115,8 +115,8 @@ export default function GoalPage() {
       
     
       <div className="flex-1 overflow-auto bg-ascend-white">
-        <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center">
-          <h2 className="text-3xl ml-2 font-semibold text-ascend-black">Goals</h2>
+        <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center p-4">
+          <h2 className="text-3xl font-semibold text-ascend-black">Goals</h2>
           <div className="flex items-center space-x-4">
           <div className="relative">
               <input

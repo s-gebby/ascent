@@ -102,7 +102,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               <li className="mb-4">
                 <Link to="/tasklist" className="flex items-center py-2 px-4 hover:bg-ascend-blue rounded text-sm">
                   <ClipboardIcon className="h-4 w-4 mr-2" />
-                  Task List
+                  Tasks
                 </Link>
               </li>
               <li className="mb-4">

@@ -180,8 +180,8 @@ return (
       setIsOpen={setIsSidebarOpen}
     />
     <div className="flex-1 flex flex-col h-screen">
-    <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center">
-        <h2 className="text-3xl ml-2 font-semibold text-ascend-black">Journal</h2>
+    <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center p-4">
+        <h2 className="text-3xl font-semibold text-ascend-black">Journal</h2>
         <div className="flex items-center space-x-4">
         <div className="relative">
             <input

@@ -89,13 +89,16 @@ const handleToggleTask = async (taskId) => {
   if (auth.currentUser) {
     const taskToUpdate = tasks.find(task => task.id === taskId);
     if (taskToUpdate) {
-      const updatedTask = { ...taskToUpdate, completed: !taskToUpdate.completed };
+      const updatedTask = { 
+        ...taskToUpdate, 
+        completed: !taskToUpdate.completed,
+        completedAt: !taskToUpdate.completed ? new Date().toISOString() : null
+      };
       await updateTask(auth.currentUser.uid, taskId, updatedTask);
       await fetchTasks();
     }
   }
 };
-
 const moveTaskToCompleted = () => {
   if (taskToComplete) {
     setCompletedTasks([...completedTasks, {...taskToComplete, completed: true}]);
@@ -153,42 +156,81 @@ const moveTaskToActive = (taskId) => {
     const difference = due - now;
     const days = Math.floor(difference / (1000 * 60 * 60 * 24));
     const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    return `${days}d ${hours}h`;
+    {/* ADD IN A NOTIFICATION FOR THIS!!! */ }
+    const isLessThan3Days = days < 3;
+    return {
+      text: `${days}d ${hours}h`,
+      isUrgent: isLessThan3Days
+    };
+  };
+
+  const getUpcomingDeadlines = (tasks) => {
+    const now = new Date();
+    const in24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    const in3Days = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+  
+    return {
+      "Due 24 Hours": tasks.filter(task => new Date(task.dueDate) <= in24Hours).length,
+      "Next 3 Days": tasks.filter(task => new Date(task.dueDate) <= in3Days).length,
+    };
+  };
+  
+  const getRecentCompletedTasks = (tasks) => {
+    return tasks
+      .filter(task => task.completed)
+      .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt))
+      .slice(0, 3);
   };
 
   return (
     <div className="flex flex-col h-screen bg-ascend-white md:flex-row">
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white z-10 p-2 flex flex-col md:flex-row justify-between items-center">
-          <h2 className="text-2xl md:text-3xl font-semibold text-ascend-black mb-2 md:mb-0">Task List</h2>
-          <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
-            <TextInput
+      <header className="bg-white z-10 p-2 flex flex-col sm:flex-row justify-between items-center p-4">
+        <h2 className="text-3xl font-semibold text-ascend-black">Tasks</h2>
+        <div className="flex items-center space-x-4">
+        <div className="relative">
+            <input
+              type="text"
               placeholder="Find..."
-              icon={<svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>}
-              className="w-48"
+              className="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
             />
-            {user && (
-              <Text size="sm" weight={700} className="text-ascend-black">
-                Welcome, {user.displayName || 'Goal Ascender'}!
-              </Text>
-            )}
-            {user && user.photoURL ? (
-              <img 
-                src={user.photoURL} 
-                alt="Profile" 
-                className="h-8 w-8 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
-                onClick={() => navigate('/account')}
+            <svg
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
-            ) : (
-              <UserCircleIcon 
-                className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:text-ascend-green" 
-                onClick={() => navigate('/account')}
-              />
-            )}
-            <BellIcon className="h-6 w-6 text-gray-600 transition-all duration-300 hover:text-ascend-green cursor-pointer"/>
+            </svg>
           </div>
-        </header>
+          {user && (
+            <p className="text-xs font-bold text-ascend-black">
+              Welcome, {user.displayName || 'Goal Ascender'}!
+            </p>
+          )}
+          {user && user.photoURL ? (
+            <img 
+              src={user.photoURL} 
+              alt="Profile" 
+              className="h-8 w-8 mr-2 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
+              onClick={() => navigate('/account')}
+            />
+          ) : (
+            <UserCircleIcon 
+              className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
+              onClick={() => navigate('/account')}
+            />
+          )}
+          <BellIcon className="h-6 w-6 text-gray-600 duration-1000 mr-2"/>
+          </div>
+      </header>
         <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6">
           <Paper className="mb-6 text-ascend-black max-w-4xl mx-auto">
             <h1 className="text-2xl mb-2 text-center text-ascend-black">
@@ -196,7 +238,7 @@ const moveTaskToActive = (taskId) => {
             </h1>
             <div className="p-1 rounded-lg">
               <p className="mb-2 text-center text-md text-ascend-black"> 
-                Breaking down your goals into manageable tasks is a proven strategy for success.
+                Breaking down your goals into manageable tasks is a proven strategy for success!
               </p>
               <div className="flex items-center justify-center mb-2">
                 <div className="w-16 h-1 mt-2 bg-ascend-black rounded"></div>
@@ -206,35 +248,78 @@ const moveTaskToActive = (taskId) => {
 
 
           <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 mt-2">
-              
-              {/* Task Statistics */}
-              <Paper p="md" withBorder className="flex-1">
-                <Text size="lg" weight={700} className="mb-4 text-center">Task Statistics</Text>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <Text size="xl" weight={700} color="blue">{totalTasks}</Text>
-                    <Text size="sm">Total Tasks</Text>
-                  </div>
-                  <div className="text-center">
-                    <Text size="xl" weight={700} color="green">{completedTasksCount}</Text>
-                    <Text size="sm">Completed</Text>
-                  </div>
-                  <div className="text-center">
-                    <Text size="xl" weight={700} color="orange">{pendingTasks}</Text>
-                    <Text size="sm">Pending</Text>
-                  </div>
+  
+            {/* Task Statistics */}
+            <Paper p="md" withBorder className="flex-1 bg-white shadow-sm rounded-lg">
+              <Text size="lg" weight={700} className="mb-6 text-center text-ascend-black">Task Overview</Text>
+              <div className="grid grid-cols-3 gap-6 mb-6">
+                <div className="text-center">
+                  <Text size="2xl" weight={700} color="ascend-blue">{totalTasks}</Text>
+                  <Text size="sm" color="dimmed">Total Tasks</Text>
                 </div>
-                {/* Progress Bar */}
-                <Progress
-                  sections={[
-                    { value: (completedTasksCount / totalTasks) * 100, color: 'ascend-green' },
-                    { value: (pendingTasks / totalTasks) * 100, color: 'ascend-orange' },
-                  ]}
-                  size="lg"
-                  className="mt-4"
-                />
-              </Paper>
-            </div>
+                <div className="text-center">
+                  <Text size="2xl" weight={700} color="ascend-green">{completedTasksCount}</Text>
+                  <Text size="sm" color="dimmed">Completed</Text>
+                </div>
+                <div className="text-center">
+                  <Text size="2xl" weight={700} color="ascend-pink">{pendingTasks}</Text>
+                  <Text size="sm" color="dimmed">Pending</Text>
+                </div>
+              </div>
+              {/* Progress Bar */}
+              <div className="mb-6">
+                <Text size="md" weight={600} p="md" className="text-ascend-black text-center">Progress</Text>
+                <div className="w-5/6 mx-auto">
+                  <Progress
+                    sections={[
+                      { value: (completedTasksCount / totalTasks) * 100, color: 'ascend-green' },
+                      { value: (pendingTasks / totalTasks) * 100, color: 'ascend-orange' },
+                    ]}
+                    size="xl"
+                  />
+                </div>
+              </div>
+            </Paper>
+
+            {/* Upcoming Deadlines */}
+            <Paper p="md" withBorder className="flex-1 bg-white shadow-sm rounded-lg">
+              <Text size="lg" color="red" weight={700} className="mb-6 text-center">Upcoming Deadlines</Text>
+              <Text size="xs" color="dimmed" className="text-center">
+                  Make sure to attack these tasks! They're due soon!
+              </Text>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                {Object.entries(getUpcomingDeadlines(tasks)).map(([period, count]) => (
+                  <div key={period} className="text-center bg-red-100 p-8 rounded-lg shadow-inner">
+                    <Text size="xl" weight={700} color="red">{count}</Text>
+                    <Text size="xs" color="dimmed">{period}</Text>
+                  </div>
+                ))}
+              </div>
+            </Paper>
+
+            {/* Recently Completed Tasks */}
+            <Paper p="md" withBorder className="flex-1 bg-white shadow-sm rounded-lg">
+              <Text size="lg" weight={700} className="mb-6 text-center text-ascend-black">Recently Completed</Text>
+              <div className="space-y-2">
+                {getRecentCompletedTasks(tasks).length > 0 ? (
+                  getRecentCompletedTasks(tasks).map(task => (
+                    <div key={task.id} className="flex items-center bg-gray-50 p-2 rounded-lg">
+                      <div className="w-2 h-2 bg-ascend-green rounded-full mr-2"></div>
+                      <Text size="sm" className="text-ascend-black">{task.title}</Text>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex items-center justify-center h-32">
+                    <Text size="md" color='ascend-blue' className="text-center italic">
+                      Work and complete tasks, you'll find them here!
+                    </Text>
+                  </div>
+                )}
+              </div>
+            </Paper>
+          </div>
+
+            {/* Buttons and Filters for Tasks */}
             <Group position="apart" className="mb-6 mt-6 flex-col md:flex-row w-full">
               <Button onClick={open} className="w-full md:w-auto mb-2 md:mb-0">
                 Add New Task
@@ -288,8 +373,12 @@ const moveTaskToActive = (taskId) => {
                             <Badge color="ascend-blue" size="sm">
                               {goals && goals[task.goalId] ? goals[task.goalId].title : 'No associated goal'}
                             </Badge>
-                            <Badge leftSection={<CalendarIcon className="h-3 w-3" />} color="ascend-green" size="sm">
-                              Due in {calculateCountdown(task.dueDate)}
+                            <Badge 
+                              leftSection={<CalendarIcon className="h-3 w-3" />} 
+                              color={calculateCountdown(task.dueDate).isUrgent ? "red" : "ascend-green"} 
+                              size="sm"
+                            >
+                              Due in {calculateCountdown(task.dueDate).text}
                             </Badge>
                           </Group>
                         </div>
