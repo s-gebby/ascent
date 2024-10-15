@@ -191,7 +191,7 @@ export default function Dashboard() {
               <div className="flex items-center space-x-4">
                 <div className="relative">
                   <button
-                    className="flex items-center text-sm font-medium text-gray-600 hover:text-ascend-green focus:outline-none"
+                    className="flex items-center text-sm font-medium text-gray-600 hover:text-ascend-blue focus:outline-none"
                     onClick={() => setNewsDropdownOpen(!newsDropdownOpen)}
                   >
                     <span>News</span>
@@ -202,10 +202,17 @@ export default function Dashboard() {
                   {/* News dropdown content */}{newsDropdownOpen && (
               <div className="absolute right-0 mt-2 w-64 bg-gray-300 border border-ascend-black rounded-md shadow-lg py-2 px-4 z-10">
               <h3 className="text-md mb-2 text-center">Latest Updates</h3>
-              <p className="text-xs mb-2 text-center">Fixed the completion features when completing a goal!</p>
+              <p className="text-xs text-ascend-black text-center">
+                We've implemented significant improvements to the Motivational Video functionality, aligning it more closely with personalized motivational strategies. This update reflects a more tailored approach to inspiration and goal achievement.
+              </p>
+              <ul className="list-disc list-inside text-xs text-ascend-black mt-2 mb-2">
+                <li>Refined video content selection</li>
+                <li>Enhanced viewing experience</li>
+                <li>Personalized motivation techniques</li>
+              </ul>
               <p className="text-xs mb-2 text-center">Questions? <a href="mailto:silasgebhart12@gmail.com" className="text-md font-bold text-ascend-blue hover:underline">
-                Email me!
-              </a></p>
+                Email me!</a>
+              </p>
               
               
               <h3 className="text-md mb-2 text-center">Feature Announcement</h3>
