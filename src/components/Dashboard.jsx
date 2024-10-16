@@ -28,18 +28,7 @@ export default function Dashboard() {
     setRandomPrompt(journalPrompts[Math.floor(Math.random() * journalPrompts.length)]);
   }, []);
 
-  const journalPrompts = [
-    "What's one small step you can take today towards your biggest goal?",
-    "Reflect on a recent challenge you overcame. What did you learn?",
-    "Describe your ideal day. How does it align with your current goals?",
-    "What's a skill you'd like to develop this month? Why is it important to you?",
-    "Write about a person who inspires you. How can you embody their qualities?",
-    "What are three things you're grateful for today?",
-    "If you could give advice to your younger self, what would it be?",
-    "Describe a recent accomplishment. How did it make you feel?",
-    "What's a fear you'd like to overcome? What's one step you can take towards facing it?",
-    "Imagine your life in 5 years. What do you hope to have achieved?"
-  ];
+  
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -58,21 +47,6 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, []);
 
-  const fetchTasks = async () => {
-    if (auth.currentUser) {
-      try {
-        const fetchedTasks = await readTasks(auth.currentUser.uid);
-        setTasks(fetchedTasks || []);
-      } catch (error) {
-        console.error("Error fetching tasks:", error.message);
-        // Handle the error, perhaps by setting an error state
-        setTasks([]);
-      }
-    } else {
-      console.log("No authenticated user");
-      setTasks([]);
-    }
-  };
 
   useEffect(() => {
     const fetchRecentTasks = async () => {
@@ -120,7 +94,18 @@ export default function Dashboard() {
       setGoals(fetchedGoals || []);
     }
   };
-
+  const journalPrompts = [
+    "What's one small step you can take today towards your biggest goal?",
+    "Reflect on a recent challenge you overcame. What did you learn?",
+    "Describe your ideal day. How does it align with your current goals?",
+    "What's a skill you'd like to develop this month? Why is it important to you?",
+    "Write about a person who inspires you. How can you embody their qualities?",
+    "What are three things you're grateful for today?",
+    "If you could give advice to your younger self, what would it be?",
+    "Describe a recent accomplishment. How did it make you feel?",
+    "What's a fear you'd like to overcome? What's one step you can take towards facing it?",
+    "Imagine your life in 5 years. What do you hope to have achieved?"
+  ];
   const [newsDropdownOpen, setNewsDropdownOpen] = useState(false);
   const [dailyQuote, setDailyQuote] = useState('');
   const quotes = [
@@ -174,20 +159,8 @@ export default function Dashboard() {
                   type="text"
                   placeholder="Find..."
                   className="w-full sm:w-auto pl-2 pr-2 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
-                /><svg
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
-              </svg>              </div>
+              </div>
               <div className="flex items-center space-x-4">
                 <div className="relative">
                   <button
@@ -332,16 +305,16 @@ export default function Dashboard() {
               </h4>
               <div className="space-y-4">
                 {recentPosts.map((post) => (
-                  <div key={post.id} className="border-b pb-2">
-                    <div className="flex items-center mb-1">
+                  <div key={post.id} className="border-b pb-1">
+                    <div className="flex items-center text-sm">
                       <img 
                         src={post.authorPhotoURL || ' https://t3.ftcdn.net/jpg/06/33/54/78/360_F_633547842_AugYzexTpMJ9z1YcpTKUBoqBF0CUCk10.jpg'} 
                         alt={post.authorName} 
-                        className="w-6 h-6 rounded-full mr-2"
+                        className="w-5 h-5 rounded-full mr-2"
                       />
                       <p className="font-semibold">{post.authorName}</p>
                     </div>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-xs text-gray-600">
                       {post.content.length > 50 ? post.content.substring(0, 50) + '...' : post.content}
                     </p>
                     <p className="text-xs text-gray-400">{new Date(post.timestamp).toLocaleString()}</p>

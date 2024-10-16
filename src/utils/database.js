@@ -176,7 +176,11 @@ export const readTasks = async (userId) => {
   try {
     const snapshot = await get(tasksRef);
     if (snapshot.exists()) {
-      return Object.entries(snapshot.val()).map(([id, task]) => ({ id, ...task }));
+      const tasks = Object.entries(snapshot.val()).map(([id, task]) => ({ id, ...task }));
+      return tasks.sort((a, b) => {
+        if (a.completed === b.completed) return 0;
+        return a.completed ? 1 : -1;
+      });
     } else {
       return [];
     }

@@ -18,7 +18,7 @@ export default function TaskList() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [sortBy, setSortBy] = useState('createdAt');
-  const [filterCompleted, setFilterCompleted] = useState('all');
+  const [filterCompleted, setFilterCompleted] = useState('active');
   const completedTasksCount = tasks.filter(task => task.completed).length
   const totalTasks = tasks.length
   const pendingTasks = totalTasks - completedTasksCount
@@ -138,7 +138,7 @@ const moveTaskToActive = (taskId) => {
       }
     }
   };
-  const sortedAndFilteredTasks = [...tasks, ...completedTasks]
+    const sortedAndFilteredTasks = tasks
     .filter(task => {
       if (filterCompleted === 'all') {
         return true;
@@ -328,9 +328,9 @@ const moveTaskToActive = (taskId) => {
                 <Select
                   placeholder="Filter"
                   data={[
+                    { value: 'active', label: 'Active Tasks' },
                     { value: 'all', label: 'All Tasks' },
-                    { value: 'completed', label: 'Completed' },
-                    { value: 'active', label: 'Active' },
+                    { value: 'completed', label: 'Completed Tasks' },
                   ]}
                   value={filterCompleted}
                   onChange={setFilterCompleted}
