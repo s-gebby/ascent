@@ -172,7 +172,8 @@ export default function Dashboard() {
                       <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   </button>
-                  {/* News dropdown content */}{newsDropdownOpen && (
+                  {/* News dropdown content */}
+                {newsDropdownOpen && (
               <div className="absolute right-0 mt-2 w-64 bg-gray-300 border border-ascend-black rounded-md shadow-lg py-2 px-4 z-10">
               <h3 className="text-md mb-2 text-center">Latest Updates</h3>
               <p className="text-xs text-ascend-black text-center">

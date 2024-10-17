@@ -5,7 +5,7 @@ import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'fire
 import { updateProfile } from 'firebase/auth'
 import Sidebar from '../Sidebar.jsx';
 import { motion } from 'framer-motion';
-import { CameraIcon, UserCircleIcon, EnvelopeIcon, CalendarIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import { CameraIcon, UserCircleIcon, EnvelopeIcon, CalendarIcon, LockClosedIcon, BellIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 
 export default function Account() {
@@ -19,6 +19,7 @@ export default function Account() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate();
+
 
 
   useEffect(() => {
@@ -91,9 +92,44 @@ export default function Account() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="flex-1 p-8"
+        className="flex-1"
       >
-        <div className="max-w-4xl mx-auto bg-white rounded-sm shadow-xl overflow-hidden">
+        <header className="bg-white z-10 p-4 shadow-md">
+          <div className="flex flex-col space-y-2 sm:flex-row sm:justify-between sm:items-center">
+            <h2 className="text-2xl font-semibold text-ascend-black">Journal</h2>
+            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4 items-center">
+              <div className="w-full sm:w-auto">
+                <input
+                  type="text"
+                  placeholder="Find..."
+                  className="w-full sm:w-auto pl-2 pr-8 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ascend-green focus:border-transparent"
+                />
+              </div>
+              <div className="flex items-center space-x-4">
+                {currentUser && (
+                  <p className="text-xs font-bold text-ascend-black">
+                    Welcome, {currentUser.displayName || 'Goal Ascender'}!
+                  </p>
+                )}
+                {currentUser && currentUser.photoURL ? (
+                  <img 
+                    src={currentUser.photoURL} 
+                    alt="Profile" 
+                    className="h-8 w-8 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
+                    onClick={() => navigate('/account')}
+                  />
+                ) : (
+                  <UserCircleIcon 
+                    className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
+                    onClick={() => navigate('/account')}
+                  />
+                )}
+                <BellIcon className="h-6 w-6 text-gray-600 duration-1000"/>
+              </div>
+            </div>
+          </div>
+        </header>
+        <div className="max-w-4xl mx-auto bg-white rounded-sm overflow-hidden mt-16">
           <div className="px-8 py-6 bg-ascend-black text-white">
             <h2 className="text-2xl font-bold">Account Information</h2>
             <p className="mt-2 mb-6 text-sm text-ascend-blue-light">Manage your personal details and account settings</p>
