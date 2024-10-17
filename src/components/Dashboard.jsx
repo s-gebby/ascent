@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import { getAuth } from 'firebase/auth';
 import { readGoals, getRecentPosts } from '../utils/database';
-import { BellIcon, UserCircleIcon, BookOpenIcon, PencilSquareIcon, ClipboardDocumentListIcon, UserGroupIcon, VideoCameraIcon, SparklesIcon, ClipboardIcon } from '@heroicons/react/24/outline';
+import { BellIcon, UserCircleIcon, BookOpenIcon, PencilSquareIcon, ClipboardDocumentListIcon, UserGroupIcon, VideoCameraIcon, SparklesIcon, ClipboardIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 import MotivationalVideo from './MotivationalVideo';
 import { readTasks, updateTask } from '../utils/database';
@@ -164,7 +164,7 @@ export default function Dashboard() {
               <div className="flex items-center space-x-4">
                 <div className="relative">
                   <button
-                    className="flex items-center text-sm font-medium text-gray-600 hover:text-ascend-blue focus:outline-none"
+                    className="flex items-center text-sm font-medium text-gray-600 hover:text-ascend-green focus:outline-none"
                     onClick={() => setNewsDropdownOpen(!newsDropdownOpen)}
                   >
                     <span>News</span>
@@ -174,9 +174,9 @@ export default function Dashboard() {
                   </button>
                   {/* News dropdown content */}
                 {newsDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-64 bg-gray-300 border border-ascend-black rounded-md shadow-lg py-2 px-4 z-10">
-              <h3 className="text-md mb-2 text-center">Latest Updates</h3>
-              <p className="text-xs text-ascend-black text-center">
+              <div className="absolute right-0 mt-2 w-64 bg-ascend-white border border-ascend-black rounded-2xl shadow-lg py-2 px-4 z-10">
+              <h3 className="text-md mb-2 text-center text-ascend-green">Latest Updates</h3>
+              <p className="text-xs text-ascend-black text-center mb-2">
                 We've implemented significant improvements to the Motivational Video functionality, aligning it more closely with personalized motivational strategies. This update reflects a more tailored approach to inspiration and goal achievement.
               </p>
               <ul className="list-disc list-inside text-xs text-ascend-black mt-2 mb-2">
@@ -189,32 +189,40 @@ export default function Dashboard() {
               </p>
               
               
-              <h3 className="text-md mb-2 text-center">Feature Announcement</h3>
+              <h3 className="text-md mb-2 text-center text-ascend-orange">Feature Announcement</h3>
               <p className="text-xs mb-2 text-center">Coming soon: Artificial Intelligence Accountability Buddy!</p>
               
-              <h3 className="text-md mb-2 text-center">Community Highlight</h3>
+              <h3 className="text-md mb-2 text-center text-ascend-pink">Community Highlight</h3>
               <p className="text-xs text-center">We'll be launching to the public here within a couple of days!</p>
             </div>
           )}
                 </div>
                 {user && (
-                  <p className="text-xs font-bold text-ascend-black">
-                    Welcome, {user.displayName || 'Goal Ascender'}!
-                  </p>
+                  <div className="flex items-center space-x-2 group relative">
+                    <p className="text-xs font-bold text-ascend-black">
+                      Welcome, {user.displayName || 'Goal Ascender'}!
+                    </p>
+                    <div className="flex items-center">
+                      {user.photoURL ? (
+                        <img 
+                          src={user.photoURL} 
+                          alt="Profile" 
+                          className="h-8 w-8 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
+                          onClick={() => navigate('/account')}
+                        />
+                      ) : (
+                        <UserCircleIcon 
+                          className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
+                          onClick={() => navigate('/account')}
+                        />
+                      )}
+                    </div>
+                    <span className="absolute top-full left-3/4 transform -translate-x-1/4 translate-y-1/4 bg-ascend-green text-ascend-black text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      Account
+                    </span>
+                  </div>
                 )}
-                {user && user.photoURL ? (
-                  <img 
-                    src={user.photoURL} 
-                    alt="Profile" 
-                    className="h-8 w-8 rounded-full cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green"
-                    onClick={() => navigate('/account')}
-                  />
-                ) : (
-                  <UserCircleIcon 
-                    className="h-8 w-8 text-gray-600 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-ascend-green rounded-full" 
-                    onClick={() => navigate('/account')}
-                  />
-                )}
+                
                 <BellIcon className="h-6 w-6 text-gray-600 duration-1000"/>
               </div>
             </div>
@@ -355,31 +363,39 @@ export default function Dashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="lg:col-span-1 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
+              className="lg:col-span-1 md:col-span-1 bg-white rounded-xs p-6 border border-gray-300"
             >
-              <h4 className="text-lg text-ascend-black mb-4 flex items-center">
+              <h4 className="text-xl text-ascend-black mb-4 flex items-center">
                 <ClipboardIcon className="w-6 h-6 mr-2 text-ascend-black" />
                 Recent Tasks
               </h4>
-              <div className="overflow-y-auto max-h-64 text-sm">
+              <div className="overflow-y-auto max-h-64 text-xs space-y-3">
                 {recentTasks.map((task) => (
-                  <div key={task.id} className="flex items-center justify-between py-2 border-b">
-                    <div className="flex items-center">
-                      <span className={task.completed ? 'line-through text-green-500' : ''}>
+                  <div key={task.id} className="flex items-center justify-between py-3 px-4 border-t rounded-sm transition-colors">
+                    <div className="flex flex-row items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        checked={task.completed}
+                        readOnly
+                        className="form-checkbox h-4 w-4 text-ascend-green rounded focus:ring-ascend-green"
+                      />
+                      <span className={`font-medium ${task.completed ? 'line-through text-gray-400' : 'text-ascend-black'}`}>
                         {task.title}
                       </span>
                     </div>
-                    <span className="text-sm text-gray-500">
-                      {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'None'}
+                    {/* look into adding bg to the due date */}
+                    <span className="text-xs text-ascend-blue font-semibold py-1 px-2 rounded-full">
+                      {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}
                     </span>
                   </div>
                 ))}
               </div>
               <button
                 onClick={() => navigate('/tasklist')}
-                className="mt-4 w-full bg-ascend-black text-white py-2 px-4 rounded-md text-sm flex items-center justify-center"
+                className="mt-6 w-full bg-ascend-black text-white py-2 px-4 rounded-lg text-sm font-medium flex items-center justify-center hover:bg-ascend-blue transition-colors duration-200"
               >
-                View All Tasks
+                <span>View All Tasks</span>
+                <ArrowRightIcon className="w-4 h-4 ml-2" />
               </button>
             </motion.div>
             
@@ -399,7 +415,7 @@ export default function Dashboard() {
                 <span className="text-lg font-semibold text-center mt-4 uppercase">Coming Soon!</span>
                 <br></br>
                 <p className="text-sm text-ascend-black text-center leading-relaxed">
-                We are excited to introduce a new feature that celebrates our members' dedication and perseverance in achieving their goals. As part of this initiative, members will have the opportunity to share their personal stories detailing their journey to success.<br></br><br></br>Once we have gathered a selection of stories, our team will anonymously review and select one member to be featured as the spotlight of the month. This initiative is designed to inspire and motivate others to continue striving toward their aspirations.<br></br><br></br>Keep ascending! Together, we will reach new heights!
+                We are excited to introduce a new feature that celebrates our members' dedication and perseverance in achieving their goals. As part of this initiative, members will have the opportunity to share their personal stories detailing their journey to success.<br></br><br></br> Our team will anonymously review and select one member to be featured as the spotlight of the month. This initiative is designed to inspire and motivate others to continue striving toward their aspirations.
                 </p>  
               </div>
             </motion.div>
