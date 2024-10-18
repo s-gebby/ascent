@@ -174,16 +174,21 @@ export default function Dashboard() {
                   </button>
                   {/* News dropdown content */}
                 {newsDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-64 bg-ascend-white border border-ascend-black rounded-2xl shadow-lg py-2 px-4 z-10">
+              <div className="absolute right-0 mt-2 w-64 bg-ascend-white border border-ascend-black rounded-2xl shadow-lg py-2 px-6 z-10">
               <h3 className="text-md mb-2 text-center text-ascend-green">Latest Updates</h3>
-              <p className="text-xs text-ascend-black text-center mb-2">
-                We've implemented significant improvements to the Motivational Video functionality, aligning it more closely with personalized motivational strategies. This update reflects a more tailored approach to inspiration and goal achievement.
+              <p className="text-xs text-ascend-black text-center mb-2 leading-snug tracking-snug">
+                We've implemented significant improvements to the Journal page, making it more user-friendly and efficient. We also made some adjustments to the account page, as well as the sidebar, to enhance the overall user experience. We hope you enjoy the updates!
               </p>
-              <ul className="list-disc list-inside text-xs text-ascend-black mt-2 mb-2">
-                <li>Refined video content selection</li>
-                <li>Enhanced viewing experience</li>
-                <li>Personalized motivation techniques</li>
+              {/* THIS IS FOR WHEN YOU TO EXPRESS MORE INFORMATION ABOUT THE UPDATES */}
+              {/*
+              <ul className="list-disc list-inside text-xs text-ascend-black mt-2 mb-2 text-justify">
+                <li className='mb-2'>Improved the export functionality for Journal entries.</li>
+                <li className='mb-2'>Enhanced the layout of journal entries for a more user-friendly experience.
+                </li>
+                <li className='mb-2'>Refined the design of the account page to align with the updated layout.</li>
+                <li className='mb-2'>Fixed the sidebar dropdown menu for smoother navigation.</li>
               </ul>
+              */}
               <p className="text-xs mb-2 text-center">Questions? <a href="mailto:silasgebhart12@gmail.com" className="text-md font-bold text-ascend-blue hover:underline">
                 Email me!</a>
               </p>
