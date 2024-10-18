@@ -252,6 +252,8 @@ export default function Account() {
   )
 }
 
+{/* add in footer */}
+
 function AccountField({ icon, label, value, isEditing, editComponent }) {
   return (
     <div className="flex items-center space-x-4">

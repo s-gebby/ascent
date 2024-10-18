@@ -68,9 +68,9 @@ export default function Sidebar() {
                   </button>
                 </div>
                 {isDashboardExpanded && (
-                  <ul className="ml-4 mt-2">
+                  <ul className="ml-2 mt-2">
                     <li className="mb-2">
-                      <Link to="/stats" className="flex items-center py-1 px-4 hover:bg-gray-700 rounded text-sm">
+                      <Link to="/stats" className="flex items-center hover:bg-ascend-blue py-1 px-4 rounded text-sm">
                         <ChartBarIcon className="h-4 w-4 mr-2" />
                         Stats
                       </Link>

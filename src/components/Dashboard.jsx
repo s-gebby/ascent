@@ -264,7 +264,7 @@ export default function Dashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="lg:col-span-2 md:col-span-1 bg-white rounded-sm p-4 border border-gray-300"
+              className="lg:col-span-2 md:col-span-1 bg-white rounded-sm border border-gray-300"
             >
               <h4 className="text-lg text-ascend-black mb-4 flex items-center">
                 <ClipboardDocumentListIcon className="w-6 h-6 mr-2 text-ascend-black" />
@@ -433,7 +433,7 @@ export default function Dashboard() {
                     <VideoCameraIcon className="w-6 h-6 mr-2 text-ascend-black" />
                     Daily Motivation
                   </h4>
-                  <p className="text-xs text-blue-500 leading-tight mr-1">
+                  <p className="text-xs text-ascend-blue leading-tight mr-1">
                     Updated <span className='italic'>weekly</span> with new motivational content!
                   </p>
                 </div>
@@ -451,6 +451,18 @@ export default function Dashboard() {
             </motion.div>
           </motion.div>
         </motion.main>
+        <footer className="bg-ascend-black text-white px-6">
+          <div className="container mx-auto flex justify-between items-center">
+            <p className="text-sm">&copy; 2023 Ascend. All rights reserved.</p>
+            <nav>
+              <ul className="flex space-x-4">
+                <li><a href="/account" className="hover:text-ascend-green font-archivo-black">About</a></li>
+                <li><a href="/account" className="hover:text-ascend-blue font-archivo-black">Privacy</a></li>
+                <li><a href="/account" className="hover:text-ascend-pink font-archivo-black">Terms</a></li>
+              </ul>
+            </nav>
+          </div>
+        </footer>
       </div>
     </div>
   );

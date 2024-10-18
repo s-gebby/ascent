@@ -5,7 +5,7 @@ import { createJournalEntry, getJournalEntries, updateJournalEntry } from '../ut
 import { Button, TextInput, Select, MultiSelect, Textarea, Modal } from '@mantine/core'
 import { jsPDF } from 'jspdf';
 import { Menu, Transition } from '@headlessui/react';
-import { ArrowDownTrayIcon, BellIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, BellIcon, UserCircleIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
 import { CalendarIcon, TagIcon } from '@heroicons/react/20/solid'
 import { TrashIcon } from '@heroicons/react/20/solid';
 import { deleteJournalEntry } from '../utils/database';
@@ -47,8 +47,6 @@ export default function Journal() {
     }
   }, [user]);
 
-
-
   const handleEntryClick = (entry) => {
     setSelectedEntry(entry);
     setIsModalOpen(true);
@@ -57,10 +55,21 @@ export default function Journal() {
   const handleExport = (format) => {
     if (format === 'pdf' && selectedEntry) {
       const doc = new jsPDF();
-      doc.text(`Journal Entry: ${selectedEntry.title}`, 10, 10);
-      doc.text(`Date: ${new Date(selectedEntry.date).toLocaleDateString()}`, 10, 20);
-      doc.text(`Category: ${selectedEntry.category}`, 10, 30);
-      doc.text(selectedEntry.text, 10, 40);
+      const lineHeight = 10;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 20;
+
+      doc.setFontSize(18);
+      doc.text(selectedEntry.title, margin, 20);
+
+      doc.setFontSize(12);
+      doc.text(`Date: ${new Date(selectedEntry.date).toLocaleDateString()}`, margin, 35);
+      doc.text(`Category: ${selectedEntry.category}`, margin, 45);
+
+      doc.setFontSize(12);
+      const splitText = doc.splitTextToSize(selectedEntry.text, pageWidth - 2 * margin);
+      doc.text(splitText, margin, 60);
+
       doc.save(`journal_entry_${selectedEntry.id}.pdf`);
     }
   };
@@ -138,9 +147,9 @@ export default function Journal() {
   }
   
   const ExportMenu = ({ onExport }) => (
-    <Menu as="div" className="relative inline-block text-left z-50">
+    <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-ascend-blue rounded-md hover:bg-ascend-blue-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+        <Menu.Button className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-ascend-black">
           <ArrowDownTrayIcon className="h-5 w-5 mr-2" aria-hidden="true" />
           Export
         </Menu.Button>
@@ -154,17 +163,18 @@ export default function Journal() {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items className="absolute right-0 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="px-1 py-1">
             <Menu.Item>
               {({ active }) => (
                 <button
                   className={`${
                     active ? 'bg-ascend-blue text-white' : 'text-gray-900'
-                  } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                  } group flex w-full items-center rounded-md px-2 py-2 text-sm transition-colors duration-150`}
                   onClick={() => onExport('pdf')}
                 >
-                  PDF
+                  <DocumentArrowDownIcon className="mr-2 h-5 w-5" aria-hidden="true" />
+                  Export as PDF
                 </button>
               )}
             </Menu.Item>
@@ -180,7 +190,7 @@ return (
       setIsOpen={setIsSidebarOpen}
     />
     <div className="flex-1 flex flex-col h-screen">
-    <header className="bg-white z-10 p-4 shadow-md">
+      <header className="bg-white z-10 p-4 shadow-md">
         <div className="flex flex-col space-y-2 sm:flex-row sm:justify-between sm:items-center">
           <h2 className="text-2xl font-semibold text-ascend-black">Journal</h2>
           <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4 items-center">
@@ -217,9 +227,9 @@ return (
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-full md:w-3/4 m-6 overflow-y-auto">
+        <div className="w-full md:w-3/4 m-6 overflow-y-auto flex-grow">
           <div className="bg-white border border-gray-300 rounded-sm p-4 md:p-6 mb-4 md:mb-6 col-span-full">
-            <h3 className="text-lg font-semibold text-ascend-black mb-4">New Journal Entry</h3>
+            <h3 className="text-lg text-ascend-black mb-4">New Journal Entry</h3>
             <TextInput
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -246,9 +256,9 @@ return (
               onChange={(e) => setNewEntry(e.target.value)}
               placeholder={prompt}
               className="mb-3"
-              minRows={10}
-              maxRows={20}
-              maxLength={5000}
+              minRows={15}
+              maxRows={25}
+              maxLength={7500}
             />
             <div className="flex justify-between items-center">
               <Button onClick={() => setPrompt(prompts[Math.floor(Math.random() * prompts.length)])}>
@@ -262,7 +272,7 @@ return (
         {/* Journal entries section */}
         <div className="w-full md:w-1/4 bg-white border border-gray-300 overflow-y-auto m-6">
           <div className="p-4">
-            <h3 className="text-lg font-semibold text-ascend-black mb-4 text-center">Journal Entries</h3>
+            <h3 className="text-lg text-ascend-black mb-4 text-center">Journal Entries</h3>
             <TextInput
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -276,7 +286,7 @@ return (
                   className="bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer relative"
                 >
                   <div onClick={() => handleEntryClick(entry)}>
-                    <h3 className="font-semibold text-sm text-ascend-black mb-1 truncate pr-6">
+                    <h3 className="font-archivo font-semibold text-sm text-ascend-black mb-1 truncate pr-6">
                       <span className={`inline-block w-2 h-2 rounded-full mr-1 ${categoryColors[entry.category]}`}></span>
                       {entry.title}
                     </h3>
@@ -313,12 +323,14 @@ return (
       >
         {selectedEntry && (
           <div>
-            <p className="text-sm text-gray-600 mb-2">{new Date(selectedEntry.date).toLocaleDateString()}</p>
-            <p className="text-sm text-gray-600 mb-4">{selectedEntry.category}</p>
-            <p className="mb-4">{selectedEntry.text}</p>
-            <div className="flex justify-end">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <p className="text-sm text-gray-600">{new Date(selectedEntry.date).toLocaleDateString()}</p>
+                <p className="text-sm text-gray-600">{selectedEntry.category}</p>
+              </div>
               <ExportMenu onExport={handleExport} />
             </div>
+            <p className="mb-4 whitespace-pre-wrap">{selectedEntry.text}</p>
           </div>
         )}
       </Modal>
